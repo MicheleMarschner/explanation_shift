@@ -38,5 +38,3 @@ IG_STEPS = 32 # n_steps, How many points Captum samples along the path from base
 class TargetPolicy(str, Enum):
     PRED_CLEAN = "pred_clean"
     PRED_PER_DOMAIN = "pred_per_domain"
-
-

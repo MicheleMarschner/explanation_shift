@@ -137,3 +137,43 @@ def print_results(row):
 
 def to_cpu_f16(x: torch.Tensor) -> torch.Tensor:
     return x.detach().to("cpu").to(torch.float16).contiguous()
+
+
+def update_results_inplace(results: dict, path: Path, key_cols=("corruption", "severity")):
+    """
+    Update the row matching key_cols in an existing CSV by filling/overwriting columns
+    from `results`. Keeps all existing columns (e.g., acc_corr) and adds new columns at end.
+    If no matching row exists, appends as a new row.
+    """
+    new_df = pd.DataFrame([results])
+
+    if path.exists():
+        df = pd.read_csv(path)
+
+        # add missing columns at the end
+        for c in new_df.columns:
+            if c not in df.columns:
+                df[c] = np.nan
+
+        # try to find a matching row
+        can_match = all(k in df.columns for k in key_cols)
+        if can_match:
+            mask = np.ones(len(df), dtype=bool)
+            for k in key_cols:
+                mask &= (df[k].astype(str) == str(results[k]))
+
+            if mask.sum() == 0:
+                # append new row aligned to df columns
+                df = pd.concat([df, new_df.reindex(columns=df.columns)], ignore_index=True)
+            else:
+                # update FIRST match
+                idx = df.index[mask][0]
+                for k, v in results.items():
+                    df.at[idx, k] = v
+        else:
+            # cannot match -> append
+            df = pd.concat([df, new_df.reindex(columns=df.columns)], ignore_index=True)
+    else:
+        df = new_df
+
+    df.to_csv(path, index=False)

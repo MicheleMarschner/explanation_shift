@@ -1,0 +1,10 @@
+__pycache__/
+build/
+dist/
+.ipynb_checkpoints/
+.env
+
+data
+experiments
+Manual.md
+checkpoints

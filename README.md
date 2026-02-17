@@ -1,0 +1,1 @@
+Resnet + weights: https://github.com/huyvnphan/PyTorch_CIFAR10
