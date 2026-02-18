@@ -5,9 +5,16 @@ import torch
 from pathlib import Path
 import pandas as pd
 
-from src.config import Paths, PATHS
+from src.configs.global_config import Paths, PATHS
 
-        
+
+def prefix_keys(d: dict, prefix: str) -> dict:
+    return {f"{prefix}{k}": v for k, v in d.items()}
+
+
+def cpu(x):
+    return x.detach().cpu() if torch.is_tensor(x) else x
+
 
 def set_seeds(seed: int = 51, deterministic: bool = True) -> None:
     """Sets seeds for complete reproducibility across all libraries and operations"""
@@ -39,6 +46,16 @@ def set_seeds(seed: int = 51, deterministic: bool = True) -> None:
     print(f"Seeds set to {seed} (deterministic={deterministic})")
 
 
+def create_file_path(run_dir: Path, stage_dir: str, prefix: str, corruption: str | None = None, severity: int | None = None) -> Path:
+    d = run_dir / stage_dir
+    ensure_dir(d)
+
+    if corruption is None or severity is None:
+        return d / f"{prefix}.pt"
+
+    return d / f"{prefix}__{corruption}__sev{severity}.pt"
+
+
 def ensure_dir(p: Path) -> None:
     """Create directory and parent directories if it doesn't already exist"""
     p.mkdir(parents=True, exist_ok=True)
@@ -46,7 +63,7 @@ def ensure_dir(p: Path) -> None:
 
 def ensure_dirs(paths: Paths) -> None:
     """Create all directories that should exist"""
-    for p in [paths.data, paths.results, paths.runs, paths.checkpoints]:
+    for p in [paths.data_clean, paths.data_corr, paths.results, paths.runs, paths.checkpoints]:
         ensure_dir(p)
 
 
@@ -70,15 +87,21 @@ def collect_labels_from_loader(dataloader):
 
 
 # aggregate metric values with an optional boolean mask (e.g., stable-prediction subset)
-def mean_std_over_mask(values, mask):
+def mean_std_over_mask(values, mask=None):
     """
-    Return mean/std of `values` over the subset where `mask` is True.
-    If the subset is empty, return (nan, nan).
+    Mean/std over values[mask] if mask is given, else over all values.
+    Returns (nan, nan) if the selected subset is empty.
     """
-    if mask.sum() == 0:
+    if mask is None:
+        subset = values
+    else:
+        if mask.sum() == 0:
+            return float("nan"), float("nan")
+        subset = values[mask]
+
+    if subset.numel() == 0:
         return float("nan"), float("nan")
-    
-    subset = values[mask]
+
     return subset.mean().item(), subset.std(unbiased=False).item()
 
 
@@ -177,3 +200,26 @@ def update_results_inplace(results: dict, path: Path, key_cols=("corruption", "s
         df = new_df
 
     df.to_csv(path, index=False)
+
+
+def load_clean_reference(exp_dir: Path) -> dict:
+    ref = torch.load(exp_dir / "experiment_reference.pt", map_location="cpu")
+    cr = ref["clean_reference"]
+
+    cr["sal_clean"] = cr["sal_clean"].float()
+    cr["logits_clean"] = cr["logits_clean"].float()
+    cr["E_clean"] = cr["E_clean"].float()
+    cr["entropy_clean"] = cr["entropy_clean"].float()
+    return ref
+
+
+def load_corr_artifact(exp_dir: Path, corruption: str, severity: int) -> dict:
+    p = exp_dir / f"artifacts_{corruption}_sev{severity}.pt"
+    art = torch.load(p, map_location="cpu")
+    cc = art["corrupt_reference"]
+
+    cc["sal_corr"] = cc["sal_corr"].float()
+    cc["logits_corr"] = cc["logits_corr"].float()
+    cc["E_corr"] = cc["E_corr"].float()
+    cc["entropy_corr"] = cc["entropy_corr"].float()
+    return art

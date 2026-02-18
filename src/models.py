@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 
-from src.config import DEVICE
+from src.configs.global_config import DEVICE
 from src.resnet import resnet18
 
 

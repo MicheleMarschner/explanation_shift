@@ -1,6 +1,6 @@
 import torch
 
-from src.config import DEVICE
+from src.configs.global_config import DEVICE
 from src.utils import mean_std_over_mask
 
 
@@ -97,27 +97,27 @@ def topk_iou(a, b, topk_frac=0.05):
     """
     N, H, W = a.shape
     k = max(1, int(topk_frac * H * W))
-
+    
     a_flat = a.reshape(N, -1)
     b_flat = b.reshape(N, -1)
 
-    # Indices of top-k salient pixels per image
-    a_idx = torch.topk(a_flat, k=k, dim=1).indices
-    b_idx = torch.topk(b_flat, k=k, dim=1).indices
+    # Get the value at the k-th rank to create a binary mask
+    # This is much faster than set operations
+    val_a, _ = torch.topk(a_flat, k=k, dim=1)
+    val_b, _ = torch.topk(b_flat, k=k, dim=1)
+    
+    # Create binary masks for top-k pixels
+    # Use the k-th largest value as the threshold
+    mask_a = (a_flat >= val_a[:, -1:].expand_as(a_flat))
+    mask_b = (b_flat >= val_b[:, -1:].expand_as(b_flat))
+    
+    intersection = (mask_a & mask_b).float().sum(dim=1)
+    union = (mask_a | mask_b).float().sum(dim=1)
+    
+    return intersection / (union + 1e-8)
 
-    # IoU over sets of pixel indices (intersection / union)
-    ious = []
-    for i in range(N):
-        sa = set(a_idx[i].tolist())
-        sb = set(b_idx[i].tolist())
-        inter = len(sa.intersection(sb))
-        union = len(sa.union(sb))
-        ious.append(inter / union if union > 0 else 0.0)
 
-    return torch.tensor(ious)
-
-
-def stable_pred_mask(pred_a, pred_b):
+def mask_invariant(pred_a, pred_b):
     """
     Label-wise stability mask: True where the predicted class did NOT change.
 
@@ -125,6 +125,13 @@ def stable_pred_mask(pred_a, pred_b):
     (e.g., clean vs corrupted prediction unchanged).
     """
     return (pred_a == pred_b)
+
+
+def mask_correct(pred_a, pred_b, y_true):
+    """
+    
+    """
+    return ((pred_a == y_true) & (pred_b == y_true))
 
 
 def spearman_rho_maps(a, b, eps=1e-8):
@@ -140,38 +147,55 @@ def spearman_rho_maps(a, b, eps=1e-8):
 
     num = (ra * rb).sum(dim=1)
     den = (ra.norm(p=2, dim=1) * rb.norm(p=2, dim=1) + eps)
+    
     return num / den  # [N]
 
 
-def compute_explanation_drift_metrics(sal_clean, sal_corr, stable_mask):
+def compute_explanation_drift_metrics(sal_clean, sal_corr, mask=None):
 
-    spearman_rho = spearman_rho_maps(sal_clean, sal_corr)
-    cosine_sim = cosine_sim_maps(sal_clean, sal_corr)
-    iou_topk = topk_iou(sal_clean, sal_corr, topk_frac=0.05)
+    # Pre-process: Absolute value and sum across color channels (if RGB)
+    # Saliency maps are usually [N, H, W]
+    # If saliency is [N,C,H,W], reduce channels; if [N,H,W], keep as is
+    if sal_clean.ndim == 4:
+        sal_clean = sal_clean.abs().sum(dim=1)
+        sal_corr  = sal_corr.abs().sum(dim=1)
+    else:
+        sal_clean = sal_clean.abs()
+        sal_corr  = sal_corr.abs()
 
-    rho_mean_stable, rho_sd_stable = mean_std_over_mask(spearman_rho, stable_mask)
-    cos_mean_stable, cos_sd_stable = mean_std_over_mask(cosine_sim, stable_mask)
-    iou_mean_stable, iou_sd_stable = mean_std_over_mask(iou_topk, stable_mask)
+    spearman_rho = spearman_rho_maps(sal_clean, sal_corr)   # [N]
+    cosine_sim   = cosine_sim_maps(sal_clean, sal_corr)     # [N]
+    iou_topk     = topk_iou(sal_clean, sal_corr, topk_frac=0.05)  # [N]
 
-    vectors = dict(
-        spearman_rho=spearman_rho,
-        cosine_sim=cosine_sim,
-        iou_topk=iou_topk,
-    )
+    vectors = {
+        "spearman_rho": spearman_rho,
+        "cosine_sim": cosine_sim,
+        "iou_topk": iou_topk,
+    }
 
-    summary = dict(
-        rho_mean=spearman_rho.mean().item(),
-        rho_sd=spearman_rho.std(unbiased=False).item(),
-        cos_mean=cosine_sim.mean().item(),
-        cos_sd=cosine_sim.std(unbiased=False).item(),
-        iou_mean=iou_topk.mean().item(),
-        iou_sd=iou_topk.std(unbiased=False).item(),
-        rho_mean_stable=rho_mean_stable,
-        rho_sd_stable=rho_sd_stable,
-        cos_mean_stable=cos_mean_stable,
-        cos_sd_stable=cos_sd_stable,
-        iou_mean_stable=iou_mean_stable,
-        iou_sd_stable=iou_sd_stable
-    )
+    if mask is None:
+        # summary all
+        summary = {
+            "rho_mean": spearman_rho.mean().item(),
+            "rho_sd": spearman_rho.std(unbiased=False).item(),
+            "cos_mean": cosine_sim.mean().item(),
+            "cos_sd": cosine_sim.std(unbiased=False).item(),
+            "iou_mean": iou_topk.mean().item(),
+            "iou_sd": iou_topk.std(unbiased=False).item(),
+        }
+        return vectors, summary
 
+    # summary masked
+    rho_mean, rho_sd = mean_std_over_mask(spearman_rho, mask)
+    cos_mean, cos_sd = mean_std_over_mask(cosine_sim, mask)
+    iou_mean, iou_sd = mean_std_over_mask(iou_topk, mask)
+
+    summary = {
+        "rho_mean": rho_mean,
+        "rho_sd": rho_sd,
+        "cos_mean": cos_mean,
+        "cos_sd": cos_sd,
+        "iou_mean": iou_mean,
+        "iou_sd": iou_sd,
+    }
     return vectors, summary

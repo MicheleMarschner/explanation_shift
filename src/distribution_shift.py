@@ -75,30 +75,34 @@ def _margin_shift_abs(logits_a, logits_b):
     return (m_b - m_a).abs()  # [N]
 
 
-def compute_confidence_shift_metrics(logits_clean, logits_corr, stable_mask):
-    # confidence shift metrics (label-wise)
-    p_shift_abs   = _prob_shift_same_label(logits_clean, logits_corr)   # |Δp| for clean-predicted label
-    margin_shift_abs  = _margin_shift_abs(logits_clean, logits_corr)        # |Δmargin|
-    p_shift_mean, p_shift_sd = p_shift_abs.mean().item(), p_shift_abs.std(unbiased=False).item()
-    margin_shift_mean, margin_shift_sd = margin_shift_abs.mean().item(), margin_shift_abs.std(unbiased=False).item()
+def compute_confidence_shift_metrics(logits_clean, logits_corr, mask=None):
+    # per-sample vectors
+    p_shift_abs      = _prob_shift_same_label(logits_clean, logits_corr)  # |Δp|
+    margin_shift_abs = _margin_shift_abs(logits_clean, logits_corr)       # |Δmargin|
 
-    p_shift_mean_stable, p_shift_sd_stable = mean_std_over_mask(p_shift_abs, stable_mask)
-    margin_shift_mean_stable, margin_shift_sd_stable = mean_std_over_mask(margin_shift_abs, stable_mask)
-  
-    vectors = dict(
-        p_shift_abs=p_shift_abs,
-        margin_shift_abs=margin_shift_abs, 
-    )
+    vectors = {
+        "p_shift_abs": p_shift_abs,
+        "margin_shift_abs": margin_shift_abs,
+    }
 
-    summary = dict(
-        p_shift_mean=p_shift_mean, 
-        p_shift_sd=p_shift_sd, 
-        margin_shift_mean=margin_shift_mean, 
-        margin_shift_sd=margin_shift_sd,
-        p_shift_mean_stable=p_shift_mean_stable,
-        p_shift_sd_stable=p_shift_sd_stable,
-        margin_shift_mean_stable=margin_shift_mean_stable,
-        margin_shift_sd_stable=margin_shift_sd_stable
-    )
+    if mask is None:
+        # overall summary
+        summary = {
+            "p_shift_mean": p_shift_abs.mean().item(),
+            "p_shift_sd": p_shift_abs.std(unbiased=False).item(),
+            "margin_shift_mean": margin_shift_abs.mean().item(),
+            "margin_shift_sd": margin_shift_abs.std(unbiased=False).item(),
+        }
+        return vectors, summary
 
+    # masked summary
+    p_mean, p_sd = mean_std_over_mask(p_shift_abs, mask)
+    m_mean, m_sd = mean_std_over_mask(margin_shift_abs, mask)
+    summary = {
+        "p_shift_mean": p_mean,
+        "p_shift_sd": p_sd,
+        "margin_shift_mean": m_mean,
+        "margin_shift_sd": m_sd,
+    }
+    
     return vectors, summary

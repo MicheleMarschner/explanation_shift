@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from src.config import PATHS
+from src.configs.global_config import PATHS
 
 __all__ = [
     "ResNet",
