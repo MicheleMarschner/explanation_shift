@@ -125,10 +125,12 @@ def main() -> None:
             quantus_clean_path  = create_file_path(experiments_dir, "03__quantus", "03__quantus", "clean", 0)
             if args.overwrite or not quantus_clean_path.exists():
                 run_quantus_metrics(
+                    pair_idx=pair_idx_np,
+                    corruption="clean",
+                    severity=0,
                     clean_path=clean_path,
                     artifact_path=None,
-                    out_path=quantus_clean_path,
-                    exp_config=exp_config,
+                    save_path=quantus_clean_path,
                     model=resnet_model,
                     transform=transform,
                     mode="clean",
@@ -166,7 +168,7 @@ def main() -> None:
                     compute_drift_metrics(
                         clean_path=clean_path,
                         artifact_path=artifact_path,
-                        save_path=drift_path,
+                        save_path=drift_path
                     )
                 print(f"drift stored under {drift_path}")
                 continue
@@ -176,10 +178,12 @@ def main() -> None:
                     if not artifact_path.exists():
                         raise FileNotFoundError(f"Missing artifact: {artifact_path} (run --stage artifact first)")
                     run_quantus_metrics(
+                        pair_idx=pair_idx_np,
+                        corruption=corr,
+                        severity=sev,
                         clean_path=clean_path,
                         artifact_path=artifact_path,
-                        out_path=quantus_path,
-                        exp_config=exp_config,
+                        save_path=quantus_path,
                         model=resnet_model,
                         transform=transform,
                         mode="corr",

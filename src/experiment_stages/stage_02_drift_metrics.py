@@ -20,7 +20,7 @@ def compute_drift_metrics(clean_path: Path, artifact_path: Path, save_path: Path
     E_clean      = cr["E_clean"].float()
     sal_clean    = cr["sal_clean"].float()
     sigma_ref    = float(cr["sigma_ref"])
-    y_true       = cr["y_true"].long()
+    y_true       = cr["y_clean"].long()
 
     logits_corr  = cc["logits_corr"]
     pred_corr    = cc["pred_corr"].long()
@@ -30,10 +30,14 @@ def compute_drift_metrics(clean_path: Path, artifact_path: Path, save_path: Path
 
     # slice 1: prediction_invariance mask + rate
     invariant = mask_invariant(pred_clean, pred_corr).bool()
+    n_invariant = invariant.sum().item()
+    print(f" labels corresponding both domains {n_invariant} from {len(pred_clean)}")
     invariant_rate = float(invariant.float().mean().item())
 
     # slice 2: both_correct (only if labels exist)
     both_correct = mask_correct(pred_clean, pred_corr, y_true).bool()
+    n_both_correct = both_correct.sum().item()
+    print(f" labels correct in both domains {n_both_correct} from {len(pred_clean)}")
     both_correct_rate = float(both_correct.float().mean().item())
 
     # shift strength
@@ -49,7 +53,9 @@ def compute_drift_metrics(clean_path: Path, artifact_path: Path, save_path: Path
         "corruption": art["corruption"],
         "severity": int(art["severity"]),
         "invariant_rate": invariant_rate,
+        "n_invariant": int(n_invariant),
         "both_correct_rate": both_correct_rate,
+        "n_both_correct": int(n_both_correct),
         "max_mean_discrepancy": mmd2,
         "mean_delta_entropy": mean_dH,
         "mean_abs_delta_entropy": mean_abs_dH,

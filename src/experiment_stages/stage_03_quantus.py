@@ -1,64 +1,53 @@
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, Dict, Literal, Optional, Tuple
-
-import numpy as np
 import torch
+import quantus
+from pathlib import Path
+import numpy as np
 
-from src.configs.global_config import PATHS, DEVICE
-from src.utils import ensure_dir, collect_x_from_loader
+from typing import Any, Dict, Literal, Optional
+
+from src.configs.global_config import PATHS, DEVICE, IG_STEPS
+from src.utils import cpu, as_np_int64_1d, collect_x_from_loader
 from src.data import get_clean_data, get_corrupted_data
-from src.experiment_stages.helper import _upsert_row_to_csv
+from src.experiment_stages.helper import save_quantus_metrics
+from src.metrics import build_quantus_metrics
 
-# -----------------------
-# helpers: formatting
-# -----------------------
 
-def _as_np_int64_1d(x: torch.Tensor) -> np.ndarray:
-    return x.detach().cpu().numpy().reshape(-1).astype(np.int64)
 
-def _to_float_tensor(x) -> torch.Tensor:
-    if torch.is_tensor(x):
-        return x.float()
-    return torch.as_tensor(x).float()
+def to_scalar(x):
+    # torch scalar
+    if hasattr(x, "detach"):
+        x = x.detach().cpu().numpy()
 
-def _sal_to_abatch(sal: torch.Tensor) -> np.ndarray:
-    """
-    Quantus expects attribution maps a_batch.
-    We'll provide (N, 1, H, W) float32.
-    Accepts:
-      - (N, C, H, W) or (N, H, W)
-    """
-    sal = _to_float_tensor(sal).detach().cpu()
+    # numpy scalar
+    if isinstance(x, (np.generic,)):
+        return float(x)
 
-    if sal.ndim == 4:         # (N,C,H,W)
-        sal = sal.abs().sum(dim=1, keepdim=True)   # -> (N,1,H,W)
-    elif sal.ndim == 3:       # (N,H,W)
-        sal = sal.abs().unsqueeze(1)               # -> (N,1,H,W)
-    else:
-        raise ValueError(f"Unexpected saliency shape: {tuple(sal.shape)}")
+    # list/tuple/ndarray
+    if isinstance(x, (list, tuple, np.ndarray)):
+        arr = np.asarray(x).astype(float)
+        # if it's a single number like [0.6] -> 0.6
+        if arr.size == 1:
+            return float(arr.reshape(-1)[0])
+        # if it's per-sample scores -> store mean (or median)
+        return float(arr.mean())
 
-    return sal.numpy().astype(np.float32)
+    # python number
+    if isinstance(x, (int, float)):
+        return float(x)
 
-def _x_to_xbatch(x_t: torch.Tensor) -> np.ndarray:
-    """
-    Provide x_batch as (N,C,H,W) float32 numpy.
-    Note: x_t is already normalized (your transform includes Normalize).
-    """
-    if not torch.is_tensor(x_t):
-        x_t = torch.as_tensor(x_t)
-    return x_t.detach().cpu().numpy().astype(np.float32)
+    # fallback: string
+    return str(x)
 
-# -----------------------
-# main stage function
-# -----------------------
 
 def run_quantus_metrics(
+    pair_idx,
+    corruption,
+    severity,
     clean_path: Path,
     artifact_path: Optional[Path],
-    out_path: Path,
-    exp_config: Any,
+    save_path: Path,
     model,
     transform,
     mode: Literal["clean", "corr"] = "corr",
@@ -77,42 +66,27 @@ def run_quantus_metrics(
       out_path (.pt): payload {row, metrics, meta}
       03__quantus_results.csv: upsert by (corruption,severity)
     """
-    
-    out_path = Path(out_path)
-    ensure_dir(out_path.parent)
 
     # Load stage00 reference
     ref = torch.load(clean_path, map_location="cpu", weights_only=False)
     cr = ref["clean_reference"]
 
     pred_clean = cr["pred_clean"].long()       # torch tensor [N]
-    y_batch = _as_np_int64_1d(pred_clean)      # numpy [N]
-    pair_idx = ref.get("pair_idx", None)
-    if pair_idx is None:
-        raise KeyError("clean reference missing top-level 'pair_idx'.")
-    if torch.is_tensor(pair_idx):
-        pair_idx = pair_idx.detach().cpu().numpy()
-    pair_idx = np.asarray(pair_idx).reshape(-1)
+    y_batch = as_np_int64_1d(pred_clean)
+
 
     # Decide domain inputs + attributions
     if mode == "clean":
-        corruption = "clean"
-        severity = 0
-
         clean_loader, _, _ = get_clean_data(path=PATHS.data_clean, idx=pair_idx, transform=transform)
-        X_t = collect_x_from_loader(clean_loader)     # torch [N,C,H,W]
-        x_batch = _x_to_xbatch(X_t)
+        X_clean_t = collect_x_from_loader(clean_loader)     # torch [N,C,H,W]
+        x_batch = cpu(X_clean_t).numpy()
 
-        a_batch = _sal_to_abatch(cr["sal_clean"])
+        #sal_clean = cr["sal_clean"].float()
+        #a_batch = cpu(sal_clean.unsqueeze(1)).numpy()  # numpy [N,1,H,W]
 
     else:
-        if artifact_path is None:
-            raise ValueError("mode='corr' requires artifact_path.")
-        art = torch.load(artifact_path, map_location="cpu", weights_only=False)
-        cc = art["corrupt_reference"]
-
-        corruption = str(art["corruption"])
-        severity = int(art["severity"])
+        corruption = str(corruption)
+        severity = int(severity)
 
         corr_loader, _, _ = get_corrupted_data(
             idx=pair_idx,
@@ -121,54 +95,46 @@ def run_quantus_metrics(
             corruption=corruption,
             severity=severity,
         )
-        X_t = collect_x_from_loader(corr_loader)
-        x_batch = _x_to_xbatch(X_t)
+        X_corr_t = collect_x_from_loader(corr_loader)
+        x_batch = cpu(X_corr_t).numpy()
 
-        a_batch = _sal_to_abatch(cc["sal_corr"])
+        #art = torch.load(artifact_path, map_location="cpu", weights_only=False)
+        #cc = art["corrupt_reference"]
+        #sal_corr = cc["sal_corr"].float()
+        #a_batch = cpu(sal_corr.unsqueeze(1)).numpy()  # numpy [N,1,H,W]
 
-    # Sanity
-    if x_batch.shape[0] != y_batch.shape[0] or a_batch.shape[0] != y_batch.shape[0]:
-        raise ValueError(
-            f"Batch size mismatch: x={x_batch.shape[0]}, a={a_batch.shape[0]}, y={y_batch.shape[0]}"
+    assert x_batch.shape[0] == y_batch.shape[0]
+    assert y_batch.ndim == 1
+    #assert a_batch.shape[0] == x_batch.shape[0] == y_batch.shape[0]
+    #assert a_batch.shape[-2:] == x_batch.shape[-2:]  # (H,W)
+
+    # -----------------------
+    # Quantus metrics
+    # -----------------------
+    metrics = build_quantus_metrics()
+
+    # Quantus runs forward passes 
+    model.eval()
+
+    results = {}
+    for metric, metric_func in metrics.items():
+        scores = metric_func(
+            model=model, 
+            x_batch=x_batch, 
+            y_batch=y_batch, 
+            a_batch=None,
+            s_batch=None,
+            explain_func=quantus.explain,   
+            explain_func_kwargs={
+                "method": "IntegratedGradients",
+                "n_steps": int(IG_STEPS),
+                "device": DEVICE,
+            },
         )
+        results[metric] = to_scalar(scores)
 
-    # -----------------------
-    # HERE: Quantus metrics
-    # -----------------------
-    # Keep it modular: compute a dict of scalar results and optionally vector scores.
-    # Example placeholders (replace with real Quantus calls):
-    quantus_scalars: Dict[str, float] = {}
-    quantus_vectors: Dict[str, Any] = {}
-
-    # TODO: insert Quantus metric calls.
-    # quantus_scalars["deletion_auc"] = float(...)
-    # quantus_scalars["avg_sensitivity"] = float(...)
-    # quantus_vectors["deletion_scores"] = <np array or torch> (optional)
-
-    row = {
-        "corruption": corruption,
-        "severity": severity,
-        **quantus_scalars,
-    }
-
-    payload = {
-        "row": row,
-        "vectors": quantus_vectors,
-        "meta": {
-            "mode": mode,
-            "y_batch_policy": "pred_clean",
-            "x_domain": "clean" if mode == "clean" else "corrupted",
-            "a_domain": "clean" if mode == "clean" else "corrupted",
-            "x_shape": tuple(x_batch.shape),
-            "a_shape": tuple(a_batch.shape),
-            "y_shape": tuple(y_batch.shape),
-        },
-    }
-
-    torch.save(payload, out_path)
-
-    # CSV
-    csv_path = out_path.parent / "03__quantus_results.csv"
-    _upsert_row_to_csv(csv_path, row, keys=("corruption", "severity"))
+    row = {"corruption": corruption, "severity": severity, **results}
+    
+    save_quantus_metrics(save_path, row, mode)
 
     return row

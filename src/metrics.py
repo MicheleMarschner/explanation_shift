@@ -16,7 +16,9 @@ def build_quantus_metrics() -> Dict[str, Any]:
         "robustness__avg_sensitivity": quantus.AvgSensitivity(
             nr_samples=2,
             lower_bound=0.2,
-            perturb_func=quantus.perturb_func.uniform_noise,
+            norm_numerator=quantus.norm_func.fro_norm,
+            norm_denominator=quantus.norm_func.fro_norm,
+            perturb_func=quantus.functions.perturb_func.batch_uniform_noise,
             similarity_func=quantus.similarity_func.difference,
             abs=True,
             normalise=False,
@@ -28,7 +30,7 @@ def build_quantus_metrics() -> Dict[str, Any]:
             nr_runs=10,
             subset_size=224,  # for CIFAR (32*32=1024), 224 is okay-ish; tune later
             perturb_baseline="black",
-            perturb_func=quantus.baseline_replacement_by_indices,
+            perturb_func=quantus.functions.perturb_func.batch_baseline_replacement_by_indices,
             similarity_func=quantus.similarity_func.correlation_pearson,
             abs=True,
             normalise=False,

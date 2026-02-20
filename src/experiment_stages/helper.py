@@ -125,70 +125,83 @@ def save_artifacts(
     _append_row_csv_stage01(results_csv, row)
 
 
-def _ensure_stage02_csv(stage01_csv: Path, stage02_csv: Path) -> None:
+def _key_series(df: pd.DataFrame, keys: Sequence[str] = ("corruption", "severity")) -> pd.Series:
+    # robust key builder
+    corr = df[keys[0]].astype(str).str.strip() if keys[0] in df.columns else ""
+    sev  = pd.to_numeric(df[keys[1]], errors="coerce").astype("Int64").astype(str) if keys[1] in df.columns else ""
+    return corr + "__" + sev
+
+
+def _read_csv_or_empty(path: Path) -> pd.DataFrame:
+    path = Path(path)
+    if not path.exists():
+        return pd.DataFrame()
+    return pd.read_csv(path)
+
+
+def _sync_prev_csv_into_curr(
+    prev_csv: Path,
+    curr_csv: Path,
+    keys: Sequence[str] = ("corruption", "severity"),
+) -> None:
     """
-    Ensure stage02 exists and contains at least all rows/columns from stage01.
-    If stage02 exists, we *sync* (union) stage01 into it.
+    Ensure curr_csv exists and contains at least all rows/columns from prev_csv.
+    - Adds missing columns from prev into curr.
+    - Adds missing rows (by keys) from prev into curr.
+    - If curr doesn't exist, copies prev entirely.
     """
-    stage01_csv = Path(stage01_csv)
-    stage02_csv = Path(stage02_csv)
-    stage02_csv.parent.mkdir(parents=True, exist_ok=True)
+    prev_csv = Path(prev_csv)
+    curr_csv = Path(curr_csv)
+    curr_csv.parent.mkdir(parents=True, exist_ok=True)
 
-    if not stage01_csv.exists():
-        raise FileNotFoundError(f"Stage01 CSV not found: {stage01_csv}")
+    if not prev_csv.exists():
+        raise FileNotFoundError(f"Previous stage CSV not found: {prev_csv}")
 
-    df1 = pd.read_csv(stage01_csv)
+    df_prev = pd.read_csv(prev_csv)
 
-    if not stage02_csv.exists():
-        df1.to_csv(stage02_csv, index=False)
+    if not curr_csv.exists():
+        df_prev.to_csv(curr_csv, index=False)
         return
 
-    df2 = pd.read_csv(stage02_csv)
+    df_curr = pd.read_csv(curr_csv)
 
-    # ensure all stage01 columns exist in stage02
-    for c in df1.columns:
-        if c not in df2.columns:
-            df2[c] = pd.NA
+    # ensure key cols exist in curr
+    for k in keys:
+        if k not in df_curr.columns:
+            df_curr[k] = pd.NA
 
-    # ensure keys exist
-    for k in ["corruption", "severity"]:
-        if k not in df2.columns:
-            df2[k] = pd.NA
+    # ensure all prev columns exist in curr
+    for c in df_prev.columns:
+        if c not in df_curr.columns:
+            df_curr[c] = pd.NA
 
-    # append missing stage01 rows (by key)
-    def key_series(df):
-        return df["corruption"].astype(str).str.strip() + "__" + pd.to_numeric(df["severity"], errors="coerce").astype("Int64").astype(str)
+    # ensure all curr columns exist in prev (for concatenation later)
+    for c in df_curr.columns:
+        if c not in df_prev.columns:
+            df_prev[c] = pd.NA
 
-    k1 = key_series(df1)
-    k2 = set(key_series(df2).tolist())
+    prev_keys = _key_series(df_prev, keys)
+    curr_key_set = set(_key_series(df_curr, keys).tolist())
 
-    missing = df1.loc[~k1.isin(k2)].copy()
+    missing = df_prev.loc[~prev_keys.isin(curr_key_set)].copy()
     if len(missing) > 0:
-        # add any extra columns that exist in stage02 but not in stage01
-        for c in df2.columns:
-            if c not in missing.columns:
-                missing[c] = pd.NA
-        df2 = pd.concat([df2, missing[df2.columns]], ignore_index=True)
+        df_curr = pd.concat([df_curr, missing[df_curr.columns]], ignore_index=True)
 
-    df2.to_csv(stage02_csv, index=False)
+    df_curr.to_csv(curr_csv, index=False)
 
-
-def _upsert_row_to_csv(csv_path: Path, row: dict, keys=["corruption", "severity"]) -> None:
-    """
-    Update matching row by keys, or append if missing.
-    Adds new columns if needed.
-    """
+def _upsert_row_to_csv(csv_path: Path, row: dict, keys=("corruption", "severity")) -> None:
     csv_path = Path(csv_path)
-    df = pd.read_csv(csv_path)
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
 
+    df = _read_csv_or_empty(csv_path)
     row_df = pd.DataFrame([row])
 
     # ensure key columns exist
     for k in keys:
-        if k not in df.columns:
-            df[k] = pd.NA
         if k not in row_df.columns:
             raise ValueError(f"Row missing key '{k}': {row}")
+        if k not in df.columns:
+            df[k] = pd.NA
 
     # ensure new columns exist
     for c in row_df.columns:
@@ -211,8 +224,8 @@ def _upsert_row_to_csv(csv_path: Path, row: dict, keys=["corruption", "severity"
     else:
         df = pd.concat([df, row_df], ignore_index=True)
 
-    # nice column order: keys first
-    cols = keys + [c for c in df.columns if c not in keys]
+    # keys first
+    cols = list(keys) + [c for c in df.columns if c not in keys]
     df = df[cols]
 
     df.to_csv(csv_path, index=False)
@@ -229,6 +242,28 @@ def save_drift_metrics(save_path: Path, row: dict, vectors: dict) -> None:
     stage01_csv = run_dir / "01__artifacts" / "01__artifact_results.csv"
     stage02_csv = run_dir / "02__drift" / "02__drift_results.csv"
 
-    _ensure_stage02_csv(stage01_csv, stage02_csv)
-    _upsert_row_to_csv(stage02_csv, row, keys=["corruption", "severity"])
+    _sync_prev_csv_into_curr(stage01_csv, stage02_csv, keys=("corruption", "severity"))
+    _upsert_row_to_csv(stage02_csv, row, keys=("corruption", "severity"))
 
+
+def save_quantus_metrics(save_path: Path, row: dict, mode: str) -> None:
+    save_path = Path(save_path)
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+
+    payload = {
+        "row": row,
+        "meta": {
+            "mode": mode,
+            "y_batch_policy": "pred_clean",
+            "x_domain": "clean" if mode == "clean" else "corrupted",
+            "a_domain": "clean" if mode == "clean" else "corrupted",
+        },
+    }
+    torch.save(payload, save_path)
+
+    run_dir = save_path.parents[1]
+    stage02_csv = run_dir / "02__drift" / "02__drift_results.csv"
+    stage03_csv = run_dir / "03__quantus" / "03__quantus_results.csv"
+
+    _sync_prev_csv_into_curr(stage02_csv, stage03_csv, keys=("corruption", "severity"))
+    _upsert_row_to_csv(stage03_csv, row, keys=("corruption", "severity"))

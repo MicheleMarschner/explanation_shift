@@ -37,7 +37,8 @@ def run_experiment(
         path=PATHS.data_corr,
         transform=transform, 
         corruption=corruption, 
-        severity=severity)
+        severity=severity
+    )
 
     assert X_corr.shape[0] == len(pair_idx)
     assert np.array_equal(y_true_np, y_corr)
