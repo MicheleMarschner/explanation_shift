@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --time=02:00:00
 #SBATCH --mem=16G
-#SBATCH --array=0-2
+#SBATCH --array=0-9
 #SBATCH --output=logs/reference_%A_%a.out
 #SBATCH --error=logs/reference_%A_%a.err
 

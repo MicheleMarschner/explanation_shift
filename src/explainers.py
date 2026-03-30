@@ -99,7 +99,7 @@ def gradcam_saliency(
 
     target_layer, reshape_transform = get_gradcam_config(model)
 
-    x = x.to(device)
+    x = x.to(device).requires_grad_(True)
 
     cam = GradCAM(
         model=model,

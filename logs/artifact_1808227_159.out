@@ -1,0 +1,4 @@
+Seeds set to 1200 (deterministic=True)
+
+[fog sev5] IG time: 0.86s for N=1000 (steps=80)
+artifacts stored under /sc/home/michele.marschner/project/explanation_shift/experiments/experiment__n1000__GradCAM__seed1200/01__artifacts/01__artifacts__fog__sev5.pt

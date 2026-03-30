@@ -47,6 +47,26 @@ def build_quantus_metrics() -> Dict[str, Any]:
             disable_warnings=False,
             display_progressbar=True, 
         ),
+        "robustness__local_lipschitz": quantus.LocalLipschitzEstimate(
+            abs=True,
+            normalise=True,
+            normalise_func=quantus.normalise_func.normalise_by_max,
+            return_aggregate=True,
+            aggregate_func=np.mean,
+            disable_warnings=False,
+            display_progressbar=True,
+        ),
+        "randomisation__random_logit": quantus.RandomLogit(
+            num_classes=10,
+            seed=42,
+            abs=True,
+            normalise=True,
+            normalise_func=quantus.normalise_func.normalise_by_max,
+            return_aggregate=True,
+            aggregate_func=np.mean,
+            disable_warnings=False,
+            display_progressbar=True,
+        ),
     }
     return metrics
 

@@ -9,7 +9,7 @@
 #SBATCH --nodes=1
 #SBATCH --mem=32G
 #SBATCH --time=4:00:00
-#SBATCH --array=0-0
+#SBATCH --array=0-159
 #SBATCH --output=logs/quantus_%A_%a.out
 #SBATCH --error=logs/quantus_%A_%a.err
 

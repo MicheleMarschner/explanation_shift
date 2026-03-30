@@ -239,11 +239,11 @@ def save_drift_metrics(save_path: Path, row: dict, vectors: dict) -> None:
     torch.save(payload, save_path)
 
     run_dir = save_path.parents[1]  # .../experiment__n...__seed...
-    stage01_csv = run_dir / "01__artifacts" / "01__artifact_results.csv"
-    stage02_csv = run_dir / "02__drift" / "02__drift_results.csv"
+    #stage01_csv = run_dir / "01__artifacts" / "01__artifact_results.csv"
+    #stage02_csv = run_dir / "02__drift" / "02__drift_results.csv"
 
-    _sync_prev_csv_into_curr(stage01_csv, stage02_csv, keys=("corruption", "severity"))
-    _upsert_row_to_csv(stage02_csv, row, keys=("corruption", "severity"))
+    #_sync_prev_csv_into_curr(stage01_csv, stage02_csv, keys=("corruption", "severity"))
+    #_upsert_row_to_csv(stage02_csv, row, keys=("corruption", "severity"))
 
 
 def save_quantus_metrics(save_path: Path, row: dict, mode: str) -> None:
@@ -262,8 +262,8 @@ def save_quantus_metrics(save_path: Path, row: dict, mode: str) -> None:
     torch.save(payload, save_path)
 
     run_dir = save_path.parents[1]
-    stage02_csv = run_dir / "02__drift" / "02__drift_results.csv"
-    stage03_csv = run_dir / "03__quantus" / "03__quantus_results.csv"
+    #stage02_csv = run_dir / "02__drift" / "02__drift_results.csv"
+    #stage03_csv = run_dir / "03__quantus" / "03__quantus_results.csv"
 
-    _sync_prev_csv_into_curr(stage02_csv, stage03_csv, keys=("corruption", "severity"))
-    _upsert_row_to_csv(stage03_csv, row, keys=("corruption", "severity"))
+    #_sync_prev_csv_into_curr(stage02_csv, stage03_csv, keys=("corruption", "severity"))
+    #_upsert_row_to_csv(stage03_csv, row, keys=("corruption", "severity"))

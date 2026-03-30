@@ -1,0 +1,4 @@
+Seeds set to 1200 (deterministic=True)
+ labels corresponding both domains 987 from 1000
+ labels correct in both domains 928 from 1000
+drift stored under /sc/home/michele.marschner/project/explanation_shift/experiments/experiment__n1000__IG__seed1200/02__drift/02__drift__brightness__sev1.pt

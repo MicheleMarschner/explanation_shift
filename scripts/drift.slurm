@@ -9,7 +9,7 @@
 #SBATCH --nodes=1
 #SBATCH --mem=32G
 #SBATCH --time=4:00:00
-#SBATCH --array=0-47
+#SBATCH --array=0-159
 #SBATCH --output=logs/drift_%A_%a.out
 #SBATCH --error=logs/drift_%A_%a.err
 
