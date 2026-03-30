@@ -6,8 +6,8 @@
 #SBATCH -o logs/setup_%j.out
 #SBATCH -e logs/setup_%j.err
 
-source ~/conda3/etc/profile.d/conda.sh
-conda create -n shift python=3.11
+source /sc/home/michele.marschner/conda3/etc/profile.d/conda.sh
+#conda create -n shift python=3.11
 conda activate shift
-cd ~/project/beyondliteral_idiomaticity_detection_anlp_project
+cd ~/project/explanation_shift
 python -m pip install -e .

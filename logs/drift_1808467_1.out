@@ -1,4 +1,0 @@
-Seeds set to 7 (deterministic=True)
- labels corresponding both domains 743 from 1000
- labels correct in both domains 715 from 1000
-drift stored under /sc/home/michele.marschner/project/explanation_shift/experiments/experiment__n1000__IG__seed7/02__drift/02__drift__gaussian_noise__sev2.pt

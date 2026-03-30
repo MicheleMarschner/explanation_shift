@@ -1,4 +1,0 @@
-Seeds set to 128 (deterministic=True)
-
-[fog sev2] IG time: 5.96s for N=1000 (steps=80)
-artifacts stored under /sc/home/michele.marschner/project/explanation_shift/experiments/experiment__n1000__IG__seed128/01__artifacts/01__artifacts__fog__sev2.pt

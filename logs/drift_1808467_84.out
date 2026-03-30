@@ -1,4 +1,0 @@
-Seeds set to 52 (deterministic=True)
- labels corresponding both domains 985 from 1000
- labels correct in both domains 920 from 1000
-drift stored under /sc/home/michele.marschner/project/explanation_shift/experiments/experiment__n1000__GradCAM__seed52/02__drift/02__drift__defocus_blur__sev1.pt

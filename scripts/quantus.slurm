@@ -3,13 +3,13 @@
 #SBATCH --account=sci-demelo-computer-vision
 #SBATCH --partition=gpu-batch
 #SBATCH --constraint=ARCH:X86
-#SBATCH --nodelist=gx24
+#####SBATCH --nodelist=gx24
 #SBATCH --gres=gpu:b200:1
 #SBATCH --cpus-per-task=8
 #SBATCH --nodes=1
 #SBATCH --mem=32G
 #SBATCH --time=4:00:00
-#SBATCH --array=0-159
+#SBATCH --array=0-79
 #SBATCH --output=logs/quantus_%A_%a.out
 #SBATCH --error=logs/quantus_%A_%a.err
 

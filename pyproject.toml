@@ -14,6 +14,7 @@ dependencies = [
   "packaging==26.0",
   "quantus==0.6.0",
   "grad-cam==1.5.5",
+  "metaquantus",
 ]
 
 [tool.setuptools]
