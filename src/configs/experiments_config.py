@@ -19,6 +19,12 @@ class RunConfig:
     corruption: str
     severity: int
 
+@dataclass(frozen=True)
+class ReferenceJob:
+    N_PAIRS: int
+    seed: int
+    explainer: str
+
 
 ## Experiment settings
 EXP_CONFIGS = ExperimentTemplate(

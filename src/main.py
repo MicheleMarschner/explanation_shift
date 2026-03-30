@@ -4,8 +4,8 @@ from pathlib import Path
 
 from typing import Any, Dict
 
-from src import run_train_pipeline
-from src import run_eval_pipeline
+from src.run_train_pipeline import run_train_pipeline, run_reference_job, run_condition_job
+from src.run_eval_pipeline import run_eval_pipeline
 from src.utils import ensure_dirs
 from src.configs.global_config import PATHS
 
@@ -35,25 +35,68 @@ def parse_args():
     p.add_argument("--stage", choices=["reference", "artifact", "drift", "quantus"], default="reference", help="Which stages to run.")
     p.add_argument("--config", type=str, required=True, help="Path to config python file, e.g. configs/experiment_config.py")
     p.add_argument("--overwrite", action="store_true")
+    p.add_argument("--job-type", choices=["reference", "condition"], default=None,
+               help="Optional: run exactly one job of this type.")
+    p.add_argument("--job-index", type=int, default=None,
+                help="Optional: index of the single job to run.")
+    p.add_argument("--job-mode", choices=["all", "single"], default="all",
+                help="Run all jobs locally (default) or a single selected job.")
 
     return p.parse_args()
 
 
 def main() -> None:
-    
     args = parse_args()
     ensure_dirs(PATHS)
     exp_config = load_experiment_config(args.config)
 
-    # build identifier
-
     if args.mode == "train":
-        run_train_pipeline(exp_config=exp_config, stage=args.stage, overwrite=args.overwrite)
-    
+        if args.job_mode == "all":
+            run_train_pipeline(
+                exp_config=exp_config,
+                stage=args.stage,
+                overwrite=args.overwrite,
+            )
+            return
+
+        if args.job_type is None or args.job_index is None:
+            raise ValueError("For --job-mode single, both --job-type and --job-index are required.")
+
+        if args.job_type == "reference":
+            if args.stage != "reference":
+                raise ValueError("Reference jobs can only be run with --stage reference.")
+
+            jobs = run_train_pipeline.expand_reference_jobs(exp_config)
+            if not (0 <= args.job_index < len(jobs)):
+                raise IndexError(f"job-index {args.job_index} out of range for {len(jobs)} reference jobs.")
+
+            run_train_pipeline.run_reference_job(
+                job=jobs[args.job_index],
+                overwrite=args.overwrite,
+            )
+            return
+
+        if args.job_type == "condition":
+            if args.stage not in {"artifact", "drift", "quantus"}:
+                raise ValueError("Condition jobs can only be run with --stage artifact, drift, or quantus.")
+
+            jobs = run_train_pipeline.expand_template(exp_config)
+            if not (0 <= args.job_index < len(jobs)):
+                raise IndexError(f"job-index {args.job_index} out of range for {len(jobs)} condition jobs.")
+
+            run_train_pipeline.run_condition_job(
+                job=jobs[args.job_index],
+                stage=args.stage,
+                overwrite=args.overwrite,
+            )
+            return
+
     if args.mode == "eval":
-        run_eval_pipeline(exp_config=exp_config, stage=args.stage, overwrite=args.overwrite)
-
-
+        run_eval_pipeline(
+            exp_config=exp_config,
+            stage=args.stage,
+            overwrite=args.overwrite,
+        )
 
 if __name__ == "__main__":
     main()
