@@ -23,14 +23,14 @@ class RunConfig:
 ## Experiment settings
 EXP_CONFIGS = ExperimentTemplate(
     N_PAIRS = 250, 
-    CORRUPTIONS = ["gaussian_noise", "defocus_blur", "brightness", "fog"], 
-    SEVERITIES  = [1, 2, 3, 5],
+    CORRUPTIONS = ["gaussian_noise"], 
+    SEVERITIES  = [5],
     EXPLAINERS = ["IG"],
     SEEDS = [51]
 )
 
 #N_PAIRS = 1000 
-#CORRUPTIONS = ["gaussian_noise", "defocus_blur", "brightness"] 
+#CORRUPTIONS = ["gaussian_noise", "defocus_blur", "brightness", "fog"] 
 #SEVERITIES  = [1, 2, 3, 5],
 #EXPLAINERS = ["IG"],
 #SEEDS = [41, 42, 43]

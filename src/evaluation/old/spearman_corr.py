@@ -20,8 +20,6 @@ compares clean MSP (x-axis) to a vulnerability measure (y-axis: explanation drif
 If the trend is negative, high clean confidence corresponds to lower vulnerability; if not, clean confidence is not a 
 reliable indicator of robustness.
 
-
-
 """
 
 
@@ -186,6 +184,3 @@ def main():
     # optional: per corruption (uncomment)
     # for corr in sorted(df["corruption"].unique()):
     #     plot_clean_conf_vs_vulnerability(df, severity=3, corruption=corr)
-
-if __name__ == "__main__":
-    main()

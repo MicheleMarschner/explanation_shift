@@ -22,93 +22,17 @@ Value: This quantifies exactly how many "Correct" labels are actually "Right for
 
 """
 
-
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
-
-from src.configs.global_config import PATHS
-
-
-def trust_zone_table(
-    df_pairs: pd.DataFrame,
-    drift_col: str = "drift",          # e.g. 1 - cos
-    correct_col: str = "correct_corr", # bool
-    severities=(1, 2, 3, 5),
-    q: float = 0.75,                   # high-drift = top q quantile
-    threshold_mode: str = "global",    # "global" or "per_severity"
-    slice_mask_col: str | None = None, # e.g. "invariant" or None
-) -> pd.DataFrame:
-    d = df_pairs.copy()
-    d["severity"] = pd.to_numeric(d["severity"], errors="raise").astype(int)
-
-    d = d[d["severity"].isin(severities)].copy()
-    d = d.dropna(subset=[drift_col, correct_col]).copy()
-
-    if slice_mask_col is not None:
-        if slice_mask_col not in d.columns:
-            raise ValueError(f"slice_mask_col '{slice_mask_col}' not in df.")
-        d = d[d[slice_mask_col].astype(bool)].copy()
-
-    # compute drift threshold(s)
-    if threshold_mode == "global":
-        thr = float(d[drift_col].quantile(q))
-        d["high_drift"] = d[drift_col] >= thr
-    elif threshold_mode == "per_severity":
-        d["high_drift"] = False
-        for sev, g in d.groupby("severity"):
-            thr = float(g[drift_col].quantile(q))
-            d.loc[g.index, "high_drift"] = g[drift_col] >= thr
-    else:
-        raise ValueError("threshold_mode must be 'global' or 'per_severity'")
-
-    # classify zones
-    correct = d[correct_col].astype(bool)
-    high = d["high_drift"].astype(bool)
-
-    d["zone"] = np.select(
-        [
-            correct & (~high),   # correct + low drift
-            correct & high,      # correct + high drift
-            (~correct) & high,   # wrong + high drift
-            (~correct) & (~high) # wrong + low drift
-        ],
-        [
-            "Robust",
-            "Silent Drift",
-            "Expected Failure",
-            "Stubborn Failure",
-        ],
-        default="(unknown)"
-    )
-
-    # percentages per severity
-    tab = (
-        d.groupby(["severity", "zone"])
-         .size()
-         .rename("n")
-         .reset_index()
-    )
-
-    totals = d.groupby("severity").size().rename("N").reset_index()
-    tab = tab.merge(totals, on="severity", how="left")
-    tab["pct"] = tab["n"] / tab["N"] * 100.0
-
-    # ensure all zones appear for all severities
-    zones = ["Robust", "Silent Drift", "Expected Failure", "Stubborn Failure"]
-    idx = pd.MultiIndex.from_product([severities, zones], names=["severity", "zone"])
-    tab = tab.set_index(["severity", "zone"]).reindex(idx, fill_value=0).reset_index()
-
-    return tab
 
 
 def plot_trust_zones_stacked(
     tab: pd.DataFrame,
     severities=(1, 2, 3, 5),
     title: str = "Silent Failure Trust Zones",
-    save_path: str | Path | None = None,
+    file_path: str | Path | None = None,
 ):
     zones = ["Robust", "Silent Drift", "Expected Failure", "Stubborn Failure"]
 
@@ -131,10 +55,8 @@ def plot_trust_zones_stacked(
     ax.legend(loc="upper right")
     plt.tight_layout()
 
-    if save_path is not None:
-        save_path = Path(save_path)
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        plt.savefig(save_path, dpi=200)
+    if file_path is not None:
+        plt.savefig(file_path, dpi=200)
 
     plt.show()
 
@@ -196,32 +118,34 @@ def trust_zone_table(
     return tab
 
 
+def run_trust_zones_analysis(exp_dir, save_dir, severities, expl_metric="cos", corruption=None):
 
+    # pairs_table_from_pt needs to be created
+    # severity, corruption, table: pairs_table_from_pt.csv
+    # just cosine?
 
-df_pairs = pd.read_csv(PATHS.results / "spearman_entropy" / "pairs_table_from_pt.csv")
-df_pairs["severity"] = df_pairs["severity"].astype(int)
+    df_pairs = pd.read_csv(save_dir / "pairs_table_from_pt.csv")
+    df_pairs["severity"] = df_pairs["severity"].astype(int)
 
-# drift from cosine similarity
-df_pairs["drift"] = 1.0 - df_pairs["cos"]
+    # drift from cosine similarity
+    df_pairs["drift"] = 1.0 - df_pairs[expl_metric]
 
-# If you stored pred_corr + y_true:
-df_pairs["correct_corr"] = (df_pairs["pred_corr"] == df_pairs["y_true"])
+    # If you stored pred_corr + y_true:
+    df_pairs["correct_corr"] = (df_pairs["pred_corr"] == df_pairs["y_true"])
 
-severities = (1, 2, 3, 5)
+    tab = trust_zone_table(
+        df_pairs,
+        drift_col="drift",
+        correct_col="correct_corr",
+        severities=severities,
+        q=0.75,
+        threshold_mode="global",
+        corruption=corruption,   # or e.g. "brightness"
+    )
 
-tab = trust_zone_table(
-    df_pairs,
-    drift_col="drift",
-    correct_col="correct_corr",
-    severities=severities,
-    q=0.75,
-    threshold_mode="global",
-    corruption=None,   # or e.g. "brightness"
-)
-
-plot_trust_zones_stacked(
-    tab,
-    severities=severities,
-    title="Trust Zones by severity (high drift = top 25% of 1−cos)",
-    save_path=PATHS.results / "spearman_entropy" / "trust_zones_stacked.png",
-)
+    plot_trust_zones_stacked(
+        tab,
+        severities=severities,
+        title=f"Trust Zones by severity (high drift = top 25% of 1−{expl_metric})",
+        file_path=save_dir / "trust_zones_stacked.png",
+    )

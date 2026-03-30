@@ -40,6 +40,7 @@ def ig_saliency(x: torch.Tensor, target: torch.Tensor, explainer, device=DEVICE,
         target=target.to(device),
         n_steps=steps,
         internal_batch_size=internal_bs,
+        method="riemann_trapezoid",
     )
 
     # Collapse RGB channels -> one heatmap per image

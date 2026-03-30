@@ -15,9 +15,6 @@ direction intuitive: higher values mean stronger explanation drift. It highlight
 explanation changes at low severity and how drift grows with severity across corruption types.
 
 """
-
-
-# src/analysis/plot_stage02_dE.py
 from __future__ import annotations
 
 from pathlib import Path
@@ -26,8 +23,6 @@ from typing import Iterable, Optional, Sequence
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
-from src.configs.global_config import PATHS
 
 
 # -------------------------
@@ -157,8 +152,6 @@ def plot_severity_vs_metric_by_corruption(
     plt.tight_layout()
 
     if save_path is not None:
-        save_path = Path(save_path)
-        save_path.parent.mkdir(parents=True, exist_ok=True)
         plt.savefig(save_path, dpi=200)
 
     plt.show()
@@ -216,53 +209,39 @@ def resolve_dE_columns(
 # -------------------------
 # Example main
 # -------------------------
-if __name__ == "__main__":
+def sev_vs_corr_metric(exp_dir, save_dir, severities, corruption, slice="inv"):
+    #welche severities, welche corruption?
 
-    stage02_path = PATHS.runs / "experiment__n250__IG__seed51" / "02__drift" / "02__drift_results.csv"
-    df2 = load_stage_table(stage02_path)
+    #exp_dir = PATHS.runs / "experiment__n250__IG__seed51" / "02__drift" / "02__drift_results.csv"
+    csv_table = exp_dir.drift / "02__drift_results.csv"
+    df2 = load_stage_table(csv_table)
 
-    SLICE = "both_corr"        # <- choose: "inv", "all", "both_corr", ...
-    cols = resolve_dE_columns(df2, slice_name=SLICE, strict=True)
+    cols = resolve_dE_columns(df2, slice_name=slice, strict=True)
 
-    cos_col = cols["cosine"]
-    iou_col = cols["iou"]
-    rho_col = cols["rho"]
+    metrics = {
+        "cosine": cols["cosine"],
+        "IoU": cols["iou"],
+        "Spearman ρ": cols["rho"]
+    }
 
-    print("Chosen slice:", SLICE)
-    print("Plotting columns:", cols)
+    # start at 1
+    for i, metric in enumerate(metrics.items()):
+        plot_severity_vs_metric_by_corruption(
+            df2,
+            y_col=metric,
+            title=f"Plot B{i}: Severity vs ΔE ({metric}) — slice={slice}",
+            ylabel=f"{metric} similarity (higher = more similar)",
+            save_path=save_dir.drift / f"plotB{i}_dE_{metric}__{slice}.png",
+        )
 
-    plot_severity_vs_metric_by_corruption(
-        df2,
-        y_col=cos_col,
-        title=f"Plot B1: Severity vs ΔE (Cosine) — slice={SLICE}",
-        ylabel="Cosine similarity (higher = more similar)",
-        save_path=PATHS.results / f"plotB1_dE_cosine__{SLICE}.png",
-    )
+        # Drift magnitude version
+        df2b = df2.copy()
+        df2b[f"drift_1m_{metric}__{slice}"] = 1.0 - df2b[metric]
 
-    plot_severity_vs_metric_by_corruption(
-        df2,
-        y_col=iou_col,
-        title=f"Plot B2: Severity vs ΔE (IoU) — slice={SLICE}",
-        ylabel="IoU% (higher = more overlap)",
-        save_path=PATHS.results / f"plotB2_dE_iou__{SLICE}.png",
-    )
-
-    plot_severity_vs_metric_by_corruption(
-        df2,
-        y_col=rho_col,
-        title=f"Plot B3: Severity vs ΔE (Spearman ρ) — slice={SLICE}",
-        ylabel="Spearman ρ (higher = more similar, lower = more drift)",
-        save_path=PATHS.results / f"plotB3_dE_rho__{SLICE}.png",
-    )
-
-    # Drift magnitude version
-    df2b = df2.copy()
-    df2b[f"drift_1m_rho__{SLICE}"] = 1.0 - df2b[rho_col]
-
-    plot_severity_vs_metric_by_corruption(
-        df2b,
-        y_col=f"drift_1m_rho__{SLICE}",
-        title=f"Plot B4: Severity vs Explanation Drift (1 − ρ) — slice={SLICE}",
-        ylabel="1 − Spearman ρ (higher = more drift)",
-        save_path=PATHS.results / f"plotB4_drift_1minus_rho__{SLICE}.png",
-    )
+        plot_severity_vs_metric_by_corruption(
+            df2b,
+            y_col=f"drift_1m_{metric}__{slice}",
+            title=f"Plot B{i+3}: Severity vs Explanation Drift (1 − {metric}) — slice={slice}",
+            ylabel=f"1 − {metric}",
+            save_path=save_dir.drift / f"plotB{i+3}_drift_1minus_{metric}__{slice}.png",
+        )

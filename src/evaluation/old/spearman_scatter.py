@@ -45,27 +45,7 @@ import pandas as pd
 import torch
 import matplotlib.pyplot as plt
 
-from src.configs.global_config import PATHS
-
-
-# ---------- CONFIG: adapt these to your saved vector key names ----------
-# Your vectors dict contains exp vectors under prefix_keys(exp_vec_all, "exp__")
-# so keys might be: "exp__cos", "exp__iou", "exp__rho" OR "exp__cos_vec", etc.
-COS_KEY_CANDIDATES = ["exp__cosine_sim"]
-IOU_KEY_CANDIDATES = ["exp__iou_topk"]
-RHO_KEY_CANDIDATES = ["exp__spearman_rho"]
-
-# Masks / entropy keys you said you have
-DH_KEY = "dH"
-INV_KEY = "invariant"
-BC_KEY  = "both_correct"
-
-PRED_CORR_KEYS = ["pred_corr", "pred_corrupted", "yhat_corr"]
-Y_KEYS = ["y_clean", "y_true", "label", "y"]
-
-# Where your stage02 pt files live (adjust if needed)
-PT_ROOT = PATHS.runs  # we’ll search below this
-
+from src.eval_pipeline.helper import load_clean_ref
 
 
 def get_nested(obj, path, default=None):
@@ -122,43 +102,7 @@ def to_np(x):
         return x.detach().cpu().numpy()
     return np.asarray(x)
 
-def load_reference(ref_pt: Path):
-    ref = torch.load(ref_pt, map_location="cpu")
-
-    # Try common label locations (top-level + nested)
-    y = (
-        get_nested(ref, ["y"]) or
-        get_nested(ref, ["y_true"]) or
-        get_nested(ref, ["y_clean"]) or
-        get_nested(ref, ["clean_reference", "y"]) or
-        get_nested(ref, ["clean_reference", "y_true"]) or
-        get_nested(ref, ["clean_reference", "y_clean"])
-    )
-    if y is None:
-        # THIS PRINT IS THE NEXT THING YOU NEED
-        print("Reference top-level keys:", list(ref.keys()) if isinstance(ref, dict) else type(ref))
-        if isinstance(ref, dict) and "clean_ref" in ref and isinstance(ref["clean_ref"], dict):
-            print("Reference clean_ref keys:", list(ref["clean_ref"].keys()))
-        raise KeyError(f"{ref_pt}: couldn't find labels. See printed keys above.")
-
-    y = to_np(y).astype(int).reshape(-1)
-
-    pair_idx = (
-        get_nested(ref, ["pair_idx"])
-    )
-    if pair_idx is not None:
-        pair_idx = to_np(pair_idx).astype(int).reshape(-1)
-    else:
-        pair_idx = np.arange(len(y), dtype=int)
     
-    proba_clean = ref["clean_reference"]["proba_clean"]   # saved by you
-    if torch.is_tensor(proba_clean):
-        proba_clean = proba_clean.detach().cpu().numpy()
-    msp_clean = proba_clean.max(axis=1).astype(float).reshape(-1)
-
-    return pair_idx, y, msp_clean
-
-
 def load_artifact_pred(artifact_pt: Path):
     art = torch.load(artifact_pt, map_location="cpu")
 
@@ -196,14 +140,31 @@ def load_stage02_vectors(drift_pt: Path):
     return dH, inv, bc, cos, iou, rho
 
 
+def compute_msp(proba_clean):
+
+    if torch.is_tensor(proba_clean):
+        proba_clean = cpu(proba_clean).numpy()
+    msp_clean = proba_clean.max(axis=1).astype(float).reshape(-1)
+
+    return msp_clean
+
+
 
 def build_pairs_table_from_pts(
     ref_pt: Path,
     artifacts_root: Path,
     drift_root: Path,
-    out_csv: Path,
+    file_path: Path,
 ):
-    pair_idx, y_true, msp_clean = load_reference(ref_pt)
+    
+    keys = ["y_clean", "proba_clean"]
+    clean_ref = load_clean_ref(ref_pt, keys)
+    y_true = clean_ref['y_clean']
+
+    ref = torch.load(ref_pt, map_location="cpu")
+    pair_idx = ref['pair_idx']
+    
+    msp_clean = compute_msp(clean_ref["proba_clean"])
 
     # index artifacts by (corr, sev)
     art_files = sorted(artifacts_root.rglob("*.pt"))
@@ -274,10 +235,8 @@ def build_pairs_table_from_pts(
         rows.append(df)
 
     out = pd.concat(rows, ignore_index=True)
-    out_csv = Path(out_csv)
-    out_csv.parent.mkdir(parents=True, exist_ok=True)
-    out.to_csv(out_csv, index=False)
-    print("Wrote:", out_csv, "rows:", len(out))
+    save_dir.to_csv(file_path, index=False)
+    print("Wrote:", file_path, "rows:", len(out))
     return out
 
 # ---------- Spearman (no scipy) ----------
@@ -492,58 +451,63 @@ def violin_by_severity(
     plt.show()
 
 
+def load_all_files(root_dir, stage_name):
+    pt_files = sorted(root_dir.rglob(f"{stage_name}/*.pt"))
+    if not pt_files:
+        pt_files = sorted(root_dir.rglob(f"{stage_name}/**/*.pt"))
+    
+    return pt_files
 
-def main():
+
+
+def create_pairs_table_from_pt(exp_dir, save_dir, stage_name):
+
+    file_path = save_dir / "pairs_table_from_pt.csv"
+
     # Find pt files under runs that look like drift vector dumps
     # Adjust glob pattern to your actual saved filenames.
-    pt_files = sorted(PT_ROOT.rglob("02__drift/*.pt"))
-    if not pt_files:
-        pt_files = sorted(PT_ROOT.rglob("02__drift/**/*.pt"))
+    pt_files = load_all_files(exp_dir, )
+    print(f"Found {len(pt_files)} .pt files under {stage_name}")
 
-    exp_dir = PATHS.runs / "experiment__n250__IG__seed51"
     ref_pt = exp_dir / "00__reference" / "00__clean_ref.pt"          # adjust filename
-    art_root = exp_dir / "01__artifacts"
-    drift_root = exp_dir / "02__drift"
     
-    out_dir = PATHS.results / "spearman_entropy"
-
-    print(f"Found {len(pt_files)} .pt files under {PT_ROOT}")
-    out_csv = out_dir / "pairs_table_from_pt.csv"
-    df_pairs = build_pairs_table_from_pts(ref_pt, art_root, drift_root, out_csv)
-    print("Wrote:", out_csv)
+    df_pairs = build_pairs_table_from_pts(ref_pt, exp_dir.artifacts, exp_dir.drift, file_path)
+    print("Wrote:", file_path)
     print("Rows:", len(df_pairs), "Cols:", len(df_pairs.columns))
     print(df_pairs.head())
 
-    
-    pairs_csv = out_dir / "pairs_table_from_pt.csv"  # from your .pt extraction
-    df_pairs = load_pairs(pairs_csv)
+    return df_pairs
 
+
+
+
+def build_plots_C(exp_dir, save_dir, corruptions, epxl_metric="iou", slice_name="inv"):
+    
+    stage_name = "02__drift"
+    df_pairs = create_pairs_table_from_pt(exp_dir, save_dir, stage_name)
+    
     # --- choose what you want ---
     # slice_name: "all" | "invariant" | "both_correct"
-    # y_mode: "cos" (1-cos) or "iou" (1-iou)
-    y_mode = "iou"
+    # epxl_metric: "cos" (1-cos) or "iou" (1-iou)
+    epxl_metric = "iou"
 
     plotC_pooled_and_grouped(
         df_pairs,
         slice_name="invariant",
-        y_mode=y_mode,
+        y_mode=epxl_metric,
         grouped=False,   # set True if you want one image per corr×sev (can be many)
-        save_dir=out_dir,
+        save_dir=save_dir,
     )
 
-    tab = spearman_table(df_pairs, slice_name="invariant", y_mode=y_mode)
-    tab.to_csv(out_dir / f"spearman_table__invariant__{y_mode}.csv", index=False)
+    tab = spearman_table(df_pairs, slice_name=slice_name, y_mode=epxl_metric)
+    tab.to_csv(save_dir / f"spearman_table__{slice_name}__{epxl_metric}.csv", index=False)
     print(tab.head(30))
 
-    for corr in ["brightness", "fog", "gaussian_noise"]:
+    for corr in corruptions:
         violin_by_severity(
             df_pairs,
-            y_col="rho",
-            slice_name="invariant",
+            y_col="rho",        # macht hier was anderes wie iou überhaupt sinn?
+            slice_name=slice_name,
             corruption=corr,
-            save_path=out_dir / f"violin_rho__inv__{corr}.png",
+            save_path=save_dir / f"violin_rho__{slice_name}__{corr}.png",
         )
-
-
-if __name__ == "__main__":
-    main()

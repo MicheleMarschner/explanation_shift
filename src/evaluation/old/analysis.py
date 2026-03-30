@@ -34,7 +34,7 @@ faithfulness drops together with performance or whether faithfulness changes eve
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterable, Optional, Sequence, Tuple
+from typing import Iterable, Optional, Sequence
 
 import numpy as np
 import pandas as pd
@@ -79,7 +79,7 @@ def plot_acc_vs_expl_similarity(
     corruption: str,
     severities: Sequence[int] = (1, 2, 3, 5),
     expl_metric: str = "rho_mean",   # or "cos_mean"
-    save_path: Optional[Path] = None,
+    file_path: Optional[Path] = None,
 ) -> None:
     """
     Plot 1:
@@ -136,9 +136,7 @@ def plot_acc_vs_expl_similarity(
     ax1.grid(True, alpha=0.25)
 
     plt.tight_layout()
-    print(save_path)
-    if save_path is not None:
-        file_path = save_path / f"acc_vs_expl_similarity_{corruption}"
+    if file_path is not None:
         plt.savefig(file_path)
     plt.show()
 
@@ -154,7 +152,7 @@ def plot_deltaP_vs_deltaE_scatter(
     # y-axis slice choice:
     y_slice: str = "inv",               # "all" | "inv" | "both_corr"
     expl_metric: str = "rho_mean",      # or "cos_mean"
-    save_path: Optional[Path] = None,
+    file_path: Optional[Path] = None,
     compute_spearman: bool = True,
 ) -> None:
     """
@@ -225,9 +223,8 @@ def plot_deltaP_vs_deltaE_scatter(
         )
 
     plt.tight_layout()
-    if save_path is not None:
-        file_path = save_path / "deltaP_vs_deltaE_scatter"
-        plt.savefig(file_path)
+    if file_path is not None:
+        plt.savefig(file_path, dpi=200, bbox_inches="tight")
     plt.show()
 
 
@@ -298,111 +295,42 @@ def attach_clean_baseline(
     return out
 
 
-# -------------------------
-# Plotting
-# -------------------------
-def plot_faithfulness_vs_severity(
-    df: pd.DataFrame,
-    corruption: str,
-    faith_col: str = "faithfulness__corr",  # your Stage03 column
-    severities: Iterable[int] = (0, 1, 2, 3, 5),
-    overlay_acc: bool = True,
-    acc_col: str = "acc_corr",
-    title: Optional[str] = None,
-    save_path: Optional[Path] = None,
-) -> None:
-    """
-    Plot Quantus faithfulness correlation vs severity, including clean baseline severity=0.
-    Optionally overlays accuracy on the left y-axis.
-    """
-    if faith_col not in df.columns:
-        raise ValueError(
-            f"Faithfulness column '{faith_col}' not found. "
-            f"Available faith columns: {[c for c in df.columns if 'faith' in c.lower()]}"
-        )
-
-    d = attach_clean_baseline(df, corruption=corruption)
-    d = d[d["severity"].isin(list(severities))].sort_values("severity")
-
-    fig, ax1 = plt.subplots(figsize=(8.5, 4.8))
-
-    # Left axis: accuracy (optional)
-    if overlay_acc:
-        if acc_col not in d.columns:
-            raise ValueError(f"overlay_acc=True but '{acc_col}' not in df columns.")
-        ax1.plot(d["severity"], d[acc_col], marker="o", label=acc_col)
-        ax1.set_ylabel("Accuracy")
-        ax2 = ax1.twinx()
-        ax2.set_ylabel("FaithfulnessCorrelation")
-    else:
-        ax2 = ax1
-        ax2.set_ylabel("FaithfulnessCorrelation")
-
-    # Right axis: faithfulness
-    ax2.plot(d["severity"], d[faith_col], marker="o", label=faith_col)
-
-    ax1.set_xlabel("Severity")
-    ax1.set_xticks(list(severities))
-
-    if title is None:
-        title = f"{corruption}: faithfulness vs severity (incl. clean sev0)"
-    ax1.set_title(title)
-
-    # Combined legend
-    h1, l1 = ax1.get_legend_handles_labels()
-    h2, l2 = ax2.get_legend_handles_labels()
-    ax1.legend(h1 + h2, l1 + l2, loc="best")
-
-    ax1.grid(True, alpha=0.25)
-    plt.tight_layout()
-
-
-    if save_path is not None:
-        save_path = Path(save_path)
-        file_path = save_path / f"metric_vs_severity_faith_{corruption}"
-        plt.savefig(file_path)
-        plt.savefig(save_path, dpi=200)
-    plt.show()
-
-
 # ----------------------------
 # Example usage
 # ----------------------------
+def make_stage02_plots(
+    exp_dir: Path,
+    save_dir: Path,
+    corruptions: list[str] | None = None,
+    severities: Sequence[int] = (1, 2, 3, 5),
+    expl_metric: str = "rho_mean",
+    slice_name: str = "all",   # all|inv|both_corr):
+):
 
-# Adjust to your actual file:
-csv_path = Path("experiments/experiment__n250__IG__seed51/02__drift/02__drift_results.csv")
-save_path = PATHS.results
-df = load_results(csv_path)
+    csv_path = exp_dir.drift / "02__drift_results.csv"
+    df = load_results(csv_path)
 
-# Plot 1 for one corruption
-plot_acc_vs_expl_similarity(
-    df,
-    corruption="gaussian_noise",
-    severities=(1, 2, 3, 5),
-    expl_metric="rho_mean",   # or "cos_mean"
-    save_path=save_path,
-)
+    if corruptions is None:
+        corruptions = sorted(df["corruption"].unique().tolist())
 
-# Plot 2 (all corruptions together)
-plot_deltaP_vs_deltaE_scatter(
-    df,
-    severities=(1, 2, 3, 5),
-    x_proxy="one_minus_acc",  # or "mean_abs_delta_entropy"
-    y_slice="inv",            # "all" | "inv" | "both_corr"
-    expl_metric="rho_mean",   # or "cos_mean"
-    save_path=save_path,
-    compute_spearman=True,
-)
+    for corruption in corruptions:
+        file_path = save_dir / f"plot1_acc_vs_expl_similarity__{corruption}__{expl_metric}.png"
 
+        plot_acc_vs_expl_similarity(
+            df,
+            corruption=corruption,
+            severities=severities,
+            expl_metric=expl_metric,   # or "cos_mean"
+            file_path=file_path,
+        )
 
-stage03_file = PATHS.runs / "experiment__n250__IG__seed51" / "03__quantus" / "03__quantus_results.csv"  # <- adapt
-
-df3 = load_stage03_table(stage03_file)
-
-plot_faithfulness_vs_severity(
-    df3,
-    corruption="fog",
-    faith_col="faithfulness__corr",
-    overlay_acc=True,           # optional: show acc_corr too
-    save_path=PATHS.results
-)
+    # Plot 2 (all corruptions together)
+    plot_deltaP_vs_deltaE_scatter(
+        df,
+        severities=severities,
+        x_proxy="one_minus_acc",  # or "mean_abs_delta_entropy"
+        y_slice=slice_name,            # "all" | "inv" | "both_corr"
+        expl_metric=expl_metric,   # or "cos_mean"
+        file_path = save_dir / f"plot2_deltaP_vs_deltaE__slice{slice_name}__{expl_metric}.png",
+        compute_spearman=True,      # !TODO: what else?
+    )
