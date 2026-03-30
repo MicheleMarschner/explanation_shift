@@ -1,88 +1,0 @@
-+ source /sc/home/michele.marschner/conda3/etc/profile.d/conda.sh
-++ export CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ export _CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ _CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ export _CE_M=
-++ _CE_M=
-++ export _CE_CONDA=
-++ _CE_CONDA=
-++ export CONDA_PYTHON_EXE=/sc/home/michele.marschner/conda3/bin/python
-++ CONDA_PYTHON_EXE=/sc/home/michele.marschner/conda3/bin/python
-++ export _CONDA_ROOT=/sc/home/michele.marschner/conda3
-++ _CONDA_ROOT=/sc/home/michele.marschner/conda3
-++ '[' -z x ']'
-+ conda activate shift
-+ local cmd=activate
-+ case "$cmd" in
-+ __conda_activate activate shift
-+ '[' -n '' ']'
-+ local ask_conda
-++ PS1=
-++ __conda_exe shell.posix activate shift
-++ '[' -n '' ']'
-++ /sc/home/michele.marschner/conda3/bin/conda shell.posix activate shift
-+ ask_conda='export _CE_M='\'''\''
-export _CE_CONDA='\'''\''
-PS1='\''(shift) '\''
-export PATH='\''/sc/home/michele.marschner/conda3/envs/shift/bin:/sc/home/michele.marschner/conda3/condabin:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/sc/home/michele.marschner/.vscode-server/cli/servers/Stable-cfbea10c5ffb233ea9177d34726e6056e89913dc/server/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'\''
-export CONDA_SHLVL='\''2'\''
-export CONDA_PROMPT_MODIFIER='\''(shift) '\''
-export CONDA_EXE='\''/sc/home/michele.marschner/conda3/bin/conda'\''
-export _CONDA_EXE='\''/sc/home/michele.marschner/conda3/bin/conda'\''
-export CONDA_PYTHON_EXE='\''/sc/home/michele.marschner/conda3/bin/python'\''
-export _CONDA_ROOT='\''/sc/home/michele.marschner/conda3'\'''
-+ eval 'export _CE_M='\'''\''
-export _CE_CONDA='\'''\''
-PS1='\''(shift) '\''
-export PATH='\''/sc/home/michele.marschner/conda3/envs/shift/bin:/sc/home/michele.marschner/conda3/condabin:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/sc/home/michele.marschner/.vscode-server/cli/servers/Stable-cfbea10c5ffb233ea9177d34726e6056e89913dc/server/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'\''
-export CONDA_SHLVL='\''2'\''
-export CONDA_PROMPT_MODIFIER='\''(shift) '\''
-export CONDA_EXE='\''/sc/home/michele.marschner/conda3/bin/conda'\''
-export _CONDA_EXE='\''/sc/home/michele.marschner/conda3/bin/conda'\''
-export CONDA_PYTHON_EXE='\''/sc/home/michele.marschner/conda3/bin/python'\''
-export _CONDA_ROOT='\''/sc/home/michele.marschner/conda3'\'''
-++ export _CE_M=
-++ _CE_M=
-++ export _CE_CONDA=
-++ _CE_CONDA=
-++ PS1='(shift) '
-++ export PATH=/sc/home/michele.marschner/conda3/envs/shift/bin:/sc/home/michele.marschner/conda3/condabin:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/sc/home/michele.marschner/.vscode-server/cli/servers/Stable-cfbea10c5ffb233ea9177d34726e6056e89913dc/server/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
-++ PATH=/sc/home/michele.marschner/conda3/envs/shift/bin:/sc/home/michele.marschner/conda3/condabin:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/sc/home/michele.marschner/.vscode-server/cli/servers/Stable-cfbea10c5ffb233ea9177d34726e6056e89913dc/server/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
-++ export CONDA_SHLVL=2
-++ CONDA_SHLVL=2
-++ export 'CONDA_PROMPT_MODIFIER=(shift) '
-++ CONDA_PROMPT_MODIFIER='(shift) '
-++ export CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ export _CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ _CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ export CONDA_PYTHON_EXE=/sc/home/michele.marschner/conda3/bin/python
-++ CONDA_PYTHON_EXE=/sc/home/michele.marschner/conda3/bin/python
-++ export _CONDA_ROOT=/sc/home/michele.marschner/conda3
-++ _CONDA_ROOT=/sc/home/michele.marschner/conda3
-+ __conda_hashr
-+ '[' -n '' ']'
-+ '[' -n '' ']'
-+ hash -r
-+ python -m src.main --mode train --job-mode single --job-type condition --job-index 64 --stage quantus --config src/configs/experiments_config.py
-  0%|          | 0/16.0 [00:00<?, ?it/s]1000it [00:00, 152848.07it/s]           
-  0%|          | 0/16.0 [00:00<?, ?it/s]/sc/home/michele.marschner/conda3/envs/shift/lib/python3.11/site-packages/quantus/metrics/robustness/avg_sensitivity.py:355: RuntimeWarning: invalid value encountered in divide
-  similarities[:, step_id] = numerator / denominator
-64it [00:00, 79.45it/s]                 128it [00:01, 111.72it/s]192it [00:01, 127.55it/s]256it [00:02, 137.52it/s]320it [00:02, 142.25it/s]384it [00:02, 146.34it/s]448it [00:03, 149.62it/s]/sc/home/michele.marschner/conda3/envs/shift/lib/python3.11/site-packages/quantus/metrics/robustness/avg_sensitivity.py:355: RuntimeWarning: divide by zero encountered in divide
-  similarities[:, step_id] = numerator / denominator
-512it [00:03, 152.38it/s]576it [00:04, 153.02it/s]640it [00:04, 154.48it/s]704it [00:04, 155.12it/s]768it [00:05, 153.78it/s]832it [00:05, 154.42it/s]896it [00:06, 153.69it/s]960it [00:06, 153.20it/s]1000it [00:06, 144.60it/s]1000it [00:06, 144.32it/s]
-  0%|          | 0/16.0 [00:00<?, ?it/s]/sc/home/michele.marschner/conda3/envs/shift/lib/python3.11/site-packages/quantus/functions/similarity_func.py:76: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
-  return scipy.stats.pearsonr(a, b, axis=1)[0]
-64it [00:00, 434.41it/s]                128it [00:00, 436.86it/s]192it [00:00, 437.19it/s]256it [00:00, 433.54it/s]320it [00:00, 434.76it/s]384it [00:00, 432.88it/s]448it [00:01, 432.02it/s]512it [00:01, 434.92it/s]576it [00:01, 436.69it/s]640it [00:01, 437.58it/s]704it [00:01, 437.48it/s]768it [00:01, 438.08it/s]832it [00:01, 437.86it/s]896it [00:02, 438.48it/s]960it [00:02, 438.94it/s]1000it [00:02, 433.82it/s]
-  0%|          | 0/16.0 [00:00<?, ?it/s]/sc/home/michele.marschner/conda3/envs/shift/lib/python3.11/site-packages/skimage/metrics/_structural_similarity.py:269: RuntimeWarning: invalid value encountered in divide
-  S = (A1 * A2) / D
-64it [00:00, 364.42it/s]                512it [00:00, 2061.93it/s]960it [00:00, 2799.64it/s]1000it [00:00, 2375.44it/s]
-  0%|          | 0/14.0 [00:00<?, ?it/s]891it [00:00, 152107.32it/s]            
-  0%|          | 0/14.0 [00:00<?, ?it/s]64it [00:00, 152.04it/s]                128it [00:00, 151.40it/s]192it [00:01, 152.14it/s]256it [00:01, 151.45it/s]320it [00:02, 151.53it/s]384it [00:02, 151.29it/s]448it [00:02, 152.16it/s]512it [00:03, 152.33it/s]576it [00:03, 151.60it/s]640it [00:04, 151.21it/s]704it [00:04, 150.82it/s]768it [00:05, 150.79it/s]832it [00:05, 151.06it/s]891it [00:05, 149.61it/s]891it [00:05, 151.03it/s]
-  0%|          | 0/14.0 [00:00<?, ?it/s]64it [00:00, 434.91it/s]                128it [00:00, 435.81it/s]192it [00:00, 436.54it/s]256it [00:00, 436.84it/s]320it [00:00, 437.06it/s]384it [00:00, 437.45it/s]448it [00:01, 437.29it/s]512it [00:01, 434.81it/s]576it [00:01, 435.42it/s]640it [00:01, 436.31it/s]704it [00:01, 436.70it/s]768it [00:01, 437.47it/s]832it [00:01, 437.33it/s]891it [00:02, 434.13it/s]891it [00:02, 435.97it/s]
-  0%|          | 0/14.0 [00:00<?, ?it/s]384it [00:00, 3761.19it/s]              768it [00:00, 3795.43it/s]891it [00:00, 3785.33it/s]
-  0%|          | 0/14.0 [00:00<?, ?it/s]857it [00:00, 162427.41it/s]            
-  0%|          | 0/14.0 [00:00<?, ?it/s]64it [00:00, 148.98it/s]                128it [00:00, 149.27it/s]192it [00:01, 148.63it/s]256it [00:01, 149.34it/s]320it [00:02, 149.66it/s]384it [00:02, 151.24it/s]448it [00:02, 151.39it/s]512it [00:03, 151.28it/s]576it [00:03, 151.09it/s]640it [00:04, 150.93it/s]704it [00:04, 151.79it/s]768it [00:05, 151.91it/s]832it [00:05, 150.93it/s]857it [00:05, 140.20it/s]857it [00:05, 148.46it/s]
-  0%|          | 0/14.0 [00:00<?, ?it/s]64it [00:00, 435.48it/s]                128it [00:00, 437.17it/s]192it [00:00, 437.45it/s]256it [00:00, 439.37it/s]320it [00:00, 440.10it/s]384it [00:00, 439.74it/s]448it [00:01, 439.90it/s]512it [00:01, 439.67it/s]576it [00:01, 438.22it/s]640it [00:01, 438.53it/s]704it [00:01, 438.67it/s]768it [00:01, 439.12it/s]832it [00:01, 439.45it/s]857it [00:01, 433.23it/s]
-  0%|          | 0/14.0 [00:00<?, ?it/s]384it [00:00, 3687.01it/s]              832it [00:00, 3777.21it/s]857it [00:00, 3727.23it/s]

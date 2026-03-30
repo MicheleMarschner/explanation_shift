@@ -1,103 +1,0 @@
-+ source /sc/home/michele.marschner/conda3/etc/profile.d/conda.sh
-++ export CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ export _CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ _CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ export _CE_M=
-++ _CE_M=
-++ export _CE_CONDA=
-++ _CE_CONDA=
-++ export CONDA_PYTHON_EXE=/sc/home/michele.marschner/conda3/bin/python
-++ CONDA_PYTHON_EXE=/sc/home/michele.marschner/conda3/bin/python
-++ export _CONDA_ROOT=/sc/home/michele.marschner/conda3
-++ _CONDA_ROOT=/sc/home/michele.marschner/conda3
-++ '[' -z x ']'
-+ conda activate shift
-+ local cmd=activate
-+ case "$cmd" in
-+ __conda_activate activate shift
-+ '[' -n '' ']'
-+ local ask_conda
-++ PS1=
-++ __conda_exe shell.posix activate shift
-++ '[' -n '' ']'
-++ /sc/home/michele.marschner/conda3/bin/conda shell.posix activate shift
-+ ask_conda='export _CE_M='\'''\''
-export _CE_CONDA='\'''\''
-PS1='\''(shift) '\''
-export PATH='\''/sc/home/michele.marschner/conda3/envs/shift/bin:/sc/home/michele.marschner/conda3/condabin:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/sc/home/michele.marschner/.vscode-server/cli/servers/Stable-cfbea10c5ffb233ea9177d34726e6056e89913dc/server/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'\''
-export CONDA_SHLVL='\''2'\''
-export CONDA_PROMPT_MODIFIER='\''(shift) '\''
-export CONDA_EXE='\''/sc/home/michele.marschner/conda3/bin/conda'\''
-export _CONDA_EXE='\''/sc/home/michele.marschner/conda3/bin/conda'\''
-export CONDA_PYTHON_EXE='\''/sc/home/michele.marschner/conda3/bin/python'\''
-export _CONDA_ROOT='\''/sc/home/michele.marschner/conda3'\'''
-+ eval 'export _CE_M='\'''\''
-export _CE_CONDA='\'''\''
-PS1='\''(shift) '\''
-export PATH='\''/sc/home/michele.marschner/conda3/envs/shift/bin:/sc/home/michele.marschner/conda3/condabin:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/sc/home/michele.marschner/.vscode-server/cli/servers/Stable-cfbea10c5ffb233ea9177d34726e6056e89913dc/server/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'\''
-export CONDA_SHLVL='\''2'\''
-export CONDA_PROMPT_MODIFIER='\''(shift) '\''
-export CONDA_EXE='\''/sc/home/michele.marschner/conda3/bin/conda'\''
-export _CONDA_EXE='\''/sc/home/michele.marschner/conda3/bin/conda'\''
-export CONDA_PYTHON_EXE='\''/sc/home/michele.marschner/conda3/bin/python'\''
-export _CONDA_ROOT='\''/sc/home/michele.marschner/conda3'\'''
-++ export _CE_M=
-++ _CE_M=
-++ export _CE_CONDA=
-++ _CE_CONDA=
-++ PS1='(shift) '
-++ export PATH=/sc/home/michele.marschner/conda3/envs/shift/bin:/sc/home/michele.marschner/conda3/condabin:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/sc/home/michele.marschner/.vscode-server/cli/servers/Stable-cfbea10c5ffb233ea9177d34726e6056e89913dc/server/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
-++ PATH=/sc/home/michele.marschner/conda3/envs/shift/bin:/sc/home/michele.marschner/conda3/condabin:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/sc/home/michele.marschner/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/sc/home/michele.marschner/.vscode-server/cli/servers/Stable-cfbea10c5ffb233ea9177d34726e6056e89913dc/server/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
-++ export CONDA_SHLVL=2
-++ CONDA_SHLVL=2
-++ export 'CONDA_PROMPT_MODIFIER=(shift) '
-++ CONDA_PROMPT_MODIFIER='(shift) '
-++ export CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ export _CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ _CONDA_EXE=/sc/home/michele.marschner/conda3/bin/conda
-++ export CONDA_PYTHON_EXE=/sc/home/michele.marschner/conda3/bin/python
-++ CONDA_PYTHON_EXE=/sc/home/michele.marschner/conda3/bin/python
-++ export _CONDA_ROOT=/sc/home/michele.marschner/conda3
-++ _CONDA_ROOT=/sc/home/michele.marschner/conda3
-+ __conda_hashr
-+ '[' -n '' ']'
-+ '[' -n '' ']'
-+ hash -r
-+ python -m src.main --mode train --job-mode single --job-type condition --job-index 42 --stage quantus --config src/configs/experiments_config.py
-  0%|          | 0/16.0 [00:00<?, ?it/s]1000it [00:00, 158664.80it/s]           
-  0%|          | 0/16.0 [00:00<?, ?it/s]64it [00:00, 76.99it/s]                 128it [00:01, 107.44it/s]192it [00:01, 123.07it/s]256it [00:02, 131.93it/s]320it [00:02, 138.24it/s]384it [00:02, 142.22it/s]448it [00:03, 145.08it/s]512it [00:03, 146.90it/s]576it [00:04, 147.40it/s]640it [00:04, 148.62it/s]704it [00:05, 148.84it/s]768it [00:05, 148.95it/s]832it [00:05, 148.92it/s]896it [00:06, 149.21it/s]960it [00:06, 150.01it/s]1000it [00:07, 142.55it/s]1000it [00:07, 140.04it/s]
-  0%|          | 0/16.0 [00:00<?, ?it/s]64it [00:00, 430.62it/s]                128it [00:00, 433.67it/s]192it [00:00, 433.37it/s]256it [00:00, 434.95it/s]320it [00:00, 435.37it/s]384it [00:00, 435.65it/s]448it [00:01, 436.55it/s]512it [00:01, 435.54it/s]576it [00:01, 435.37it/s]640it [00:01, 435.87it/s]704it [00:01, 436.17it/s]768it [00:01, 436.21it/s]832it [00:01, 433.28it/s]896it [00:02, 434.46it/s]960it [00:02, 434.86it/s]1000it [00:02, 432.01it/s]
-  0%|          | 0/16.0 [00:00<?, ?it/s]384it [00:00, 3511.27it/s]              832it [00:00, 3722.50it/s]1000it [00:00, 3687.23it/s]
-  0%|          | 0/16.0 [00:00<?, ?it/s]964it [00:00, 155829.54it/s]            
-  0%|          | 0/16.0 [00:00<?, ?it/s]64it [00:00, 135.99it/s]                128it [00:00, 143.10it/s]192it [00:01, 145.21it/s]256it [00:01, 147.90it/s]320it [00:02, 149.09it/s]384it [00:02, 149.53it/s]448it [00:03, 149.41it/s]512it [00:03, 150.05it/s]576it [00:03, 150.75it/s]640it [00:04, 149.93it/s]704it [00:04, 150.28it/s]768it [00:05, 149.94it/s]832it [00:05, 149.02it/s]896it [00:06, 149.64it/s]960it [00:06, 149.82it/s]964it [00:06, 145.93it/s]
-  0%|          | 0/16.0 [00:00<?, ?it/s]64it [00:00, 431.08it/s]                128it [00:00, 436.18it/s]192it [00:00, 437.22it/s]256it [00:00, 438.27it/s]320it [00:00, 435.15it/s]384it [00:00, 436.72it/s]448it [00:01, 437.76it/s]512it [00:01, 438.31it/s]576it [00:01, 438.64it/s]640it [00:01, 438.99it/s]704it [00:01, 439.07it/s]768it [00:01, 439.16it/s]832it [00:01, 439.23it/s]896it [00:02, 439.04it/s]960it [00:02, 438.62it/s]964it [00:02, 429.89it/s]
-  0%|          | 0/16.0 [00:00<?, ?it/s]384it [00:00, 3771.03it/s]              768it [00:00, 3805.78it/s]Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "/sc/home/michele.marschner/project/explanation_shift/src/main.py", line 103, in <module>
-    main()
-  File "/sc/home/michele.marschner/project/explanation_shift/src/main.py", line 88, in main
-    run_condition_job(
-  File "/sc/home/michele.marschner/project/explanation_shift/src/run_train_pipeline.py", line 165, in run_condition_job
-    run_quantus_metrics(
-  File "/sc/home/michele.marschner/project/explanation_shift/src/experiment_stages/stage_03_quantus.py", line 173, in run_quantus_metrics
-    scores = metric_func(
-             ^^^^^^^^^^^^
-  File "/sc/home/michele.marschner/conda3/envs/shift/lib/python3.11/site-packages/quantus/metrics/randomisation/random_logit.py", line 225, in __call__
-    return super().__call__(
-           ^^^^^^^^^^^^^^^^^
-  File "/sc/home/michele.marschner/conda3/envs/shift/lib/python3.11/site-packages/quantus/metrics/base.py", line 291, in __call__
-    result = self.evaluate_batch(**data_batch)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/sc/home/michele.marschner/conda3/envs/shift/lib/python3.11/site-packages/quantus/metrics/randomisation/random_logit.py", line 302, in evaluate_batch
-    a_perturbed = self.explain_batch(model, x_batch, y_off)
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/sc/home/michele.marschner/conda3/envs/shift/lib/python3.11/site-packages/quantus/metrics/base.py", line 931, in explain_batch
-    asserts.assert_attributions(x_batch=x_batch, a_batch=a_batch)
-  File "/sc/home/michele.marschner/conda3/envs/shift/lib/python3.11/site-packages/quantus/helpers/asserts.py", line 180, in assert_attributions
-    assert not np.all((a_batch == 0)), (
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: The elements in the attribution vector are all equal to zero, which may cause inconsistent results since many metrics rely on ordering. Recompute the explanations.
-960it [00:00, 2803.26it/s]
