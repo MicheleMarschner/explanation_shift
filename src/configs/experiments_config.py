@@ -31,7 +31,7 @@ EXP_CONFIGS = ExperimentTemplate(
     N_PAIRS = 1000,
     CORRUPTIONS = ["gaussian_noise", "defocus_blur", "brightness", "fog"], 
     SEVERITIES  = [1, 2, 3, 5],
-    EXPLAINERS = ["GradCAM"],
+    EXPLAINERS = ["IG", "GradCAM"],
     SEEDS = [7, 42, 52, 128, 1200]
 )
 

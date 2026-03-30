@@ -17,7 +17,7 @@ def build_quantus_metrics() -> Dict[str, Any]:
             display_progressbar=True, 
         ),
         "robustness__avg_sensitivity": quantus.AvgSensitivity(
-            nr_samples=20,  # maybe later 50, 20
+            nr_samples=50,  # maybe later 50, 20
             lower_bound=0.2,
             norm_numerator=quantus.norm_func.fro_norm,
             norm_denominator=quantus.norm_func.fro_norm,
@@ -34,8 +34,8 @@ def build_quantus_metrics() -> Dict[str, Any]:
             display_progressbar=True, 
         ),
         "faithfulness__corr": quantus.FaithfulnessCorrelation(
-            nr_runs=30, # maybe later around 100, 10
-            subset_size=100,  # for CIFAR (32*32=1024), 224 is okay-ish; tune later
+            nr_runs=100, # maybe later around 100, 10
+            subset_size=150,  # for CIFAR (32*32=1024), 224 is okay-ish; tune later
             perturb_baseline="mean", # or black
             perturb_func=quantus.functions.perturb_func.batch_baseline_replacement_by_indices,
             similarity_func=quantus.similarity_func.correlation_pearson,
@@ -69,8 +69,6 @@ def build_quantus_metrics() -> Dict[str, Any]:
         ),
     }
     return metrics
-
-
 
 
 
