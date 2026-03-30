@@ -16,8 +16,21 @@ def load_model(device=DEVICE):
     return model
 
 
+def get_gradcam_config(model):
+    """
+    Returns the model-specific Grad-CAM configuration.
+
+    For this custom CIFAR ResNet-18, the standard target layer is the
+    last residual block in layer4. No reshape transform is needed because
+    the activations are already standard CNN feature maps [B, C, H, W].
+    """
+    target_layer = model.layer4[-1]
+    reshape_transform = None
+    return target_layer, reshape_transform
+
+
 @torch.no_grad()
-def predict_resnet_embeddings(model, dataloader, device="cpu"):
+def predict_resnet_embeddings(model, dataloader, device=None):
     """
     Returns penultimate embeddings [N, D] on CPU for THIS custom ResNet.
 
@@ -26,6 +39,9 @@ def predict_resnet_embeddings(model, dataloader, device="cpu"):
     """
     model.eval()
     outs = []
+
+    if device is None:
+        device = next(model.parameters()).device
 
     for xb, _ in dataloader:
         xb = xb.to(device, non_blocking=True)

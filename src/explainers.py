@@ -1,7 +1,28 @@
 import torch
+import torch.nn.functional as F
+from pytorch_grad_cam import GradCAM
+from captum.attr import IntegratedGradients
 
 from src.configs.global_config import DEVICE
 from src.utils import mean_std_over_mask
+from src.models import get_gradcam_config
+
+
+class ClassTarget:
+    """
+    Grad-CAM target for one class logit.
+    """
+    def __init__(self, class_idx: int):
+        self.class_idx = int(class_idx)
+
+    def __call__(self, model_output: torch.Tensor) -> torch.Tensor:
+        if model_output.ndim == 1:
+            return model_output[self.class_idx]
+        if model_output.ndim == 2:
+            return model_output[:, self.class_idx]
+        raise ValueError(
+            f"Unexpected model_output shape in ClassTarget: {tuple(model_output.shape)}"
+        )
 
 
 def ig_saliency(x: torch.Tensor, target: torch.Tensor, explainer, device=DEVICE, steps=16, internal_bs=32):
@@ -44,7 +65,7 @@ def ig_saliency(x: torch.Tensor, target: torch.Tensor, explainer, device=DEVICE,
     )
 
     # Collapse RGB channels -> one heatmap per image
-    sal = attr.abs().sum(dim=1)  # [N,32,32]
+    sal = attr.sum(dim=1)  # [N,32,32]
     return sal.detach().cpu()
 
 
@@ -54,6 +75,67 @@ def ig_saliency_batched(X, target, explainer, device, steps=32, internal_bs=32, 
         xb = X[i:i+batch_size]
         tb = target[i:i+batch_size]
         outs.append(ig_saliency(xb, tb, explainer=explainer, device=device, steps=steps, internal_bs=internal_bs))
+    return torch.cat(outs, dim=0)
+
+
+def gradcam_saliency(
+    x: torch.Tensor,
+    target: torch.Tensor,
+    model,
+    device=DEVICE,
+):
+    """
+    Grad-CAM wrapper returning one comparable saliency map per image.
+
+    Args:
+        x: [N,3,H,W] normalized images on CPU.
+        target: [N] class indices (on CPU). Grad-CAM explains these logits.
+        model: classifier model.
+
+    Returns:
+        sal: [N,H,W] saliency maps on CPU.
+    """
+    model.eval()
+
+    target_layer, reshape_transform = get_gradcam_config(model)
+
+    x = x.to(device)
+
+    cam = GradCAM(
+        model=model,
+        target_layers=[target_layer],
+        reshape_transform=reshape_transform,
+    )
+
+    targets = [ClassTarget(int(t.item())) for t in target]
+
+    grayscale_cam = cam(input_tensor=x, targets=targets)   # numpy [N,h,w]
+    sal = torch.as_tensor(grayscale_cam, dtype=torch.float32, device=x.device)
+
+    H, W = x.shape[-2], x.shape[-1]
+    if sal.shape[-2:] != (H, W):
+        sal = F.interpolate(
+            sal.unsqueeze(1),   # [N,1,h,w]
+            size=(H, W),
+            mode="bilinear",
+            align_corners=False,
+        ).squeeze(1)            # [N,H,W]
+
+    return sal.detach().cpu()
+
+def gradcam_saliency_batched(X, target, model, device, batch_size=32):
+    outs = []
+    for i in range(0, X.size(0), batch_size):
+        xb = X[i:i+batch_size]
+        tb = target[i:i+batch_size]
+        outs.append(
+            gradcam_saliency(
+                xb,
+                tb,
+                model=model,
+                device=device,
+            )
+        )
     return torch.cat(outs, dim=0)
 
 
@@ -200,3 +282,44 @@ def compute_explanation_drift_metrics(sal_clean, sal_corr, mask=None):
         "iou_sd": iou_sd,
     }
     return vectors, summary
+
+
+def compute_saliency_maps(
+    X: torch.Tensor,
+    target: torch.Tensor,
+    explainer_name: str,
+    model,
+    device=DEVICE,
+    steps: int = 32,
+    internal_bs: int = 32,
+    batch_size: int = 32,
+):
+    """
+    Unified saliency dispatcher.
+
+    Returns one saliency map per image [N,H,W] for the requested explainer.
+    """
+    if explainer_name == "IG":
+        from captum.attr import IntegratedGradients
+
+        explainer = IntegratedGradients(model)
+        return ig_saliency_batched(
+            X,
+            target,
+            explainer=explainer,
+            device=device,
+            steps=steps,
+            internal_bs=internal_bs,
+            batch_size=batch_size,
+        )
+
+    if explainer_name == "GradCAM":
+        return gradcam_saliency_batched(
+            X,
+            target,
+            model=model,
+            device=device,
+            batch_size=batch_size,
+        )
+
+    raise ValueError(f"Unknown explainer: {explainer_name}")

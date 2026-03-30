@@ -9,9 +9,11 @@ dependencies = [
   "huggingface_hub==1.4.1",
   "safetensors==0.7.0",
   "matplotlib==3.10.8",
+  "opencv-python-headless>=4.10,<4.11",
   "tqdm==4.67.3",
   "packaging==26.0",
   "quantus==0.6.0",
+  "grad-cam==1.5.5",
 ]
 
 [tool.setuptools]

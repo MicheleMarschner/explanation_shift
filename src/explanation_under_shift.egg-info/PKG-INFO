@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: explanation-under-shift
+Version: 0.1.0
+Requires-Dist: numpy==2.0.2
+Requires-Dist: torch==2.9.0
+Requires-Dist: torchvision==0.24.0
+Requires-Dist: torchaudio==2.9.0
+Requires-Dist: huggingface_hub==1.4.1
+Requires-Dist: safetensors==0.7.0
+Requires-Dist: matplotlib==3.10.8
+Requires-Dist: opencv-python-headless<4.11,>=4.10
+Requires-Dist: tqdm==4.67.3
+Requires-Dist: packaging==26.0
+Requires-Dist: quantus==0.6.0
+Requires-Dist: grad-cam==1.5.5

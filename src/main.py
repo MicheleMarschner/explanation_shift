@@ -4,7 +4,7 @@ from pathlib import Path
 
 from typing import Any, Dict
 
-from src.run_train_pipeline import run_train_pipeline, run_reference_job, run_condition_job
+from src.run_train_pipeline import run_train_pipeline, run_reference_job, expand_template, expand_reference_jobs, run_condition_job
 from src.run_eval_pipeline import run_eval_pipeline
 from src.utils import ensure_dirs
 from src.configs.global_config import PATHS
@@ -66,12 +66,13 @@ def main() -> None:
             if args.stage != "reference":
                 raise ValueError("Reference jobs can only be run with --stage reference.")
 
-            jobs = run_train_pipeline.expand_reference_jobs(exp_config)
+            jobs = expand_reference_jobs(exp_config)
             if not (0 <= args.job_index < len(jobs)):
                 raise IndexError(f"job-index {args.job_index} out of range for {len(jobs)} reference jobs.")
 
-            run_train_pipeline.run_reference_job(
+            run_reference_job(
                 job=jobs[args.job_index],
+                exp_config=exp_config,
                 overwrite=args.overwrite,
             )
             return
@@ -80,11 +81,11 @@ def main() -> None:
             if args.stage not in {"artifact", "drift", "quantus"}:
                 raise ValueError("Condition jobs can only be run with --stage artifact, drift, or quantus.")
 
-            jobs = run_train_pipeline.expand_template(exp_config)
+            jobs = expand_template(exp_config)
             if not (0 <= args.job_index < len(jobs)):
                 raise IndexError(f"job-index {args.job_index} out of range for {len(jobs)} condition jobs.")
 
-            run_train_pipeline.run_condition_job(
+            run_condition_job(
                 job=jobs[args.job_index],
                 stage=args.stage,
                 overwrite=args.overwrite,

@@ -28,11 +28,11 @@ class ReferenceJob:
 
 ## Experiment settings
 EXP_CONFIGS = ExperimentTemplate(
-    N_PAIRS = 250, 
-    CORRUPTIONS = ["gaussian_noise"], 
-    SEVERITIES  = [5],
+    N_PAIRS = 1000,
+    CORRUPTIONS = ["gaussian_noise", "defocus_blur", "brightness", "fog"], 
+    SEVERITIES  = [1, 2, 3, 5],
     EXPLAINERS = ["IG"],
-    SEEDS = [51]
+    SEEDS = [42, 52, 128]
 )
 
 #N_PAIRS = 1000 
@@ -40,3 +40,10 @@ EXP_CONFIGS = ExperimentTemplate(
 #SEVERITIES  = [1, 2, 3, 5],
 #EXPLAINERS = ["IG"],
 #SEEDS = [41, 42, 43]
+
+
+# N_PAIRS = 250, 
+# CORRUPTIONS = ["gaussian_noise"], 
+#    SEVERITIES  = [5],
+#    EXPLAINERS = ["IG"],
+#    SEEDS = [51]

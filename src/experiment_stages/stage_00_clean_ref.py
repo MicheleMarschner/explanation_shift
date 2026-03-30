@@ -6,7 +6,7 @@ from src.configs.global_config import BATCH_SIZE_EXPLAINER, DEVICE, IG_STEPS, PA
 from src.experiment_stages.helper import save_experiment_reference
 from src.data import get_clean_data
 from src.distribution_shift import estimate_sigma
-from src.explainers import ig_saliency_batched
+from src.explainers import compute_saliency_maps
 from src.models import (
     entropy_from_logits,
     predict_logits_and_accuracy,
@@ -19,12 +19,12 @@ from src.utils import collect_x_from_loader
 
 def compute_clean_reference(
     pair_idx,
-    exp_config: Any,          
-    save_path: Path,        
+    exp_config: Any,
+    save_path: Path,
     model,
     transform,
-    explainer,
-    seed: int
+    explainer_name: str,
+    seed: int,
 ) -> Dict[str, Any]:
     """
     Stage 00: compute clean predictions + IG saliency + embedding reference.
@@ -44,15 +44,17 @@ def compute_clean_reference(
     E_clean = predict_resnet_embeddings(model, clean_loader)
     sigma_ref = estimate_sigma(E_clean)
 
-    # IG saliency on clean
-    X_clean_t = collect_x_from_loader(clean_loader).to(DEVICE)
-    target = pred_clean.to(DEVICE)
+    
+    # Saliency on clean
+    X_clean_t = collect_x_from_loader(clean_loader)
+    target = pred_clean
 
-    sal_clean = ig_saliency_batched(
+    sal_clean = compute_saliency_maps(
         X_clean_t,
         target=target,
+        explainer_name=explainer_name,
+        model=model,
         device=DEVICE,
-        explainer=explainer,
         steps=IG_STEPS,
         internal_bs=BATCH_SIZE_EXPLAINER,
         batch_size=BATCH_SIZE_EXPLAINER,

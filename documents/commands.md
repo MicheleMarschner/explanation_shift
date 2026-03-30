@@ -11,7 +11,7 @@ tar -xzf ~/Downloads/final_round_1.tar.gz
 
 ## Monitoring
 - squeue --me
-- tail -n 100 -f /sc/home/michele.marschner/project/jaguar_project/logs/xai_1768566.err
+- tail -n 100 -f /sc/home/michele.marschner/project/explanation_shift/logs/reference_1805926_0.err
 
 ## Logs
 less /sc/home/michele.marschner/project/jaguar_project/logs/array_<JOBID>_<TASKID>.out

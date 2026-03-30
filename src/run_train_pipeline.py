@@ -1,7 +1,6 @@
 from collections import defaultdict
 from itertools import product
 import torchvision.transforms as T
-from captum.attr import IntegratedGradients
 
 from typing import Dict, List, Tuple
 
@@ -37,13 +36,6 @@ def group_by_seed_explainer(runs: List[RunConfig]) -> Dict[Tuple[int, str], List
 
 """
 
-def build_explainer(expl_name: str, model):
-    if expl_name == "IG":
-        return IntegratedGradients(model)
-    raise ValueError(f"Unknown explainer: {expl_name}")
-
-
-
 def expand_reference_jobs(t: ExperimentTemplate) -> List[ReferenceJob]:
     jobs: List[ReferenceJob] = []
     for seed, expl in product(t.SEEDS, t.EXPLAINERS):
@@ -57,7 +49,7 @@ def expand_reference_jobs(t: ExperimentTemplate) -> List[ReferenceJob]:
     return jobs
 
 
-def run_reference_job(job: ReferenceJob, overwrite: bool = False):
+def run_reference_job(job: ReferenceJob, exp_config, overwrite: bool = False):
     # Set up basics:
     resnet_model = load_model()
     transform = T.Compose([
@@ -74,16 +66,15 @@ def run_reference_job(job: ReferenceJob, overwrite: bool = False):
     experiment_dir = PATHS.runs / f"experiment__n{int(job.N_PAIRS)}__{job.explainer}__seed{job.seed}"
     clean_path = create_file_path(experiment_dir, "00__reference", "00__clean_ref")
 
-    explainer = build_explainer(job.explainer, resnet_model)
 
     if overwrite or not clean_path.exists():
         compute_clean_reference(
             pair_idx=pair_idx_np,
-            exp_config=job,
+            exp_config=exp_config,
             save_path=clean_path,
             model=resnet_model,
             transform=transform,
-            explainer=explainer,
+            explainer_name=job.explainer,
             seed=job.seed,
         )
 
@@ -111,8 +102,6 @@ def run_condition_job(job: RunConfig, stage: str, overwrite: bool = False):
     if not clean_path.exists():
         raise FileNotFoundError(f"Missing clean reference: {clean_path} (run --stage reference first)")
 
-    explainer = build_explainer(job.explainer, resnet_model)
-
     artifact_path = create_file_path(
         experiment_dir, "01__artifacts", "01__artifacts", job.corruption, job.severity
     )
@@ -133,7 +122,7 @@ def run_condition_job(job: RunConfig, stage: str, overwrite: bool = False):
                 save_path=artifact_path,
                 model=resnet_model,
                 transform=transform,
-                explainer=explainer,
+                explainer_name=job.explainer,
             )
         print(f"artifacts stored under {artifact_path}")
         return
@@ -165,6 +154,7 @@ def run_condition_job(job: RunConfig, stage: str, overwrite: bool = False):
                 save_path=quantus_clean_path,
                 model=resnet_model,
                 transform=transform,
+                explainer_name=job.explainer,
                 mode="clean",
             )
         print(f"quantus(clean) stored under {quantus_clean_path}")
@@ -181,6 +171,7 @@ def run_condition_job(job: RunConfig, stage: str, overwrite: bool = False):
                 save_path=quantus_path,
                 model=resnet_model,
                 transform=transform,
+                explainer_name=job.explainer,
                 mode="corr",
             )
         print(f"quantus stored under {quantus_path}")

@@ -7,7 +7,7 @@ from src.experiment_stages.helper import save_artifacts
 from src.utils import collect_x_from_loader
 from src.data import get_corrupted_data
 from src.models import predict_resnet_embeddings, transform_logits_to_preds, predict_logits_and_accuracy, entropy_from_logits, transform_logits_to_probs
-from src.explainers import ig_saliency_batched
+from src.explainers import compute_saliency_maps
 
 
 def run_experiment(
@@ -18,7 +18,7 @@ def run_experiment(
         save_path,
         model, 
         transform,
-        explainer,
+        explainer_name: str,
     ):
 
     ref = torch.load(clean_path, map_location="cpu", weights_only=False)
@@ -51,17 +51,19 @@ def run_experiment(
 
     E_corr = predict_resnet_embeddings(model, corr_dataloader)
 
-    # IG saliency
+    # Saliency
     X_corr_t = collect_x_from_loader(corr_dataloader)
-    target = pred_clean.to(DEVICE) if TARGET_POLICY == TargetPolicy.PRED_CLEAN else pred_corr.to(DEVICE) 
-    sal_corr  = ig_saliency_batched(
-        X_corr_t, 
-        target=target, 
-        device=DEVICE, 
-        explainer=explainer, 
-        steps=IG_STEPS, 
-        internal_bs=BATCH_SIZE_EXPLAINER, 
-        batch_size=BATCH_SIZE_EXPLAINER
+    target = pred_clean if TARGET_POLICY == TargetPolicy.PRED_CLEAN else pred_corr
+
+    sal_corr = compute_saliency_maps(
+        X_corr_t,
+        target=target,
+        explainer_name=explainer_name,
+        model=model,
+        device=DEVICE,
+        steps=IG_STEPS,
+        internal_bs=BATCH_SIZE_EXPLAINER,
+        batch_size=BATCH_SIZE_EXPLAINER,
     )
 
     corr_ref = {

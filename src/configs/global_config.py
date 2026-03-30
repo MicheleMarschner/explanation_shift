@@ -56,7 +56,7 @@ CIFAR10_MEAN = (0.4914, 0.4822, 0.4465)
 CIFAR10_SD  = (0.2470, 0.2435, 0.2616)
 BATCH_SIZE = 64 
 
-IG_STEPS = 64 # n_steps, How many points Captum samples along the path from baseline → input. 
-BATCH_SIZE_EXPLAINER = 32 
+IG_STEPS = 80 # n_steps, How many points Captum samples along the path from baseline → input. 
+BATCH_SIZE_EXPLAINER = 64 
 TARGET_POLICY = TargetPolicy.PRED_CLEAN.value
 

@@ -20,7 +20,7 @@ def compute_drift_metrics(clean_path: Path, artifact_path: Path, save_path: Path
     E_clean      = cr["E_clean"].float()
     sal_clean    = cr["sal_clean"].float()
     sigma_ref    = float(cr["sigma_ref"])
-    y_true       = cr["y_clean"].long()
+    y_true       = cr["y_true"].long()
 
     logits_corr  = cc["logits_corr"]
     pred_corr    = cc["pred_corr"].long()

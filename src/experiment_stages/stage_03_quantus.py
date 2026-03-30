@@ -8,12 +8,12 @@ import numpy as np
 
 from typing import Any, Dict, Literal, Optional
 
-from src.configs.global_config import PATHS, DEVICE, IG_STEPS
+from src.configs.global_config import PATHS, DEVICE, IG_STEPS, BATCH_SIZE_EXPLAINER, BATCH_SIZE
 from src.utils import cpu, as_np_int64_1d, collect_x_from_loader
 from src.data import get_clean_data, get_corrupted_data
 from src.experiment_stages.helper import save_quantus_metrics
 from src.metrics import build_quantus_metrics
-from src.explainers import mask_invariant, mask_correct
+from src.explainers import mask_invariant, mask_correct, compute_saliency_maps
 
 
 def to_scalar(x):
@@ -31,6 +31,7 @@ def run_quantus_metrics(
     save_path: Path,
     model,
     transform,
+    explainer_name: str,
     mode: Literal["clean", "corr"] = "corr",
 ) -> Dict[str, Any]:
     """
@@ -63,6 +64,28 @@ def run_quantus_metrics(
     pred_clean = cr["pred_clean"].long()       # torch tensor [N]
     y_batch = as_np_int64_1d(pred_clean)
 
+    def quantus_explain_func(model, inputs, targets, **kwargs):
+        """
+        Quantus-compatible explanation function.
+        Returns absolute saliency maps as numpy [N, 1, H, W].
+        """
+        x_t = torch.as_tensor(inputs, dtype=torch.float32)
+        t_t = torch.as_tensor(targets, dtype=torch.long)
+
+        sal = compute_saliency_maps(
+            x_t,
+            target=t_t,
+            explainer_name=explainer_name,
+            model=model,
+            device=DEVICE,
+            steps=IG_STEPS,
+            internal_bs=BATCH_SIZE_EXPLAINER,
+            batch_size=BATCH_SIZE,
+        )
+
+        a = sal.abs().unsqueeze(1)   # [N,1,H,W]
+        return cpu(a).numpy()
+
 
     # Decide domain inputs + attributions
     if mode == "clean":
@@ -70,8 +93,8 @@ def run_quantus_metrics(
         X_clean_t = collect_x_from_loader(clean_loader)     # torch [N,C,H,W]
         x_batch = cpu(X_clean_t).numpy()
 
-        #sal_clean = cr["sal_clean"].float()
-        #a_batch = cpu(sal_clean.unsqueeze(1)).numpy()  # numpy [N,1,H,W]
+        sal_clean = cr["sal_clean"].float()
+        a_batch = cpu(sal_clean.abs().unsqueeze(1)).numpy()  # numpy [N,1,H,W]
 
         masks = {
             "all": np.ones_like(pred_clean, dtype=bool)
@@ -91,14 +114,14 @@ def run_quantus_metrics(
         X_corr_t = collect_x_from_loader(corr_loader)
         x_batch = cpu(X_corr_t).numpy()
 
-        y_true = cr["y_clean"]
+        y_true = cr["y_true"]
 
         art = torch.load(artifact_path, map_location="cpu", weights_only=False)
         cc = art["corrupt_reference"]
         pred_corr = cc["pred_corr"]
 
-        #sal_corr = cc["sal_corr"].float()
-        #a_batch = cpu(sal_corr.unsqueeze(1)).numpy()  # numpy [N,1,H,W]
+        sal_corr = cc["sal_corr"].float()
+        a_batch = cpu(sal_corr.abs().unsqueeze(1)).numpy()  # numpy [N,1,H,W]
 
         masks = {
             "all": np.ones_like(pred_clean, dtype=bool),
@@ -113,8 +136,8 @@ def run_quantus_metrics(
 
     assert x_batch.shape[0] == y_batch.shape[0]
     assert y_batch.ndim == 1
-    #assert a_batch.shape[0] == x_batch.shape[0] == y_batch.shape[0]
-    #assert a_batch.shape[-2:] == x_batch.shape[-2:]  # (H,W)
+    assert a_batch.shape[0] == x_batch.shape[0] == y_batch.shape[0]
+    assert a_batch.shape[-2:] == x_batch.shape[-2:]  # (H,W)
 
     # -----------------------
     # Quantus metrics
@@ -140,6 +163,7 @@ def run_quantus_metrics(
 
         x_s = x_batch[idx]
         y_s = y_batch[idx]
+        a_s = a_batch[idx]
 
         for metric, metric_func in metrics.items():
             print(f"Evaluating {metric}.")
@@ -147,18 +171,13 @@ def run_quantus_metrics(
             torch.cuda.empty_cache()
 
             scores = metric_func(
-                model=model, 
-                x_batch=x_s, 
-                y_batch=y_s, 
-                a_batch=None,
+                model=model,
+                x_batch=x_s,
+                y_batch=y_s,
+                a_batch=a_s,
                 s_batch=None,
                 device=DEVICE,
-                explain_func=quantus.explain,   
-                explain_func_kwargs={
-                    "method": "IntegratedGradients",
-                    "n_steps": int(IG_STEPS),
-                    "device": DEVICE,
-                },
+                explain_func=quantus_explain_func,
             )
             results[f"{metric}__{slice_name}"] = to_scalar(scores)
 
