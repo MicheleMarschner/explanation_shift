@@ -4,7 +4,7 @@
 ssh hpi
 
 ## zippen
-tar -czf results.tar.gz results
+tar -czf experiments.tar.gz experiments
 tar -xzf experiments.tar.gz
 
 tar -xzf ~/Downloads/final_round_1.tar.gz
@@ -58,7 +58,7 @@ python src/jaguar/experiments/experiment_runner.py \
   --experiment_config experiments/scientific_deduplication
 
 
-rsync -avz --progress michele.marschner@lx01.hpc.sci.hpi.de:/sc/home/michele.marschner/project/jaguar_project/experiments/round_1/eda_xai_similarity/eva02_triplet_poseasy_hard_neghard/ ~/Downloads/
+rsync -avz --progress michele.marschner@lx01.hpc.sci.hpi.de:/sc/home/michele.marschner/project/explanation_shift/experiments/ ~/Downloads/
 
 
 rsync -avz --progress ~/Downloads/kaggle_ensemble michele.marschner@lx01.hpc.sci.hpi.de:/sc/home/michele.marschner/project/jaguar_project/configs/_generated/

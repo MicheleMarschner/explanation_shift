@@ -10,4 +10,6 @@ source /sc/home/michele.marschner/conda3/etc/profile.d/conda.sh
 #conda create -n shift python=3.11
 conda activate shift
 cd ~/project/explanation_shift
-python -m pip install -e .
+python -m pip uninstall -y opencv-python opencv-python-headless
+python -m pip install "opencv-python-headless>=4.10,<4.11"
+#python -m pip install -e .

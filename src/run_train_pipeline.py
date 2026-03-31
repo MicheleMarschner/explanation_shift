@@ -10,6 +10,7 @@ from src.experiment_stages.stage_00_clean_ref import compute_clean_reference
 from src.experiment_stages.stage_01_artifacts import run_experiment
 from src.experiment_stages.stage_02_drift_metrics import compute_drift_metrics
 from src.experiment_stages.stage_03_quantus import run_quantus_metrics
+from src.experiment_stages.stage_04_metaquantus import run_metaquantus_stage
 from src.configs.global_config import PATHS, CIFAR10_MEAN, CIFAR10_SD
 from src.utils import create_file_path, to_np_idx, set_seeds
 from src.configs.experiments_config import ReferenceJob, RunConfig, ExperimentTemplate
@@ -48,6 +49,17 @@ def expand_reference_jobs(t: ExperimentTemplate) -> List[ReferenceJob]:
         )
     return jobs
 
+def expand_metaquantus_jobs(t: ExperimentTemplate) -> List[dict]:
+    jobs: List[dict] = []
+    for seed in t.SEEDS:
+        jobs.append(
+            {
+                "N_PAIRS": int(t.N_PAIRS),
+                "seed": int(seed),
+            }
+        )
+    return jobs
+
 
 def run_reference_job(job: ReferenceJob, exp_config, overwrite: bool = False):
     # Set up basics:
@@ -79,6 +91,33 @@ def run_reference_job(job: ReferenceJob, exp_config, overwrite: bool = False):
         )
 
     print(f"reference stored under {clean_path}")
+
+def run_metaquantus_job(job: dict, overwrite: bool = False):
+    set_seeds(job["seed"], deterministic=True)
+    pair_idx = sample_cifar10_pair_indices(n_pairs=int(job["N_PAIRS"]), seed=job["seed"])
+    pair_idx_np = to_np_idx(pair_idx)
+
+    transform = T.Compose([
+        T.ToTensor(),
+        T.Normalize(CIFAR10_MEAN, CIFAR10_SD),
+    ])
+
+    # eigener seed-basierter Ordner, nicht an einzelnen Explainer gebunden
+    experiment_dir = PATHS.runs / f"metaquantus__n{int(job['N_PAIRS'])}__seed{job['seed']}"
+    metaquantus_path = create_file_path(
+        experiment_dir,
+        "04__metaquantus",
+        "04__metaquantus",
+    )
+
+    if overwrite or not metaquantus_path.exists():
+        run_metaquantus_stage(
+            pair_idx=pair_idx_np,
+            save_path=metaquantus_path,
+            transform=transform
+        )
+
+    print(f"metaquantus stored under {metaquantus_path}")
 
 
 
@@ -185,7 +224,14 @@ def run_train_pipeline(exp_config, stage, overwrite=False):
         reference_jobs = expand_reference_jobs(exp_config)
 
         for job in reference_jobs:
-            run_reference_job(job=job, overwrite=overwrite)
+            run_reference_job(job=job, exp_config=exp_config, overwrite=overwrite)
+        return
+
+    if stage == "metaquantus":
+        meta_jobs = expand_metaquantus_jobs(exp_config)
+
+        for job in meta_jobs:
+            run_metaquantus_job(job=job, overwrite=overwrite)
         return
 
     condition_jobs = expand_template(exp_config)

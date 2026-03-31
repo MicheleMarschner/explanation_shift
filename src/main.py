@@ -4,7 +4,15 @@ from pathlib import Path
 
 from typing import Any, Dict
 
-from src.run_train_pipeline import run_train_pipeline, run_reference_job, expand_template, expand_reference_jobs, run_condition_job
+from src.run_train_pipeline import (
+    run_train_pipeline,
+    run_reference_job,
+    expand_template,
+    expand_reference_jobs,
+    run_condition_job,
+    expand_metaquantus_jobs,
+    run_metaquantus_job,
+)
 from src.run_eval_pipeline import run_eval_pipeline
 from src.utils import ensure_dirs
 from src.configs.global_config import PATHS
@@ -32,11 +40,20 @@ def load_experiment_config(file: str) -> Dict[str, Any]:
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--mode", choices=["train", "eval"], default="train", help="Which mode to run.")
-    p.add_argument("--stage", choices=["reference", "artifact", "drift", "quantus"], default="reference", help="Which stages to run.")
+    p.add_argument(
+        "--stage",
+        choices=["reference", "artifact", "drift", "quantus", "metaquantus"],
+        default="reference",
+        help="Which stages to run.",
+    )
     p.add_argument("--config", type=str, required=True, help="Path to config python file, e.g. configs/experiment_config.py")
     p.add_argument("--overwrite", action="store_true")
-    p.add_argument("--job-type", choices=["reference", "condition"], default=None,
-               help="Optional: run exactly one job of this type.")
+    p.add_argument(
+        "--job-type",
+        choices=["reference", "condition", "metaquantus"],
+        default=None,
+        help="Optional: run exactly one job of this type.",
+    )
     p.add_argument("--job-index", type=int, default=None,
                 help="Optional: index of the single job to run.")
     p.add_argument("--job-mode", choices=["all", "single"], default="all",
@@ -68,7 +85,9 @@ def main() -> None:
 
             jobs = expand_reference_jobs(exp_config)
             if not (0 <= args.job_index < len(jobs)):
-                raise IndexError(f"job-index {args.job_index} out of range for {len(jobs)} reference jobs.")
+                raise IndexError(
+                    f"job-index {args.job_index} out of range for {len(jobs)} reference jobs."
+                )
 
             run_reference_job(
                 job=jobs[args.job_index],
@@ -79,15 +98,35 @@ def main() -> None:
 
         if args.job_type == "condition":
             if args.stage not in {"artifact", "drift", "quantus"}:
-                raise ValueError("Condition jobs can only be run with --stage artifact, drift, or quantus.")
+                raise ValueError(
+                    "Condition jobs can only be run with --stage artifact, drift, or quantus."
+                )
 
             jobs = expand_template(exp_config)
             if not (0 <= args.job_index < len(jobs)):
-                raise IndexError(f"job-index {args.job_index} out of range for {len(jobs)} condition jobs.")
+                raise IndexError(
+                    f"job-index {args.job_index} out of range for {len(jobs)} condition jobs."
+                )
 
             run_condition_job(
                 job=jobs[args.job_index],
                 stage=args.stage,
+                overwrite=args.overwrite,
+            )
+            return
+
+        if args.job_type == "metaquantus":
+            if args.stage != "metaquantus":
+                raise ValueError("MetaQuantus jobs can only be run with --stage metaquantus.")
+
+            jobs = expand_metaquantus_jobs(exp_config)
+            if not (0 <= args.job_index < len(jobs)):
+                raise IndexError(
+                    f"job-index {args.job_index} out of range for {len(jobs)} metaquantus jobs."
+                )
+
+            run_metaquantus_job(
+                job=jobs[args.job_index],
                 overwrite=args.overwrite,
             )
             return
