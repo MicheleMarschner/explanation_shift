@@ -1,481 +1,481 @@
 explainer,seed,corruption,severity,zone,sample_idx,similarity,abs_dH,invariant,both_correct
-GradCAM,7,brightness,1,robust,96,1.0,8.903443813323975e-06,True,True
-GradCAM,7,brightness,1,silent_drift,805,0.0,0.38456282019615173,True,True
-GradCAM,7,brightness,1,stubborn_failure,399,1.0,0.0005257949233055115,True,False
-GradCAM,7,brightness,1,expected_failure,850,0.0,0.2585427165031433,True,False
-GradCAM,7,brightness,2,robust,887,1.0,1.4901161193847656e-08,True,True
-GradCAM,7,brightness,2,silent_drift,753,0.0,0.7795529365539551,True,True
-GradCAM,7,brightness,2,stubborn_failure,399,1.0,0.0038175061345100403,True,False
-GradCAM,7,brightness,2,expected_failure,381,0.0,0.5960620641708374,True,False
-GradCAM,7,brightness,3,robust,841,1.0,1.354515552520752e-05,True,True
-GradCAM,7,brightness,3,silent_drift,66,0.0,1.4816876649856567,True,True
-GradCAM,7,brightness,3,stubborn_failure,147,1.0,0.0027380287647247314,True,False
-GradCAM,7,brightness,3,expected_failure,381,0.0,0.7351027727127075,True,False
-GradCAM,7,brightness,5,robust,640,1.0,0.00010799616575241089,True,True
-GradCAM,7,brightness,5,silent_drift,66,0.0,1.7863694429397583,True,True
-GradCAM,7,brightness,5,stubborn_failure,788,1.0,0.0051566362380981445,True,False
-GradCAM,7,brightness,5,expected_failure,753,0.0,1.491684913635254,False,False
-GradCAM,7,fog,1,robust,927,1.0,1.6845762729644775e-05,True,True
-GradCAM,7,fog,1,silent_drift,1,0.0,0.7440091371536255,True,True
-GradCAM,7,fog,1,stubborn_failure,402,1.0,0.0013023614883422852,True,False
-GradCAM,7,fog,1,expected_failure,503,0.0,1.0713164806365967,False,False
-GradCAM,7,fog,2,robust,466,1.0,3.565847873687744e-05,True,True
-GradCAM,7,fog,2,silent_drift,206,0.0,1.2655537128448486,True,True
-GradCAM,7,fog,2,stubborn_failure,399,1.0,0.004682213068008423,True,False
-GradCAM,7,fog,2,expected_failure,159,0.0,1.3636165857315063,False,False
-GradCAM,7,fog,3,robust,376,1.0,3.546476364135742e-06,True,True
-GradCAM,7,fog,3,silent_drift,307,0.0,1.2098674774169922,True,True
-GradCAM,7,fog,3,stubborn_failure,136,1.0,0.010044265538454056,True,False
-GradCAM,7,fog,3,expected_failure,709,0.0,1.4010096788406372,False,False
-GradCAM,7,fog,5,robust,840,1.0,8.009374141693115e-06,True,True
-GradCAM,7,fog,5,silent_drift,450,0.0,1.828650712966919,True,True
-GradCAM,7,fog,5,stubborn_failure,136,1.0,0.0023883655667304993,True,False
-GradCAM,7,fog,5,expected_failure,61,0.0,1.6122380495071411,False,False
-GradCAM,7,gaussian_noise,1,robust,354,1.0,1.4841556549072266e-05,True,True
-GradCAM,7,gaussian_noise,1,silent_drift,34,0.0,1.5039085149765015,True,True
-GradCAM,7,gaussian_noise,1,stubborn_failure,110,1.0,0.010758638381958008,False,False
-GradCAM,7,gaussian_noise,1,expected_failure,524,0.0,1.816935658454895,False,False
-GradCAM,7,gaussian_noise,2,robust,144,1.0,1.284480094909668e-05,True,True
-GradCAM,7,gaussian_noise,2,silent_drift,552,0.0,1.525795817375183,True,True
-GradCAM,7,gaussian_noise,2,stubborn_failure,557,1.0,0.003528088331222534,True,False
-GradCAM,7,gaussian_noise,2,expected_failure,237,0.0,1.6939104795455933,False,False
-GradCAM,7,gaussian_noise,3,robust,530,1.0,0.0006531178951263428,True,True
-GradCAM,7,gaussian_noise,3,silent_drift,412,0.0,1.6356010437011719,True,True
-GradCAM,7,gaussian_noise,3,stubborn_failure,193,1.0,0.01620185375213623,False,False
-GradCAM,7,gaussian_noise,3,expected_failure,57,0.0,1.7807834148406982,False,False
-GradCAM,7,gaussian_noise,5,robust,88,1.0,0.0012231692671775818,True,True
-GradCAM,7,gaussian_noise,5,silent_drift,790,0.0,1.9336175918579102,True,True
-GradCAM,7,gaussian_noise,5,stubborn_failure,950,1.0,0.002650529146194458,False,False
-GradCAM,7,gaussian_noise,5,expected_failure,445,0.0,1.8392478227615356,False,False
-GradCAM,42,brightness,1,robust,935,1.0,6.42240047454834e-06,True,True
-GradCAM,42,brightness,1,silent_drift,879,0.0,0.8672600984573364,True,True
-GradCAM,42,brightness,1,stubborn_failure,219,1.0,0.0005257949233055115,True,False
-GradCAM,42,brightness,1,expected_failure,449,0.0,0.396886944770813,False,False
-GradCAM,42,brightness,2,robust,611,1.0,1.4454126358032227e-05,True,True
-GradCAM,42,brightness,2,silent_drift,879,0.0,1.1814465522766113,True,True
-GradCAM,42,brightness,2,stubborn_failure,258,1.0,0.003493368625640869,True,False
-GradCAM,42,brightness,2,expected_failure,368,0.0,0.6770097613334656,True,False
-GradCAM,42,brightness,3,robust,992,1.0,2.0973384380340576e-05,True,True
-GradCAM,42,brightness,3,silent_drift,673,0.0,1.486018419265747,True,True
-GradCAM,42,brightness,3,stubborn_failure,809,1.0,0.0027380287647247314,True,False
-GradCAM,42,brightness,3,expected_failure,361,0.0,0.9280481934547424,False,False
-GradCAM,42,brightness,5,robust,301,1.0,5.5693089962005615e-05,True,True
-GradCAM,42,brightness,5,silent_drift,879,0.0,1.2655898332595825,True,True
-GradCAM,42,brightness,5,stubborn_failure,372,1.0,0.012174010276794434,True,False
-GradCAM,42,brightness,5,expected_failure,182,0.0,1.6613707542419434,False,False
-GradCAM,42,fog,1,robust,51,1.0,5.647540092468262e-06,True,True
-GradCAM,42,fog,1,silent_drift,366,0.0,0.5333434343338013,True,True
-GradCAM,42,fog,1,stubborn_failure,219,1.0,0.00437367707490921,True,False
-GradCAM,42,fog,1,expected_failure,609,0.0,0.5413089990615845,True,False
-GradCAM,42,fog,2,robust,591,1.0,9.320676326751709e-06,True,True
-GradCAM,42,fog,2,silent_drift,217,0.0,1.3253957033157349,True,True
-GradCAM,42,fog,2,stubborn_failure,219,1.0,0.004682213068008423,True,False
-GradCAM,42,fog,2,expected_failure,81,0.0,1.6941782236099243,False,False
-GradCAM,42,fog,3,robust,234,1.0,1.1570751667022705e-05,True,True
-GradCAM,42,fog,3,silent_drift,793,0.0,1.6333916187286377,True,True
-GradCAM,42,fog,3,stubborn_failure,31,1.0,0.0009959787130355835,True,False
-GradCAM,42,fog,3,expected_failure,12,0.0,1.5939853191375732,False,False
-GradCAM,42,fog,5,robust,371,1.0,5.3651630878448486e-05,True,True
-GradCAM,42,fog,5,silent_drift,4,0.0,1.828650712966919,True,True
-GradCAM,42,fog,5,stubborn_failure,849,1.0,0.004354171454906464,True,False
-GradCAM,42,fog,5,expected_failure,109,0.0,1.6858675479888916,False,False
-GradCAM,42,gaussian_noise,1,robust,255,1.0,1.4841556549072266e-05,True,True
-GradCAM,42,gaussian_noise,1,silent_drift,91,0.0,1.3812646865844727,True,True
-GradCAM,42,gaussian_noise,1,stubborn_failure,31,1.0,0.008654221892356873,True,False
-GradCAM,42,gaussian_noise,1,expected_failure,868,0.0,1.6904082298278809,False,False
-GradCAM,42,gaussian_noise,2,robust,972,1.0,0.00010106712579727173,True,True
-GradCAM,42,gaussian_noise,2,silent_drift,647,0.0,1.70798659324646,True,True
-GradCAM,42,gaussian_noise,2,stubborn_failure,330,1.0,0.0006017908453941345,False,False
-GradCAM,42,gaussian_noise,2,expected_failure,971,0.0,1.9369796514511108,False,False
-GradCAM,42,gaussian_noise,3,robust,111,1.0,0.00028127431869506836,True,True
-GradCAM,42,gaussian_noise,3,silent_drift,685,0.0,1.7889231443405151,True,True
-GradCAM,42,gaussian_noise,3,stubborn_failure,664,1.0,0.0007644891738891602,True,False
-GradCAM,42,gaussian_noise,3,expected_failure,726,0.0,1.9921125173568726,False,False
-GradCAM,42,gaussian_noise,5,robust,316,1.0,0.003513440489768982,True,True
-GradCAM,42,gaussian_noise,5,silent_drift,265,0.0,1.7732065916061401,True,True
-GradCAM,42,gaussian_noise,5,stubborn_failure,860,1.0,0.006314575672149658,False,False
-GradCAM,42,gaussian_noise,5,expected_failure,810,0.0,1.8109309673309326,False,False
-GradCAM,52,brightness,1,robust,431,1.0,3.8743019104003906e-07,True,True
-GradCAM,52,brightness,1,silent_drift,375,0.0,0.5028274059295654,True,True
-GradCAM,52,brightness,1,stubborn_failure,920,1.0,0.0009178146719932556,True,False
-GradCAM,52,brightness,1,expected_failure,752,0.0,0.2625802755355835,False,False
-GradCAM,52,brightness,2,robust,243,1.0,6.649643182754517e-06,True,True
-GradCAM,52,brightness,2,silent_drift,375,0.0,0.8196737766265869,True,True
-GradCAM,52,brightness,2,stubborn_failure,469,1.0,0.002406597137451172,False,False
-GradCAM,52,brightness,2,expected_failure,179,0.0,0.4362558126449585,False,False
-GradCAM,52,brightness,3,robust,514,1.0,2.545863389968872e-05,True,True
-GradCAM,52,brightness,3,silent_drift,156,0.0,1.2361538410186768,True,True
-GradCAM,52,brightness,3,stubborn_failure,586,1.0,0.005696937441825867,True,False
-GradCAM,52,brightness,3,expected_failure,472,0.0,1.3226304054260254,False,False
-GradCAM,52,brightness,5,robust,13,1.0,4.322081804275513e-05,True,True
-GradCAM,52,brightness,5,silent_drift,106,0.0,1.3972446918487549,True,True
-GradCAM,52,brightness,5,stubborn_failure,862,1.0,0.004364825785160065,True,False
-GradCAM,52,brightness,5,expected_failure,267,0.0,1.6613707542419434,False,False
-GradCAM,52,fog,1,robust,781,1.0,4.284083843231201e-06,True,True
-GradCAM,52,fog,1,silent_drift,995,0.0,0.9143622517585754,True,True
-GradCAM,52,fog,1,stubborn_failure,220,1.0,0.0017666816711425781,False,False
-GradCAM,52,fog,1,expected_failure,692,0.0,0.3999277651309967,True,False
-GradCAM,52,fog,2,robust,726,1.0,5.07161021232605e-05,True,True
-GradCAM,52,fog,2,silent_drift,277,0.0,1.2655537128448486,True,True
-GradCAM,52,fog,2,stubborn_failure,845,1.0,0.006927490234375,True,False
-GradCAM,52,fog,2,expected_failure,704,0.0,1.1468740701675415,False,False
-GradCAM,52,fog,3,robust,521,1.0,6.952136754989624e-05,True,True
-GradCAM,52,fog,3,silent_drift,707,0.0,1.299103021621704,True,True
-GradCAM,52,fog,3,stubborn_failure,84,1.0,8.165836334228516e-05,False,False
-GradCAM,52,fog,3,expected_failure,591,0.0,1.6622918844223022,False,False
-GradCAM,52,fog,5,robust,439,1.0,8.009374141693115e-06,True,True
-GradCAM,52,fog,5,silent_drift,784,0.0,1.6216404438018799,True,True
-GradCAM,52,fog,5,stubborn_failure,634,1.0,0.010692611336708069,True,False
-GradCAM,52,fog,5,expected_failure,674,0.0,1.82901132106781,False,False
-GradCAM,52,gaussian_noise,1,robust,963,1.0,4.201382398605347e-05,True,True
-GradCAM,52,gaussian_noise,1,silent_drift,130,0.0,1.7449637651443481,True,True
-GradCAM,52,gaussian_noise,1,stubborn_failure,762,1.0,0.008685946464538574,False,False
-GradCAM,52,gaussian_noise,1,expected_failure,339,0.0,1.622941493988037,False,False
-GradCAM,52,gaussian_noise,2,robust,691,1.0,6.579235196113586e-05,True,True
-GradCAM,52,gaussian_noise,2,silent_drift,518,0.0,1.8730324506759644,True,True
-GradCAM,52,gaussian_noise,2,stubborn_failure,826,1.0,0.0006017908453941345,False,False
-GradCAM,52,gaussian_noise,2,expected_failure,637,0.0,1.7377339601516724,False,False
-GradCAM,52,gaussian_noise,3,robust,246,1.0,0.000593431293964386,True,True
-GradCAM,52,gaussian_noise,3,silent_drift,344,0.0,1.6503568887710571,True,True
-GradCAM,52,gaussian_noise,3,stubborn_failure,508,1.0,0.0007644891738891602,True,False
-GradCAM,52,gaussian_noise,3,expected_failure,89,0.0,1.8703606128692627,False,False
-GradCAM,52,gaussian_noise,5,robust,669,1.0,0.00032098591327667236,True,True
-GradCAM,52,gaussian_noise,5,silent_drift,238,0.0,1.9336175918579102,True,True
-GradCAM,52,gaussian_noise,5,stubborn_failure,361,1.0,0.009088501334190369,False,False
-GradCAM,52,gaussian_noise,5,expected_failure,755,0.0,1.884267807006836,False,False
-GradCAM,128,brightness,1,robust,454,1.0,8.665025234222412e-06,True,True
-GradCAM,128,brightness,1,silent_drift,25,0.0,0.3464502692222595,True,True
-GradCAM,128,brightness,1,stubborn_failure,150,1.0,0.00023103505373001099,True,False
-GradCAM,128,brightness,1,expected_failure,924,0.0,0.7498171329498291,True,False
-GradCAM,128,brightness,2,robust,762,1.0,1.3262033462524414e-06,True,True
-GradCAM,128,brightness,2,silent_drift,187,0.0,0.8291475772857666,True,True
-GradCAM,128,brightness,2,stubborn_failure,150,1.0,4.9173831939697266e-06,True,False
-GradCAM,128,brightness,2,expected_failure,924,0.0,1.1766290664672852,True,False
-GradCAM,128,brightness,3,robust,219,1.0,0.00011523067951202393,True,True
-GradCAM,128,brightness,3,silent_drift,870,0.0,1.2343151569366455,True,True
-GradCAM,128,brightness,3,stubborn_failure,768,1.0,0.0005522966384887695,False,False
-GradCAM,128,brightness,3,expected_failure,924,0.0,1.203339695930481,True,False
-GradCAM,128,brightness,5,robust,148,1.0,1.0952353477478027e-05,True,True
-GradCAM,128,brightness,5,silent_drift,698,0.0,1.180141568183899,True,True
-GradCAM,128,brightness,5,stubborn_failure,288,1.0,0.005049467086791992,True,False
-GradCAM,128,brightness,5,expected_failure,870,0.0,1.5227792263031006,False,False
-GradCAM,128,fog,1,robust,792,1.0,3.6559998989105225e-05,True,True
-GradCAM,128,fog,1,silent_drift,483,0.0,0.7435985803604126,True,True
-GradCAM,128,fog,1,stubborn_failure,176,1.0,0.0023150891065597534,True,False
-GradCAM,128,fog,1,expected_failure,332,0.0,0.3848377466201782,True,False
-GradCAM,128,fog,2,robust,6,1.0,3.6247074604034424e-05,True,True
-GradCAM,128,fog,2,silent_drift,127,0.0,1.3012152910232544,True,True
-GradCAM,128,fog,2,stubborn_failure,694,1.0,0.004674263298511505,True,False
-GradCAM,128,fog,2,expected_failure,919,0.0,1.2123221158981323,False,False
-GradCAM,128,fog,3,robust,227,1.0,4.291534423828125e-06,True,True
-GradCAM,128,fog,3,silent_drift,251,0.0,1.3832706212997437,True,True
-GradCAM,128,fog,3,stubborn_failure,736,1.0,0.0010867118835449219,False,False
-GradCAM,128,fog,3,expected_failure,679,0.0,1.8316469192504883,False,False
-GradCAM,128,fog,5,robust,491,1.0,5.379319190979004e-06,True,True
-GradCAM,128,fog,5,silent_drift,925,0.0,1.8223373889923096,True,True
-GradCAM,128,fog,5,stubborn_failure,630,1.0,0.0010141879320144653,False,False
-GradCAM,128,fog,5,expected_failure,482,0.0,1.8290190696716309,False,False
-GradCAM,128,gaussian_noise,1,robust,774,1.0,7.146596908569336e-05,True,True
-GradCAM,128,gaussian_noise,1,silent_drift,457,0.0,1.3890643119812012,True,True
-GradCAM,128,gaussian_noise,1,stubborn_failure,150,1.0,0.001821570098400116,True,False
-GradCAM,128,gaussian_noise,1,expected_failure,70,0.0,1.6056134700775146,False,False
-GradCAM,128,gaussian_noise,2,robust,787,1.0,8.097663521766663e-05,True,True
-GradCAM,128,gaussian_noise,2,silent_drift,990,0.0,1.9191255569458008,True,True
-GradCAM,128,gaussian_noise,2,stubborn_failure,607,1.0,0.03335028886795044,False,False
-GradCAM,128,gaussian_noise,2,expected_failure,223,0.0,1.9680237770080566,False,False
-GradCAM,128,gaussian_noise,3,robust,78,1.0,2.3946166038513184e-05,True,True
-GradCAM,128,gaussian_noise,3,silent_drift,960,0.0,1.8034948110580444,True,True
-GradCAM,128,gaussian_noise,3,stubborn_failure,912,1.0,0.0007451027631759644,True,False
-GradCAM,128,gaussian_noise,3,expected_failure,423,0.0,1.8757330179214478,False,False
-GradCAM,128,gaussian_noise,5,robust,292,1.0,0.0003232434391975403,True,True
-GradCAM,128,gaussian_noise,5,silent_drift,209,0.0,1.7746838331222534,True,True
-GradCAM,128,gaussian_noise,5,stubborn_failure,664,1.0,0.055388517677783966,False,False
-GradCAM,128,gaussian_noise,5,expected_failure,489,0.0,1.8717060089111328,False,False
-GradCAM,1200,brightness,1,robust,241,1.0,1.2367963790893555e-06,True,True
-GradCAM,1200,brightness,1,silent_drift,765,0.0,0.2955266535282135,True,True
-GradCAM,1200,brightness,1,stubborn_failure,224,1.0,0.00011871755123138428,True,False
-GradCAM,1200,brightness,1,expected_failure,251,0.0,0.43413054943084717,True,False
-GradCAM,1200,brightness,2,robust,563,1.0,1.3262033462524414e-06,True,True
-GradCAM,1200,brightness,2,silent_drift,980,0.0,0.7796187996864319,True,True
-GradCAM,1200,brightness,2,stubborn_failure,594,1.0,0.0004862770438194275,True,False
-GradCAM,1200,brightness,2,expected_failure,559,0.0,0.8913463354110718,True,False
-GradCAM,1200,brightness,3,robust,676,1.0,4.664063453674316e-06,True,True
-GradCAM,1200,brightness,3,silent_drift,980,0.0,0.9959690570831299,True,True
-GradCAM,1200,brightness,3,stubborn_failure,244,1.0,0.006493687629699707,False,False
-GradCAM,1200,brightness,3,expected_failure,233,0.0,1.3739938735961914,False,False
-GradCAM,1200,brightness,5,robust,52,1.0,5.106627941131592e-05,True,True
-GradCAM,1200,brightness,5,silent_drift,765,0.0,1.5013201236724854,True,True
-GradCAM,1200,brightness,5,stubborn_failure,544,1.0,0.009069517254829407,True,False
-GradCAM,1200,brightness,5,expected_failure,980,0.0,1.491750717163086,False,False
-GradCAM,1200,fog,1,robust,650,1.0,2.0042061805725098e-06,True,True
-GradCAM,1200,fog,1,silent_drift,886,0.0,0.7435985803604126,True,True
-GradCAM,1200,fog,1,stubborn_failure,275,1.0,0.00416874885559082,True,False
-GradCAM,1200,fog,1,expected_failure,251,0.0,0.6964559555053711,True,False
-GradCAM,1200,fog,2,robust,59,1.0,4.3720006942749023e-05,True,True
-GradCAM,1200,fog,2,silent_drift,546,0.0,0.9801009297370911,True,True
-GradCAM,1200,fog,2,stubborn_failure,470,1.0,0.010688245296478271,False,False
-GradCAM,1200,fog,2,expected_failure,61,0.0,1.19011652469635,True,False
-GradCAM,1200,fog,3,robust,502,1.0,5.46872615814209e-06,True,True
-GradCAM,1200,fog,3,silent_drift,665,0.0,1.3481742143630981,True,True
-GradCAM,1200,fog,3,stubborn_failure,912,1.0,0.0009655654430389404,True,False
-GradCAM,1200,fog,3,expected_failure,543,0.0,1.7097026109695435,False,False
-GradCAM,1200,fog,5,robust,816,1.0,9.454786777496338e-06,True,True
-GradCAM,1200,fog,5,silent_drift,54,0.0,1.5163427591323853,True,True
-GradCAM,1200,fog,5,stubborn_failure,969,1.0,0.02634044736623764,False,False
-GradCAM,1200,fog,5,expected_failure,144,0.0,1.7654410600662231,False,False
-GradCAM,1200,gaussian_noise,1,robust,528,1.0,2.228468656539917e-05,True,True
-GradCAM,1200,gaussian_noise,1,silent_drift,465,0.0,1.6576480865478516,True,True
-GradCAM,1200,gaussian_noise,1,stubborn_failure,912,1.0,0.008684635162353516,True,False
-GradCAM,1200,gaussian_noise,1,expected_failure,303,0.0,1.6509007215499878,False,False
-GradCAM,1200,gaussian_noise,2,robust,885,1.0,0.00027310848236083984,True,True
-GradCAM,1200,gaussian_noise,2,silent_drift,145,0.0,1.7079989910125732,True,True
-GradCAM,1200,gaussian_noise,2,stubborn_failure,637,1.0,0.006113335490226746,False,False
-GradCAM,1200,gaussian_noise,2,expected_failure,237,0.0,1.8955239057540894,False,False
-GradCAM,1200,gaussian_noise,3,robust,879,1.0,2.3946166038513184e-05,True,True
-GradCAM,1200,gaussian_noise,3,silent_drift,627,0.0,1.8034946918487549,True,True
-GradCAM,1200,gaussian_noise,3,stubborn_failure,51,1.0,0.00027601420879364014,False,False
-GradCAM,1200,gaussian_noise,3,expected_failure,421,0.0,1.9699749946594238,False,False
-GradCAM,1200,gaussian_noise,5,robust,752,1.0,0.0011537820100784302,True,True
-GradCAM,1200,gaussian_noise,5,silent_drift,704,0.0,1.7162361145019531,True,True
-GradCAM,1200,gaussian_noise,5,stubborn_failure,690,1.0,0.005331873893737793,False,False
-GradCAM,1200,gaussian_noise,5,expected_failure,208,0.0,1.999552845954895,False,False
-IG,7,brightness,1,robust,910,0.8545454740524292,0.00011244416236877441,True,True
-IG,7,brightness,1,silent_drift,78,0.3246753215789795,0.46693021059036255,True,True
-IG,7,brightness,1,stubborn_failure,402,0.7288135886192322,0.0005618482828140259,True,False
-IG,7,brightness,1,expected_failure,557,0.47826087474823,0.22051450610160828,True,False
-IG,7,brightness,2,robust,325,0.6721311211585999,0.0002597793936729431,True,True
-IG,7,brightness,2,silent_drift,753,0.17241379618644714,0.7795529365539551,True,True
-IG,7,brightness,2,stubborn_failure,132,0.6190476417541504,0.007458329200744629,True,False
-IG,7,brightness,2,expected_failure,78,0.21176470816135406,0.8873723149299622,False,False
-IG,7,brightness,3,robust,192,0.5692307949066162,0.0005028247833251953,True,True
-IG,7,brightness,3,silent_drift,753,0.10869564861059189,0.9959032535552979,True,True
-IG,7,brightness,3,stubborn_failure,147,0.3733333349227905,0.0027380287647247314,True,False
-IG,7,brightness,3,expected_failure,78,0.14606741070747375,0.7615154385566711,False,False
-IG,7,brightness,5,robust,198,0.22891566157341003,0.0011336281895637512,True,True
-IG,7,brightness,5,silent_drift,913,0.03030303120613098,1.3869072198867798,True,True
-IG,7,brightness,5,stubborn_failure,788,0.12087912112474442,0.0051566362380981445,True,False
-IG,7,brightness,5,expected_failure,753,0.019999999552965164,1.491684913635254,False,False
-IG,7,fog,1,robust,961,0.8545454740524292,2.668052911758423e-05,True,True
-IG,7,fog,1,silent_drift,685,0.3918918967247009,0.5659863948822021,True,True
-IG,7,fog,1,stubborn_failure,402,0.7288135886192322,0.0013023614883422852,True,False
-IG,7,fog,1,expected_failure,729,0.4166666567325592,0.36226704716682434,True,False
-IG,7,fog,2,robust,917,0.7288135886192322,7.168948650360107e-05,True,True
-IG,7,fog,2,silent_drift,549,0.2142857164144516,1.448438048362732,True,True
-IG,7,fog,2,stubborn_failure,399,0.4714285731315613,0.004682213068008423,True,False
-IG,7,fog,2,expected_failure,695,0.19767442345619202,1.342376947402954,False,False
-IG,7,fog,3,robust,492,0.6451612710952759,0.0005820915102958679,True,True
-IG,7,fog,3,silent_drift,233,0.13333334028720856,1.0154123306274414,True,True
-IG,7,fog,3,stubborn_failure,479,0.59375,0.11604008078575134,True,False
-IG,7,fog,3,expected_failure,549,0.040816325694322586,1.2256786823272705,False,False
-IG,7,fog,5,robust,799,0.36000001430511475,0.0013305172324180603,True,True
-IG,7,fog,5,silent_drift,321,0.03030303120613098,1.744969129562378,True,True
-IG,7,fog,5,stubborn_failure,399,0.2409638613462448,0.006701536476612091,True,False
-IG,7,fog,5,expected_failure,257,0.03030303120613098,1.2603193521499634,False,False
-IG,7,gaussian_noise,1,robust,189,0.5223880410194397,0.0001464933156967163,True,True
-IG,7,gaussian_noise,1,silent_drift,307,0.10869564861059189,1.5589145421981812,True,True
-IG,7,gaussian_noise,1,stubborn_failure,6,0.39726027846336365,0.008060768246650696,True,False
-IG,7,gaussian_noise,1,expected_failure,784,0.0625,1.2206168174743652,False,False
-IG,7,gaussian_noise,2,robust,700,0.34210526943206787,0.0014055818319320679,True,True
-IG,7,gaussian_noise,2,silent_drift,390,0.0736842080950737,1.482550024986267,True,True
-IG,7,gaussian_noise,2,stubborn_failure,6,0.2142857164144516,0.004372760653495789,True,False
-IG,7,gaussian_noise,2,expected_failure,237,0.05154639109969139,1.6939104795455933,False,False
-IG,7,gaussian_noise,3,robust,88,0.2750000059604645,0.001699984073638916,True,True
-IG,7,gaussian_noise,3,silent_drift,904,0.05154639109969139,1.5749796628952026,True,True
-IG,7,gaussian_noise,3,stubborn_failure,193,0.2750000059604645,0.01620185375213623,False,False
-IG,7,gaussian_noise,3,expected_failure,220,0.051020409911870956,1.7544664144515991,False,False
-IG,7,gaussian_noise,5,robust,216,0.2142857164144516,0.0036495178937911987,True,True
-IG,7,gaussian_noise,5,silent_drift,143,0.03030303120613098,1.2486765384674072,True,True
-IG,7,gaussian_noise,5,stubborn_failure,349,0.20000000298023224,0.003833360970020294,False,False
-IG,7,gaussian_noise,5,expected_failure,529,0.03030303120613098,1.815825343132019,False,False
-IG,42,brightness,1,robust,122,0.8214285969734192,0.00017127394676208496,True,True
-IG,42,brightness,1,silent_drift,238,0.22891566157341003,0.5828516483306885,True,True
-IG,42,brightness,1,stubborn_failure,219,0.6451612710952759,0.0005257949233055115,True,False
-IG,42,brightness,1,expected_failure,897,0.43661972880363464,0.1605626344680786,True,False
-IG,42,brightness,2,robust,455,0.6721311211585999,2.275407314300537e-05,True,True
-IG,42,brightness,2,silent_drift,238,0.15909090638160706,0.6097081899642944,True,True
-IG,42,brightness,2,stubborn_failure,837,0.5454545617103577,0.004478812217712402,True,False
-IG,42,brightness,2,expected_failure,791,0.24390244483947754,0.7981798052787781,False,False
-IG,42,brightness,3,robust,931,0.5692307949066162,0.0004729032516479492,True,True
-IG,42,brightness,3,silent_drift,856,0.13333334028720856,1.0239107608795166,True,True
-IG,42,brightness,3,stubborn_failure,509,0.4166666567325592,0.002174466848373413,True,False
-IG,42,brightness,3,expected_failure,361,0.12087912112474442,0.9280481934547424,False,False
-IG,42,brightness,5,robust,382,0.34210526943206787,0.000690653920173645,True,True
-IG,42,brightness,5,silent_drift,226,0.03030303120613098,0.9624474048614502,True,True
-IG,42,brightness,5,stubborn_failure,509,0.24390244483947754,0.016177475452423096,True,False
-IG,42,brightness,5,expected_failure,361,0.019999999552965164,1.0752933025360107,False,False
-IG,42,fog,1,robust,853,0.8545454740524292,0.00012989342212677002,True,True
-IG,42,fog,1,silent_drift,761,0.37837839126586914,0.4942748546600342,True,True
-IG,42,fog,1,stubborn_failure,219,0.7586206793785095,0.00437367707490921,True,False
-IG,42,fog,1,expected_failure,897,0.39726027846336365,0.3730093240737915,True,False
-IG,42,fog,2,robust,445,0.699999988079071,0.0001500844955444336,True,True
-IG,42,fog,2,silent_drift,217,0.17241379618644714,1.3253957033157349,True,True
-IG,42,fog,2,stubborn_failure,998,0.6721311211585999,0.005876302719116211,True,False
-IG,42,fog,2,expected_failure,81,0.24390244483947754,1.6941782236099243,False,False
-IG,42,fog,3,robust,260,0.6721311211585999,0.0002478659152984619,True,True
-IG,42,fog,3,silent_drift,788,0.14606741070747375,1.1191984415054321,True,True
-IG,42,fog,3,stubborn_failure,31,0.5,0.0009959787130355835,True,False
-IG,42,fog,3,expected_failure,101,0.13333334028720856,1.3604602813720703,False,False
-IG,42,fog,5,robust,676,0.34210526943206787,0.002224639058113098,True,True
-IG,42,fog,5,silent_drift,295,0.0736842080950737,1.6170262098312378,True,True
-IG,42,fog,5,stubborn_failure,219,0.2409638613462448,0.006701536476612091,True,False
-IG,42,fog,5,expected_failure,217,0.009900989942252636,1.3463914394378662,False,False
-IG,42,gaussian_noise,1,robust,260,0.4166666567325592,0.00031797587871551514,True,True
-IG,42,gaussian_noise,1,silent_drift,802,0.12087912112474442,1.176093339920044,True,True
-IG,42,gaussian_noise,1,stubborn_failure,31,0.3205128312110901,0.008654221892356873,True,False
-IG,42,gaussian_noise,1,expected_failure,868,0.0736842080950737,1.6904082298278809,False,False
-IG,42,gaussian_noise,2,robust,932,0.39726027846336365,0.00019768625497817993,True,True
-IG,42,gaussian_noise,2,silent_drift,151,0.019999999552965164,1.236253261566162,True,True
-IG,42,gaussian_noise,2,stubborn_failure,71,0.34210526943206787,0.017092064023017883,False,False
-IG,42,gaussian_noise,2,expected_failure,323,0.05154639109969139,1.2750329971313477,False,False
-IG,42,gaussian_noise,3,robust,189,0.3076923191547394,0.004548780620098114,True,True
-IG,42,gaussian_noise,3,silent_drift,386,0.0625,1.6284117698669434,True,True
-IG,42,gaussian_noise,3,stubborn_failure,330,0.24390244483947754,0.0014092549681663513,False,False
-IG,42,gaussian_noise,3,expected_failure,423,0.0625,1.7412928342819214,False,False
-IG,42,gaussian_noise,5,robust,627,0.22891566157341003,0.003968067467212677,True,True
-IG,42,gaussian_noise,5,silent_drift,75,0.029999999329447746,1.3580784797668457,True,True
-IG,42,gaussian_noise,5,stubborn_failure,330,0.1860465109348297,0.011593252420425415,False,False
-IG,42,gaussian_noise,5,expected_failure,581,0.019999999552965164,1.688342571258545,False,False
-IG,52,brightness,1,robust,360,0.9245283007621765,0.00015524029731750488,True,True
-IG,52,brightness,1,silent_drift,956,0.4166666567325592,0.26839321851730347,True,True
-IG,52,brightness,1,stubborn_failure,988,0.699999988079071,0.0012814104557037354,True,False
-IG,52,brightness,1,expected_failure,154,0.47826087474823,0.1349949836730957,True,False
-IG,52,brightness,2,robust,617,0.6451612710952759,0.0004030168056488037,True,True
-IG,52,brightness,2,silent_drift,504,0.2750000059604645,0.450487345457077,True,True
-IG,52,brightness,2,stubborn_failure,988,0.47826087474823,0.0040829479694366455,True,False
-IG,52,brightness,2,expected_failure,399,0.25925925374031067,0.6298621296882629,True,False
-IG,52,brightness,3,robust,668,0.5223880410194397,0.00010361522436141968,True,True
-IG,52,brightness,3,silent_drift,504,0.08510638028383255,0.6434531211853027,True,True
-IG,52,brightness,3,stubborn_failure,862,0.37837839126586914,0.006295002996921539,True,False
-IG,52,brightness,3,expected_failure,905,0.17241379618644714,0.3836151957511902,False,False
-IG,52,brightness,5,robust,24,0.37837839126586914,0.0005689337849617004,True,True
-IG,52,brightness,5,silent_drift,106,0.009900989942252636,1.3972446918487549,True,True
-IG,52,brightness,5,stubborn_failure,211,0.34210526943206787,0.004543140530586243,False,False
-IG,52,brightness,5,expected_failure,267,0.03030303120613098,1.6613707542419434,False,False
-IG,52,fog,1,robust,551,0.8545454740524292,0.0004186853766441345,True,True
-IG,52,fog,1,silent_drift,308,0.3918918967247009,0.5659863948822021,True,True
-IG,52,fog,1,stubborn_failure,295,0.8214285969734192,0.006379812955856323,True,False
-IG,52,fog,1,expected_failure,765,0.4571428596973419,0.6134966611862183,False,False
-IG,52,fog,2,robust,42,0.699999988079071,0.00014331936836242676,True,True
-IG,52,fog,2,silent_drift,826,0.20000000298023224,0.6974803805351257,True,True
-IG,52,fog,2,stubborn_failure,295,0.6190476417541504,0.0021967291831970215,True,False
-IG,52,fog,2,expected_failure,928,0.17241379618644714,1.2069567441940308,False,False
-IG,52,fog,3,robust,82,0.6451612710952759,0.0002800077199935913,True,True
-IG,52,fog,3,silent_drift,707,0.15909090638160706,1.299103021621704,True,True
-IG,52,fog,3,stubborn_failure,84,0.4571428596973419,8.165836334228516e-05,False,False
-IG,52,fog,3,expected_failure,928,0.13333334028720856,1.297671914100647,False,False
-IG,52,fog,5,robust,381,0.4166666567325592,0.0020108968019485474,True,True
-IG,52,fog,5,silent_drift,620,0.009900989942252636,1.4448091983795166,True,True
-IG,52,fog,5,stubborn_failure,508,0.29113924503326416,0.023031428456306458,True,False
-IG,52,fog,5,expected_failure,223,0.040816325694322586,1.6675395965576172,False,False
-IG,52,gaussian_noise,1,robust,760,0.43661972880363464,0.0003688633441925049,True,True
-IG,52,gaussian_noise,1,silent_drift,815,0.08510638028383255,0.9369809031486511,True,True
-IG,52,gaussian_noise,1,stubborn_failure,544,0.33766233921051025,0.010373055934906006,True,False
-IG,52,gaussian_noise,1,expected_failure,925,0.09677419066429138,1.5691509246826172,False,False
-IG,52,gaussian_noise,2,robust,347,0.36000001430511475,0.0011360570788383484,True,True
-IG,52,gaussian_noise,2,silent_drift,450,0.0625,1.1772489547729492,True,True
-IG,52,gaussian_noise,2,stubborn_failure,907,0.22891566157341003,0.002087891101837158,False,False
-IG,52,gaussian_noise,2,expected_failure,920,0.03030303120613098,1.6221290826797485,False,False
-IG,52,gaussian_noise,3,robust,671,0.3246753215789795,0.00609162449836731,True,True
-IG,52,gaussian_noise,3,silent_drift,226,0.0625,1.4086272716522217,True,True
-IG,52,gaussian_noise,3,stubborn_failure,826,0.24390244483947754,0.0014092549681663513,False,False
-IG,52,gaussian_noise,3,expected_failure,387,0.051020409911870956,1.7544664144515991,False,False
-IG,52,gaussian_noise,5,robust,746,0.21176470816135406,0.005525138229131699,True,True
-IG,52,gaussian_noise,5,silent_drift,420,0.05154639109969139,1.7293438911437988,True,True
-IG,52,gaussian_noise,5,stubborn_failure,171,0.1860465109348297,0.0020456910133361816,True,False
-IG,52,gaussian_noise,5,expected_failure,85,0.019999999552965164,1.6372976303100586,False,False
-IG,128,brightness,1,robust,454,0.8214285969734192,8.665025234222412e-06,True,True
-IG,128,brightness,1,silent_drift,226,0.3246753215789795,0.46695488691329956,True,True
-IG,128,brightness,1,stubborn_failure,21,0.7288135886192322,0.0023602843284606934,False,False
-IG,128,brightness,1,expected_failure,463,0.4166666567325592,0.12202158570289612,True,False
-IG,128,brightness,2,robust,422,0.6190476417541504,0.0003740936517715454,True,True
-IG,128,brightness,2,silent_drift,815,0.22891566157341003,0.9368356466293335,True,True
-IG,128,brightness,2,stubborn_failure,997,0.560606062412262,0.002156555652618408,True,False
-IG,128,brightness,2,expected_failure,226,0.21176470816135406,0.8873969912528992,False,False
-IG,128,brightness,3,robust,464,0.6190476417541504,0.0007870346307754517,True,True
-IG,128,brightness,3,silent_drift,418,0.14606741070747375,0.8799493312835693,True,True
-IG,128,brightness,3,stubborn_failure,118,0.5454545617103577,0.005647994577884674,True,False
-IG,128,brightness,3,expected_failure,815,0.15909090638160706,1.2104686498641968,False,False
-IG,128,brightness,5,robust,440,0.2750000059604645,0.0009595751762390137,True,True
-IG,128,brightness,5,silent_drift,853,0.03030303120613098,0.8184738159179688,True,True
-IG,128,brightness,5,stubborn_failure,559,0.25925925374031067,0.010237164795398712,True,False
-IG,128,brightness,5,expected_failure,870,0.03030303120613098,1.5227792263031006,False,False
-IG,128,fog,1,robust,208,0.8214285969734192,0.00016973912715911865,True,True
-IG,128,fog,1,silent_drift,200,0.39726027846336365,0.5655771493911743,True,True
-IG,128,fog,1,stubborn_failure,396,0.7288135886192322,0.0009546950459480286,True,False
-IG,128,fog,1,expected_failure,350,0.39726027846336365,0.4590761661529541,False,False
-IG,128,fog,2,robust,646,0.7894737124443054,0.0005935877561569214,True,True
-IG,128,fog,2,silent_drift,66,0.2142857164144516,1.4485632181167603,True,True
-IG,128,fog,2,stubborn_failure,768,0.5692307949066162,0.005503177642822266,True,False
-IG,128,fog,2,expected_failure,350,0.17241379618644714,1.536062479019165,False,False
-IG,128,fog,3,robust,413,0.6451612710952759,0.00021319091320037842,True,True
-IG,128,fog,3,silent_drift,843,0.15909090638160706,1.6629465818405151,True,True
-IG,128,fog,3,stubborn_failure,768,0.5,0.007719635963439941,True,False
-IG,128,fog,3,expected_failure,66,0.040816325694322586,1.2258038520812988,False,False
-IG,128,fog,5,robust,209,0.36000001430511475,0.005784943699836731,True,True
-IG,128,fog,5,silent_drift,240,0.040816325694322586,1.6916472911834717,True,True
-IG,128,fog,5,stubborn_failure,672,0.3076923191547394,0.007045328617095947,False,False
-IG,128,fog,5,expected_failure,472,0.03030303120613098,1.5184108018875122,False,False
-IG,128,gaussian_noise,1,robust,413,0.4166666567325592,0.00035265088081359863,True,True
-IG,128,gaussian_noise,1,silent_drift,615,0.0736842080950737,1.4038887023925781,True,True
-IG,128,gaussian_noise,1,stubborn_failure,396,0.36000001430511475,0.010862857103347778,True,False
-IG,128,gaussian_noise,1,expected_failure,350,0.09677419066429138,1.5583233833312988,False,False
-IG,128,gaussian_noise,2,robust,386,0.36000001430511475,0.0003520473837852478,True,True
-IG,128,gaussian_noise,2,silent_drift,755,0.019999999552965164,1.2362828254699707,True,True
-IG,128,gaussian_noise,2,stubborn_failure,167,0.39726027846336365,0.04394760727882385,False,False
-IG,128,gaussian_noise,2,expected_failure,559,0.03030303120613098,1.622140645980835,False,False
-IG,128,gaussian_noise,3,robust,390,0.2750000059604645,0.004845671355724335,True,True
-IG,128,gaussian_noise,3,silent_drift,791,0.05154639109969139,1.321516513824463,True,True
-IG,128,gaussian_noise,3,stubborn_failure,866,0.2142857164144516,0.01801373064517975,False,False
-IG,128,gaussian_noise,3,expected_failure,975,0.03030303120613098,1.6682696342468262,False,False
-IG,128,gaussian_noise,5,robust,835,0.3246753215789795,0.009227544069290161,True,True
-IG,128,gaussian_noise,5,silent_drift,998,0.019999999552965164,1.7363874912261963,True,True
-IG,128,gaussian_noise,5,stubborn_failure,866,0.19767442345619202,0.014818727970123291,False,False
-IG,128,gaussian_noise,5,expected_failure,596,0.03030303120613098,1.6671252250671387,False,False
-IG,1200,brightness,1,robust,897,0.8214285969734192,6.57886266708374e-06,True,True
-IG,1200,brightness,1,silent_drift,963,0.4166666567325592,0.2681983709335327,True,True
-IG,1200,brightness,1,stubborn_failure,112,0.7288135886192322,0.0009336993098258972,True,False
-IG,1200,brightness,1,expected_failure,233,0.5147058963775635,0.24838995933532715,False,False
-IG,1200,brightness,2,robust,897,0.6451612710952759,6.59450888633728e-05,True,True
-IG,1200,brightness,2,silent_drift,980,0.17241379618644714,0.7796187996864319,True,True
-IG,1200,brightness,2,stubborn_failure,112,0.47826087474823,0.0010406076908111572,True,False
-IG,1200,brightness,2,expected_failure,233,0.2261904776096344,0.9949234127998352,False,False
-IG,1200,brightness,3,robust,30,0.5692307949066162,3.8743019104003906e-05,True,True
-IG,1200,brightness,3,silent_drift,980,0.10869564861059189,0.9959690570831299,True,True
-IG,1200,brightness,3,stubborn_failure,112,0.43661972880363464,0.0016364380717277527,True,False
-IG,1200,brightness,3,expected_failure,233,0.14606741070747375,1.3739938735961914,False,False
-IG,1200,brightness,5,robust,962,0.29113924503326416,0.0006811916828155518,True,True
-IG,1200,brightness,5,silent_drift,413,0.03030303120613098,0.8054059147834778,True,True
-IG,1200,brightness,5,stubborn_failure,637,0.3076923191547394,0.03895734250545502,True,False
-IG,1200,brightness,5,expected_failure,980,0.019999999552965164,1.491750717163086,False,False
-IG,1200,fog,1,robust,979,0.8545454740524292,0.0002221912145614624,True,True
-IG,1200,fog,1,silent_drift,423,0.4507042169570923,0.4040359854698181,True,True
-IG,1200,fog,1,stubborn_failure,275,0.7894737124443054,0.00416874885559082,True,False
-IG,1200,fog,1,expected_failure,359,0.4507042169570923,0.4537210464477539,True,False
-IG,1200,fog,2,robust,736,0.7931034564971924,0.0009576231241226196,True,True
-IG,1200,fog,2,silent_drift,796,0.2874999940395355,0.9212863445281982,True,True
-IG,1200,fog,2,stubborn_failure,275,0.59375,0.014947131276130676,True,False
-IG,1200,fog,2,expected_failure,295,0.25925925374031067,1.170097827911377,False,False
-IG,1200,fog,3,robust,455,0.7586206793785095,5.217641592025757e-05,True,True
-IG,1200,fog,3,silent_drift,407,0.12087912112474442,0.8452317118644714,True,True
-IG,1200,fog,3,stubborn_failure,701,0.49275362491607666,0.00011217594146728516,True,False
-IG,1200,fog,3,expected_failure,15,0.13333334028720856,1.241714596748352,False,False
-IG,1200,fog,5,robust,99,0.3246753215789795,0.002285212278366089,True,True
-IG,1200,fog,5,silent_drift,505,0.05154639109969139,1.0103776454925537,True,True
-IG,1200,fog,5,stubborn_failure,699,0.43661972880363464,0.06863638758659363,False,False
-IG,1200,fog,5,expected_failure,543,0.0625,1.7615740299224854,False,False
-IG,1200,gaussian_noise,1,robust,23,0.6721311211585999,5.322694778442383e-05,True,True
-IG,1200,gaussian_noise,1,silent_drift,684,0.09677419066429138,1.0521996021270752,True,True
-IG,1200,gaussian_noise,1,stubborn_failure,912,0.3205128312110901,0.008684635162353516,True,False
-IG,1200,gaussian_noise,1,expected_failure,47,0.09677419066429138,1.3446155786514282,False,False
-IG,1200,gaussian_noise,2,robust,520,0.39726027846336365,0.0001969262957572937,True,True
-IG,1200,gaussian_noise,2,silent_drift,970,0.0625,1.4344539642333984,True,True
-IG,1200,gaussian_noise,2,stubborn_failure,922,0.20000000298023224,0.0028804242610931396,False,False
-IG,1200,gaussian_noise,2,expected_failure,917,0.040816325694322586,1.8270094394683838,False,False
-IG,1200,gaussian_noise,3,robust,587,0.34210526943206787,0.0033390969038009644,True,True
-IG,1200,gaussian_noise,3,silent_drift,611,0.0729166641831398,1.785071849822998,True,True
-IG,1200,gaussian_noise,3,stubborn_failure,824,0.25925925374031067,0.010572731494903564,False,False
-IG,1200,gaussian_noise,3,expected_failure,765,0.019999999552965164,1.4094350337982178,False,False
-IG,1200,gaussian_noise,5,robust,467,0.2142857164144516,0.005139186978340149,True,True
-IG,1200,gaussian_noise,5,silent_drift,213,0.03030303120613098,1.9469696283340454,True,True
-IG,1200,gaussian_noise,5,stubborn_failure,797,0.2750000059604645,0.005530893802642822,False,False
-IG,1200,gaussian_noise,5,expected_failure,292,0.019999999552965164,1.688348650932312,False,False
+GradCAM,7,brightness,1,Robust,710,0.9994544982910156,6.582587957382202e-05,True,True
+GradCAM,7,brightness,1,Silent Drift,921,0.5430932641029358,0.28189268708229065,True,True
+GradCAM,7,brightness,1,Stubborn Failure,270,0.9985920786857605,0.0017147660255432129,True,False
+GradCAM,7,brightness,1,Expected Failure,101,0.7599538564682007,0.23122549057006836,True,False
+GradCAM,7,brightness,2,Robust,602,0.999376654624939,0.0003565102815628052,True,True
+GradCAM,7,brightness,2,Silent Drift,753,-0.6002572774887085,0.7795529365539551,True,True
+GradCAM,7,brightness,2,Stubborn Failure,519,0.9986737966537476,0.009115546941757202,True,False
+GradCAM,7,brightness,2,Expected Failure,101,0.6562233567237854,0.4756430387496948,True,False
+GradCAM,7,brightness,3,Robust,638,0.9993550181388855,0.000472143292427063,True,True
+GradCAM,7,brightness,3,Silent Drift,753,-0.5932915806770325,0.9959032535552979,True,True
+GradCAM,7,brightness,3,Stubborn Failure,402,0.9920452833175659,0.011982828378677368,True,False
+GradCAM,7,brightness,3,Expected Failure,921,-0.8314138054847717,0.49818137288093567,False,False
+GradCAM,7,brightness,5,Robust,948,0.9992673993110657,0.0005014091730117798,True,True
+GradCAM,7,brightness,5,Silent Drift,414,-0.34886541962623596,0.985795259475708,True,True
+GradCAM,7,brightness,5,Stubborn Failure,328,0.9976035356521606,0.03806057572364807,False,False
+GradCAM,7,brightness,5,Expected Failure,753,-0.6024105548858643,1.491684913635254,False,False
+GradCAM,7,fog,1,Robust,243,0.999284029006958,0.00026123225688934326,True,True
+GradCAM,7,fog,1,Silent Drift,41,-0.3542144000530243,0.5688489079475403,True,True
+GradCAM,7,fog,1,Stubborn Failure,402,0.9924407005310059,0.0013023614883422852,True,False
+GradCAM,7,fog,1,Expected Failure,503,0.24447062611579895,1.0713164806365967,False,False
+GradCAM,7,fog,2,Robust,783,0.9988909959793091,0.0006064325571060181,True,True
+GradCAM,7,fog,2,Silent Drift,573,-0.5338497161865234,1.2026361227035522,True,True
+GradCAM,7,fog,2,Stubborn Failure,399,0.9643157124519348,0.004682213068008423,True,False
+GradCAM,7,fog,2,Expected Failure,709,-0.9123006463050842,0.8582788705825806,True,False
+GradCAM,7,fog,3,Robust,382,0.9967897534370422,0.0006721913814544678,True,True
+GradCAM,7,fog,3,Silent Drift,667,-0.8870119452476501,1.0340250730514526,True,True
+GradCAM,7,fog,3,Stubborn Failure,746,0.996723473072052,0.027660638093948364,True,False
+GradCAM,7,fog,3,Expected Failure,709,-0.9978213310241699,1.4010096788406372,False,False
+GradCAM,7,fog,5,Robust,910,0.9978758692741394,0.0020826607942581177,True,True
+GradCAM,7,fog,5,Silent Drift,595,-0.9666295647621155,1.5543632507324219,True,True
+GradCAM,7,fog,5,Stubborn Failure,813,0.9887266159057617,0.03142368793487549,True,False
+GradCAM,7,fog,5,Expected Failure,46,-0.9930012822151184,1.3958332538604736,False,False
+GradCAM,7,gaussian_noise,1,Robust,404,0.9989181756973267,0.0003239065408706665,True,True
+GradCAM,7,gaussian_noise,1,Silent Drift,812,-0.8456199765205383,0.9382032155990601,True,True
+GradCAM,7,gaussian_noise,1,Stubborn Failure,472,0.9952178001403809,0.08170700073242188,False,False
+GradCAM,7,gaussian_noise,1,Expected Failure,419,-0.8823772072792053,1.4683735370635986,False,False
+GradCAM,7,gaussian_noise,2,Robust,300,0.9966238737106323,0.0014911964535713196,True,True
+GradCAM,7,gaussian_noise,2,Silent Drift,730,-0.8493409752845764,1.4204035997390747,True,True
+GradCAM,7,gaussian_noise,2,Stubborn Failure,781,0.9808736443519592,0.008938014507293701,False,False
+GradCAM,7,gaussian_noise,2,Expected Failure,864,-0.9591180682182312,1.4487261772155762,False,False
+GradCAM,7,gaussian_noise,3,Robust,88,0.9855793118476868,0.001699984073638916,True,True
+GradCAM,7,gaussian_noise,3,Silent Drift,175,-0.9877917170524597,1.4722394943237305,True,True
+GradCAM,7,gaussian_noise,3,Stubborn Failure,193,0.9978981018066406,0.01620185375213623,False,False
+GradCAM,7,gaussian_noise,3,Expected Failure,57,-0.9873000383377075,1.7807834148406982,False,False
+GradCAM,7,gaussian_noise,5,Robust,88,0.9789464473724365,0.0012231692671775818,True,True
+GradCAM,7,gaussian_noise,5,Silent Drift,854,-0.9904084205627441,1.427753210067749,True,True
+GradCAM,7,gaussian_noise,5,Stubborn Failure,938,0.8398593068122864,0.0055389404296875,False,False
+GradCAM,7,gaussian_noise,5,Expected Failure,256,-0.9678778648376465,1.3791359663009644,False,False
+GradCAM,42,brightness,1,Robust,125,0.9996994137763977,0.00019305944442749023,True,True
+GradCAM,42,brightness,1,Silent Drift,879,0.7509050965309143,0.8672600984573364,True,True
+GradCAM,42,brightness,1,Stubborn Failure,520,0.9994621276855469,0.0040732622146606445,True,False
+GradCAM,42,brightness,1,Expected Failure,556,-0.6362816095352173,0.2625802755355835,False,False
+GradCAM,42,brightness,2,Robust,77,0.9998610615730286,0.00024518370628356934,True,True
+GradCAM,42,brightness,2,Silent Drift,942,0.007528979331254959,0.4957217276096344,True,True
+GradCAM,42,brightness,2,Stubborn Failure,860,0.9968677163124084,0.00821620225906372,False,False
+GradCAM,42,brightness,2,Expected Failure,609,-0.8684008121490479,0.47977614402770996,True,False
+GradCAM,42,brightness,3,Robust,760,0.9996366500854492,0.00022049620747566223,True,True
+GradCAM,42,brightness,3,Silent Drift,856,-0.6088945269584656,1.0239107608795166,True,True
+GradCAM,42,brightness,3,Stubborn Failure,899,0.9790546298027039,0.004541337490081787,True,False
+GradCAM,42,brightness,3,Expected Failure,609,-0.9870208501815796,0.6864193677902222,True,False
+GradCAM,42,brightness,5,Robust,931,0.9987810254096985,0.000502169132232666,True,True
+GradCAM,42,brightness,5,Silent Drift,956,-0.7167463898658752,1.0381373167037964,True,True
+GradCAM,42,brightness,5,Stubborn Failure,372,0.9393609166145325,0.012174010276794434,True,False
+GradCAM,42,brightness,5,Expected Failure,137,-0.8961218595504761,0.8576284646987915,False,False
+GradCAM,42,fog,1,Robust,872,0.9992123246192932,0.0002432987093925476,True,True
+GradCAM,42,fog,1,Silent Drift,465,-0.3179846405982971,0.5313675999641418,True,True
+GradCAM,42,fog,1,Stubborn Failure,541,0.9971050024032593,0.004605963826179504,True,False
+GradCAM,42,fog,1,Expected Failure,609,0.11112776398658752,0.5413089990615845,True,False
+GradCAM,42,fog,2,Robust,894,0.9985800981521606,0.0003539472818374634,True,True
+GradCAM,42,fog,2,Silent Drift,172,-0.4350352883338928,1.1863199472427368,True,True
+GradCAM,42,fog,2,Stubborn Failure,886,0.9984846115112305,0.007872402667999268,False,False
+GradCAM,42,fog,2,Expected Failure,81,-0.38650020956993103,1.6941782236099243,False,False
+GradCAM,42,fog,3,Robust,341,0.9991551637649536,0.0009833872318267822,True,True
+GradCAM,42,fog,3,Silent Drift,956,-0.7314507365226746,1.0698295831680298,True,True
+GradCAM,42,fog,3,Stubborn Failure,31,0.9807756543159485,0.0009959787130355835,True,False
+GradCAM,42,fog,3,Expected Failure,476,-0.9978213310241699,1.4010096788406372,False,False
+GradCAM,42,fog,5,Robust,771,0.9922236204147339,0.002239227294921875,True,True
+GradCAM,42,fog,5,Silent Drift,847,-0.9951533079147339,1.427805781364441,True,True
+GradCAM,42,fog,5,Stubborn Failure,451,0.9951614737510681,0.006284892559051514,False,False
+GradCAM,42,fog,5,Expected Failure,610,-0.9055078029632568,1.453345775604248,False,False
+GradCAM,42,gaussian_noise,1,Robust,995,0.9992339611053467,0.0001685619354248047,True,True
+GradCAM,42,gaussian_noise,1,Silent Drift,549,-0.8755213618278503,1.3625208139419556,True,True
+GradCAM,42,gaussian_noise,1,Stubborn Failure,31,0.9970719218254089,0.008654221892356873,True,False
+GradCAM,42,gaussian_noise,1,Expected Failure,556,-0.811427652835846,1.0759899616241455,False,False
+GradCAM,42,gaussian_noise,2,Robust,290,0.9969232082366943,0.0016443431377410889,True,True
+GradCAM,42,gaussian_noise,2,Silent Drift,647,-0.9476731419563293,1.70798659324646,True,True
+GradCAM,42,gaussian_noise,2,Stubborn Failure,739,0.9954196810722351,0.042382240295410156,False,False
+GradCAM,42,gaussian_noise,2,Expected Failure,722,-0.9076393842697144,1.4693069458007812,False,False
+GradCAM,42,gaussian_noise,3,Robust,741,0.9954477548599243,0.0009593889117240906,True,True
+GradCAM,42,gaussian_noise,3,Silent Drift,654,-0.9136956930160522,1.5412076711654663,True,True
+GradCAM,42,gaussian_noise,3,Stubborn Failure,837,0.9717856049537659,0.003954887390136719,True,False
+GradCAM,42,gaussian_noise,3,Expected Failure,785,-0.9950552582740784,1.6982238292694092,False,False
+GradCAM,42,gaussian_noise,5,Robust,244,0.9947915077209473,0.009859293699264526,True,True
+GradCAM,42,gaussian_noise,5,Silent Drift,110,-0.9075391292572021,1.5271443128585815,True,True
+GradCAM,42,gaussian_noise,5,Stubborn Failure,308,0.9243583679199219,0.047345101833343506,False,False
+GradCAM,42,gaussian_noise,5,Expected Failure,16,-0.9224570989608765,1.6692155599594116,False,False
+GradCAM,52,brightness,1,Robust,349,0.9994544982910156,6.582587957382202e-05,True,True
+GradCAM,52,brightness,1,Silent Drift,573,0.7883349061012268,0.15845522284507751,True,True
+GradCAM,52,brightness,1,Stubborn Failure,586,0.9994834065437317,0.0014069750905036926,True,False
+GradCAM,52,brightness,1,Expected Failure,752,-0.6362816095352173,0.2625802755355835,False,False
+GradCAM,52,brightness,2,Robust,816,0.9991388320922852,8.635222911834717e-05,True,True
+GradCAM,52,brightness,2,Silent Drift,870,0.29494065046310425,0.2849922180175781,True,True
+GradCAM,52,brightness,2,Stubborn Failure,988,0.998813271522522,0.0040829479694366455,True,False
+GradCAM,52,brightness,2,Expected Failure,283,0.2942962646484375,0.5346276164054871,True,False
+GradCAM,52,brightness,3,Robust,339,0.9993550181388855,0.000472143292427063,True,True
+GradCAM,52,brightness,3,Silent Drift,830,-0.6927444338798523,0.30510735511779785,True,True
+GradCAM,52,brightness,3,Stubborn Failure,586,0.9985803961753845,0.005696937441825867,True,False
+GradCAM,52,brightness,3,Expected Failure,752,-0.7750831842422485,0.3751590847969055,False,False
+GradCAM,52,brightness,5,Robust,249,0.9981676936149597,7.496774196624756e-05,True,True
+GradCAM,52,brightness,5,Silent Drift,888,-0.81721031665802,1.2280653715133667,True,True
+GradCAM,52,brightness,5,Stubborn Failure,920,0.9738978743553162,0.010225571691989899,True,False
+GradCAM,52,brightness,5,Expected Failure,661,-0.8842532634735107,1.3730664253234863,False,False
+GradCAM,52,fog,1,Robust,894,0.9999830722808838,9.199976921081543e-05,True,True
+GradCAM,52,fog,1,Silent Drift,995,-0.05143814533948898,0.9143622517585754,True,True
+GradCAM,52,fog,1,Stubborn Failure,132,0.9908735752105713,0.0032507777214050293,True,False
+GradCAM,52,fog,1,Expected Failure,631,0.1547711044549942,0.2542463541030884,False,False
+GradCAM,52,fog,2,Robust,112,0.9974648356437683,0.0007330849766731262,True,True
+GradCAM,52,fog,2,Silent Drift,573,-0.48123034834861755,0.779401421546936,True,True
+GradCAM,52,fog,2,Stubborn Failure,845,0.9970079064369202,0.006927490234375,True,False
+GradCAM,52,fog,2,Expected Failure,928,-0.6356044411659241,1.2069567441940308,False,False
+GradCAM,52,fog,3,Robust,71,0.9976984858512878,0.0010697618126869202,True,True
+GradCAM,52,fog,3,Silent Drift,707,-0.7841253876686096,1.299103021621704,True,True
+GradCAM,52,fog,3,Stubborn Failure,634,0.9929239749908447,0.01612040400505066,True,False
+GradCAM,52,fog,3,Expected Failure,928,-0.6356044411659241,1.297671914100647,False,False
+GradCAM,52,fog,5,Robust,744,0.9970254302024841,0.00024256110191345215,True,True
+GradCAM,52,fog,5,Silent Drift,707,-0.9985345005989075,1.4413546323776245,True,True
+GradCAM,52,fog,5,Stubborn Failure,297,0.930387556552887,0.00804879516363144,False,False
+GradCAM,52,fog,5,Expected Failure,183,-0.824556291103363,1.6807215213775635,False,False
+GradCAM,52,gaussian_noise,1,Robust,605,0.9989181756973267,0.0003239065408706665,True,True
+GradCAM,52,gaussian_noise,1,Silent Drift,130,-0.9097667336463928,1.7449637651443481,True,True
+GradCAM,52,gaussian_noise,1,Stubborn Failure,762,0.9959970712661743,0.008685946464538574,False,False
+GradCAM,52,gaussian_noise,1,Expected Failure,184,-0.9570249915122986,1.2107412815093994,False,False
+GradCAM,52,gaussian_noise,2,Robust,635,0.9952836632728577,0.001801416277885437,True,True
+GradCAM,52,gaussian_noise,2,Silent Drift,659,-0.9881508350372314,1.2758020162582397,True,True
+GradCAM,52,gaussian_noise,2,Stubborn Failure,116,0.9675450921058655,0.006019994616508484,False,False
+GradCAM,52,gaussian_noise,2,Expected Failure,435,-0.97959303855896,1.7095648050308228,False,False
+GradCAM,52,gaussian_noise,3,Robust,246,0.9741587042808533,0.000593431293964386,True,True
+GradCAM,52,gaussian_noise,3,Silent Drift,203,-0.9076751470565796,1.563902497291565,True,True
+GradCAM,52,gaussian_noise,3,Stubborn Failure,508,0.8918371200561523,0.0007644891738891602,True,False
+GradCAM,52,gaussian_noise,3,Expected Failure,688,-0.9885396957397461,1.4846113920211792,False,False
+GradCAM,52,gaussian_noise,5,Robust,669,0.9995374083518982,0.00032098591327667236,True,True
+GradCAM,52,gaussian_noise,5,Silent Drift,52,-0.8634528517723083,1.3635878562927246,True,True
+GradCAM,52,gaussian_noise,5,Stubborn Failure,454,0.9529111981391907,0.021974928677082062,False,False
+GradCAM,52,gaussian_noise,5,Expected Failure,2,-0.9580953121185303,1.7833144664764404,False,False
+GradCAM,128,brightness,1,Robust,208,0.9995450973510742,6.0580670833587646e-05,True,True
+GradCAM,128,brightness,1,Silent Drift,511,0.7234420776367188,0.7978885173797607,True,True
+GradCAM,128,brightness,1,Stubborn Failure,150,0.9976499080657959,0.00023103505373001099,True,False
+GradCAM,128,brightness,1,Expected Failure,924,0.8039820790290833,0.7498171329498291,True,False
+GradCAM,128,brightness,2,Robust,762,0.9998632669448853,1.3262033462524414e-06,True,True
+GradCAM,128,brightness,2,Silent Drift,805,-0.057360827922821045,0.38596606254577637,True,True
+GradCAM,128,brightness,2,Stubborn Failure,150,0.997337281703949,4.9173831939697266e-06,True,False
+GradCAM,128,brightness,2,Expected Failure,165,0.4258735775947571,0.7981259226799011,False,False
+GradCAM,128,brightness,3,Robust,762,0.9996949434280396,0.00048561394214630127,True,True
+GradCAM,128,brightness,3,Silent Drift,805,-0.05273037403821945,0.7395625114440918,True,True
+GradCAM,128,brightness,3,Stubborn Failure,892,0.9985483884811401,0.0013057291507720947,True,False
+GradCAM,128,brightness,3,Expected Failure,189,0.07489610463380814,0.8157334327697754,True,False
+GradCAM,128,brightness,5,Robust,700,0.9979330897331238,0.0009118914604187012,True,True
+GradCAM,128,brightness,5,Silent Drift,972,-0.13951563835144043,1.3778932094573975,True,True
+GradCAM,128,brightness,5,Stubborn Failure,559,0.9739020466804504,0.010237164795398712,True,False
+GradCAM,128,brightness,5,Expected Failure,876,-0.8842774033546448,1.3721294403076172,False,False
+GradCAM,128,fog,1,Robust,174,0.9999762177467346,0.00023293495178222656,True,True
+GradCAM,128,fog,1,Silent Drift,202,-0.45494040846824646,0.37777844071388245,True,True
+GradCAM,128,fog,1,Stubborn Failure,796,0.9986243844032288,0.006343662738800049,True,False
+GradCAM,128,fog,1,Expected Failure,147,-0.13828882575035095,0.21514421701431274,True,False
+GradCAM,128,fog,2,Robust,900,0.9982134699821472,0.00042065978050231934,True,True
+GradCAM,128,fog,2,Silent Drift,594,-0.903067946434021,0.5185914039611816,True,True
+GradCAM,128,fog,2,Stubborn Failure,210,0.9944242238998413,0.010688245296478271,False,False
+GradCAM,128,fog,2,Expected Failure,919,-0.18923048675060272,1.2123221158981323,False,False
+GradCAM,128,fog,3,Robust,158,0.9964725375175476,0.0003634244203567505,True,True
+GradCAM,128,fog,3,Silent Drift,840,-0.9689733386039734,1.2526096105575562,True,True
+GradCAM,128,fog,3,Stubborn Failure,338,0.9931700825691223,0.013719618320465088,True,False
+GradCAM,128,fog,3,Expected Failure,350,-0.789884090423584,1.6049023866653442,False,False
+GradCAM,128,fog,5,Robust,902,0.9811688661575317,0.0015152990818023682,True,True
+GradCAM,128,fog,5,Silent Drift,471,-0.9950419068336487,1.4277993440628052,True,True
+GradCAM,128,fog,5,Stubborn Failure,316,0.9933790564537048,0.002860136330127716,False,False
+GradCAM,128,fog,5,Expected Failure,350,-0.9491452574729919,1.5904529094696045,False,False
+GradCAM,128,gaussian_noise,1,Robust,983,0.9987467527389526,7.88271427154541e-05,True,True
+GradCAM,128,gaussian_noise,1,Silent Drift,149,-0.9069278836250305,0.8719919919967651,True,True
+GradCAM,128,gaussian_noise,1,Stubborn Failure,366,0.9892515540122986,0.011918589472770691,True,False
+GradCAM,128,gaussian_noise,1,Expected Failure,489,-0.9020312428474426,1.107811450958252,False,False
+GradCAM,128,gaussian_noise,2,Robust,23,0.9952836632728577,0.0017891749739646912,True,True
+GradCAM,128,gaussian_noise,2,Silent Drift,546,-0.9826692938804626,1.3963677883148193,True,True
+GradCAM,128,gaussian_noise,2,Stubborn Failure,399,0.9385754466056824,0.006788626313209534,False,False
+GradCAM,128,gaussian_noise,2,Expected Failure,232,-0.9852354526519775,1.3394386768341064,False,False
+GradCAM,128,gaussian_noise,3,Robust,281,0.9741637110710144,0.0005732700228691101,True,True
+GradCAM,128,gaussian_noise,3,Silent Drift,113,-0.9877978563308716,1.47225821018219,True,True
+GradCAM,128,gaussian_noise,3,Stubborn Failure,912,0.8918612599372864,0.0007451027631759644,True,False
+GradCAM,128,gaussian_noise,3,Expected Failure,502,-0.9459004998207092,1.6075992584228516,False,False
+GradCAM,128,gaussian_noise,5,Robust,292,0.9702824950218201,0.0003232434391975403,True,True
+GradCAM,128,gaussian_noise,5,Silent Drift,616,-0.8559289574623108,1.592157244682312,True,True
+GradCAM,128,gaussian_noise,5,Stubborn Failure,399,0.9537912011146545,0.022132650017738342,False,False
+GradCAM,128,gaussian_noise,5,Expected Failure,783,-0.8817002773284912,1.7063482999801636,False,False
+GradCAM,1200,brightness,1,Robust,424,0.9994428753852844,6.439536809921265e-05,True,True
+GradCAM,1200,brightness,1,Silent Drift,714,0.32236871123313904,0.14385421574115753,True,True
+GradCAM,1200,brightness,1,Stubborn Failure,224,0.9982694983482361,0.00011871755123138428,True,False
+GradCAM,1200,brightness,1,Expected Failure,251,0.6953315138816833,0.43413054943084717,True,False
+GradCAM,1200,brightness,2,Robust,563,0.9998632669448853,1.3262033462524414e-06,True,True
+GradCAM,1200,brightness,2,Silent Drift,980,-0.600210964679718,0.7796187996864319,True,True
+GradCAM,1200,brightness,2,Stubborn Failure,594,0.9970596432685852,0.0004862770438194275,True,False
+GradCAM,1200,brightness,2,Expected Failure,484,-0.22859667241573334,0.6094911098480225,False,False
+GradCAM,1200,brightness,3,Robust,563,0.9996949434280396,0.00048561394214630127,True,True
+GradCAM,1200,brightness,3,Silent Drift,980,-0.5932424664497375,0.9959690570831299,True,True
+GradCAM,1200,brightness,3,Stubborn Failure,256,0.9992575645446777,0.01195816695690155,True,False
+GradCAM,1200,brightness,3,Expected Failure,61,-0.8261702656745911,0.5370538234710693,True,False
+GradCAM,1200,brightness,5,Robust,28,0.9986333250999451,5.5208802223205566e-05,True,True
+GradCAM,1200,brightness,5,Silent Drift,803,-0.18541745841503143,1.1041765213012695,True,True
+GradCAM,1200,brightness,5,Stubborn Failure,544,0.9857358932495117,0.009069517254829407,True,False
+GradCAM,1200,brightness,5,Expected Failure,334,-0.9375338554382324,1.36118745803833,False,False
+GradCAM,1200,fog,1,Robust,843,0.9993610978126526,6.654858589172363e-05,True,True
+GradCAM,1200,fog,1,Silent Drift,524,0.4318467080593109,0.30439066886901855,True,True
+GradCAM,1200,fog,1,Stubborn Failure,275,0.9933018684387207,0.00416874885559082,True,False
+GradCAM,1200,fog,1,Expected Failure,251,0.23447315394878387,0.6964559555053711,True,False
+GradCAM,1200,fog,2,Robust,794,0.9988948106765747,0.0006145313382148743,True,True
+GradCAM,1200,fog,2,Silent Drift,67,-0.9149030447006226,0.6356922388076782,True,True
+GradCAM,1200,fog,2,Stubborn Failure,470,0.9944242238998413,0.010688245296478271,False,False
+GradCAM,1200,fog,2,Expected Failure,156,-0.9763802289962769,0.7293612957000732,False,False
+GradCAM,1200,fog,3,Robust,421,0.9990816712379456,0.00013566017150878906,True,True
+GradCAM,1200,fog,3,Silent Drift,89,-0.5791634917259216,1.098954439163208,True,True
+GradCAM,1200,fog,3,Stubborn Failure,912,0.9804233908653259,0.0009655654430389404,True,False
+GradCAM,1200,fog,3,Expected Failure,251,-0.7419505715370178,1.1988176107406616,True,False
+GradCAM,1200,fog,5,Robust,703,0.9988881349563599,0.0049997493624687195,True,True
+GradCAM,1200,fog,5,Silent Drift,834,-0.9889528155326843,1.4865251779556274,True,True
+GradCAM,1200,fog,5,Stubborn Failure,956,0.9589567184448242,0.012656256556510925,False,False
+GradCAM,1200,fog,5,Expected Failure,845,-0.9730458855628967,1.535097360610962,False,False
+GradCAM,1200,gaussian_noise,1,Robust,105,0.9995706677436829,0.00017117708921432495,True,True
+GradCAM,1200,gaussian_noise,1,Silent Drift,16,-0.8755297660827637,1.3625198602676392,True,True
+GradCAM,1200,gaussian_noise,1,Stubborn Failure,912,0.9967538118362427,0.008684635162353516,True,False
+GradCAM,1200,gaussian_noise,1,Expected Failure,303,-0.989618182182312,1.6509007215499878,False,False
+GradCAM,1200,gaussian_noise,2,Robust,28,0.9942901730537415,0.002153553068637848,True,True
+GradCAM,1200,gaussian_noise,2,Silent Drift,145,-0.9476932883262634,1.7079989910125732,True,True
+GradCAM,1200,gaussian_noise,2,Stubborn Failure,637,0.968479335308075,0.006113335490226746,False,False
+GradCAM,1200,gaussian_noise,2,Expected Failure,83,-0.9913411736488342,1.4065254926681519,False,False
+GradCAM,1200,gaussian_noise,3,Robust,988,0.9963026642799377,0.00017840415239334106,True,True
+GradCAM,1200,gaussian_noise,3,Silent Drift,618,-0.9965422749519348,1.2609624862670898,True,True
+GradCAM,1200,gaussian_noise,3,Stubborn Failure,80,0.8548709750175476,0.009144604206085205,False,False
+GradCAM,1200,gaussian_noise,3,Expected Failure,821,-0.9868794083595276,1.4682652950286865,False,False
+GradCAM,1200,gaussian_noise,5,Robust,467,0.9984999299049377,0.005139186978340149,True,True
+GradCAM,1200,gaussian_noise,5,Silent Drift,367,-0.9905024766921997,1.4442158937454224,True,True
+GradCAM,1200,gaussian_noise,5,Stubborn Failure,765,0.9921901226043701,0.011265814304351807,False,False
+GradCAM,1200,gaussian_noise,5,Expected Failure,495,-0.9576220512390137,1.783328652381897,False,False
+IG,7,brightness,1,Robust,910,0.9348949193954468,0.00011244416236877441,True,True
+IG,7,brightness,1,Silent Drift,361,0.7018765807151794,0.23600231111049652,True,True
+IG,7,brightness,1,Stubborn Failure,419,0.9495598673820496,0.0036019086837768555,True,False
+IG,7,brightness,1,Expected Failure,557,0.7513691782951355,0.22051450610160828,True,False
+IG,7,brightness,2,Robust,14,0.7967379689216614,5.2034854888916016e-05,True,True
+IG,7,brightness,2,Silent Drift,361,0.515689492225647,0.6100715398788452,True,True
+IG,7,brightness,2,Stubborn Failure,924,0.7359105944633484,0.008072525262832642,True,False
+IG,7,brightness,2,Expected Failure,469,0.5347252488136292,0.45180264115333557,True,False
+IG,7,brightness,3,Robust,33,0.6978227496147156,0.0005759596824645996,True,True
+IG,7,brightness,3,Silent Drift,969,0.35443899035453796,0.6435920000076294,True,True
+IG,7,brightness,3,Stubborn Failure,399,0.5518325567245483,0.005610249936580658,True,False
+IG,7,brightness,3,Expected Failure,469,0.35378968715667725,1.0590916872024536,True,False
+IG,7,brightness,5,Robust,776,0.5154406428337097,0.00013069063425064087,True,True
+IG,7,brightness,5,Silent Drift,66,0.06791765242815018,1.7863694429397583,True,True
+IG,7,brightness,5,Stubborn Failure,399,0.3675993084907532,0.0231216698884964,True,False
+IG,7,brightness,5,Expected Failure,861,0.11055293679237366,1.4899115562438965,False,False
+IG,7,fog,1,Robust,696,0.9371579885482788,0.00028298795223236084,True,True
+IG,7,fog,1,Silent Drift,1,0.706678032875061,0.7440091371536255,True,True
+IG,7,fog,1,Stubborn Failure,402,0.8679664134979248,0.0013023614883422852,True,False
+IG,7,fog,1,Expected Failure,729,0.7438479065895081,0.36226704716682434,True,False
+IG,7,fog,2,Robust,697,0.8386350274085999,0.0002873949706554413,True,True
+IG,7,fog,2,Silent Drift,444,0.47960174083709717,1.2626702785491943,True,True
+IG,7,fog,2,Stubborn Failure,519,0.7952021360397339,0.02246272563934326,True,False
+IG,7,fog,2,Expected Failure,637,0.3986106514930725,1.3440351486206055,False,False
+IG,7,fog,3,Robust,296,0.7393198013305664,1.0058283805847168e-05,True,True
+IG,7,fog,3,Silent Drift,274,0.33898863196372986,1.0843676328659058,True,True
+IG,7,fog,3,Stubborn Failure,193,0.705351710319519,0.13360488414764404,True,False
+IG,7,fog,3,Expected Failure,123,0.28493785858154297,1.2633912563323975,False,False
+IG,7,fog,5,Robust,901,0.4728715717792511,0.0005729198455810547,True,True
+IG,7,fog,5,Silent Drift,800,0.109415203332901,0.9559440016746521,True,True
+IG,7,fog,5,Stubborn Failure,252,0.46715304255485535,0.0025731846690177917,False,False
+IG,7,fog,5,Expected Failure,869,0.11136918514966965,1.6019952297210693,False,False
+IG,7,gaussian_noise,1,Robust,426,0.669381856918335,0.00012217462062835693,True,True
+IG,7,gaussian_noise,1,Silent Drift,34,0.28559610247612,1.5039085149765015,True,True
+IG,7,gaussian_noise,1,Stubborn Failure,6,0.5516420602798462,0.008060768246650696,True,False
+IG,7,gaussian_noise,1,Expected Failure,784,0.13406240940093994,1.2206168174743652,False,False
+IG,7,gaussian_noise,2,Robust,92,0.6130714416503906,0.0031317993998527527,True,True
+IG,7,gaussian_noise,2,Silent Drift,495,0.15238982439041138,1.276120901107788,True,True
+IG,7,gaussian_noise,2,Stubborn Failure,6,0.4535166621208191,0.004372760653495789,True,False
+IG,7,gaussian_noise,2,Expected Failure,916,0.23639902472496033,1.9173738956451416,False,False
+IG,7,gaussian_noise,3,Robust,732,0.5417041182518005,0.009595885872840881,True,True
+IG,7,gaussian_noise,3,Silent Drift,514,0.19390954077243805,1.4864369630813599,True,True
+IG,7,gaussian_noise,3,Stubborn Failure,727,0.5164527297019958,0.02419176697731018,False,False
+IG,7,gaussian_noise,3,Expected Failure,513,0.2049013078212738,1.6565093994140625,False,False
+IG,7,gaussian_noise,5,Robust,556,0.48040077090263367,0.007155038416385651,True,True
+IG,7,gaussian_noise,5,Silent Drift,755,0.20614247024059296,1.6399755477905273,True,True
+IG,7,gaussian_noise,5,Stubborn Failure,349,0.5720914006233215,0.003833360970020294,False,False
+IG,7,gaussian_noise,5,Expected Failure,107,0.17368608713150024,1.570887565612793,False,False
+IG,42,brightness,1,Robust,835,0.9078689813613892,2.1763145923614502e-05,True,True
+IG,42,brightness,1,Silent Drift,238,0.4612816572189331,0.5828516483306885,True,True
+IG,42,brightness,1,Stubborn Failure,258,0.8616958260536194,0.0022455453872680664,True,False
+IG,42,brightness,1,Expected Failure,615,0.6758807301521301,0.18016469478607178,True,False
+IG,42,brightness,2,Robust,931,0.7988324165344238,0.00011189281940460205,True,True
+IG,42,brightness,2,Silent Drift,238,0.34973591566085815,0.6097081899642944,True,True
+IG,42,brightness,2,Stubborn Failure,837,0.7138547301292419,0.004478812217712402,True,False
+IG,42,brightness,2,Expected Failure,449,0.5474019050598145,1.1274466514587402,False,False
+IG,42,brightness,3,Robust,931,0.7577459812164307,0.0004729032516479492,True,True
+IG,42,brightness,3,Silent Drift,856,0.30431535840034485,1.0239107608795166,True,True
+IG,42,brightness,3,Stubborn Failure,509,0.5810481905937195,0.002174466848373413,True,False
+IG,42,brightness,3,Expected Failure,449,0.33583343029022217,1.4262690544128418,False,False
+IG,42,brightness,5,Robust,142,0.5038961172103882,0.0003216937184333801,True,True
+IG,42,brightness,5,Silent Drift,226,0.02819354459643364,0.9624474048614502,True,True
+IG,42,brightness,5,Stubborn Failure,509,0.42860257625579834,0.016177475452423096,True,False
+IG,42,brightness,5,Expected Failure,449,0.09194152802228928,1.5023183822631836,False,False
+IG,42,fog,1,Robust,527,0.9127582907676697,0.00013518333435058594,True,True
+IG,42,fog,1,Silent Drift,96,0.6103909015655518,0.6320472359657288,True,True
+IG,42,fog,1,Stubborn Failure,339,0.8956980109214783,0.004449382424354553,True,False
+IG,42,fog,1,Expected Failure,897,0.6430283784866333,0.3730093240737915,True,False
+IG,42,fog,2,Robust,445,0.8048245906829834,0.0001500844955444336,True,True
+IG,42,fog,2,Silent Drift,238,0.2722177505493164,0.9763929843902588,True,True
+IG,42,fog,2,Stubborn Failure,998,0.7830517888069153,0.005876302719116211,True,False
+IG,42,fog,2,Expected Failure,449,0.38846808671951294,1.1703083515167236,False,False
+IG,42,fog,3,Robust,260,0.7482708692550659,0.0002478659152984619,True,True
+IG,42,fog,3,Silent Drift,238,0.30052661895751953,1.2801144123077393,True,True
+IG,42,fog,3,Stubborn Failure,849,0.7298669219017029,0.0035570859909057617,True,False
+IG,42,fog,3,Expected Failure,101,0.2424917221069336,1.3604602813720703,False,False
+IG,42,fog,5,Robust,265,0.4779593050479889,0.002155385911464691,True,True
+IG,42,fog,5,Silent Drift,175,0.11875156313180923,1.6340441703796387,True,True
+IG,42,fog,5,Stubborn Failure,750,0.4671742022037506,0.0025731846690177917,False,False
+IG,42,fog,5,Expected Failure,217,0.015829982236027718,1.3463914394378662,False,False
+IG,42,gaussian_noise,1,Robust,108,0.680002748966217,0.0005446150898933411,True,True
+IG,42,gaussian_noise,1,Silent Drift,175,0.3214876651763916,0.9519578218460083,True,True
+IG,42,gaussian_noise,1,Stubborn Failure,31,0.5754321217536926,0.008654221892356873,True,False
+IG,42,gaussian_noise,1,Expected Failure,243,0.18192169070243835,1.5461993217468262,False,False
+IG,42,gaussian_noise,2,Robust,745,0.7069373726844788,0.00010380148887634277,True,True
+IG,42,gaussian_noise,2,Silent Drift,689,0.2331160455942154,1.2771761417388916,True,True
+IG,42,gaussian_noise,2,Stubborn Failure,339,0.4138805866241455,0.0008891373872756958,True,False
+IG,42,gaussian_noise,2,Expected Failure,416,0.21348410844802856,1.3453764915466309,False,False
+IG,42,gaussian_noise,3,Robust,380,0.5603713393211365,0.0030992478132247925,True,True
+IG,42,gaussian_noise,3,Silent Drift,519,0.1694343537092209,1.4786368608474731,True,True
+IG,42,gaussian_noise,3,Stubborn Failure,358,0.511344313621521,0.006711125373840332,False,False
+IG,42,gaussian_noise,3,Expected Failure,151,0.13865679502487183,1.8021308183670044,False,False
+IG,42,gaussian_noise,5,Robust,623,0.5248157978057861,0.006646052002906799,True,True
+IG,42,gaussian_noise,5,Silent Drift,364,0.17894625663757324,1.5500725507736206,True,True
+IG,42,gaussian_noise,5,Stubborn Failure,527,0.5859869718551636,0.013027667999267578,False,False
+IG,42,gaussian_noise,5,Expected Failure,427,0.14164575934410095,1.5692185163497925,False,False
+IG,52,brightness,1,Robust,55,0.9078463912010193,2.1763145923614502e-05,True,True
+IG,52,brightness,1,Silent Drift,166,0.7158899903297424,0.34565451741218567,True,True
+IG,52,brightness,1,Stubborn Failure,586,0.8585405349731445,0.0014069750905036926,True,False
+IG,52,brightness,1,Expected Failure,162,0.6758807301521301,0.18016469478607178,True,False
+IG,52,brightness,2,Robust,617,0.8716458678245544,0.0004030168056488037,True,True
+IG,52,brightness,2,Silent Drift,849,0.48952770233154297,0.3984415531158447,True,True
+IG,52,brightness,2,Stubborn Failure,806,0.6913682818412781,0.002422019839286804,True,False
+IG,52,brightness,2,Expected Failure,232,0.4981229901313782,0.27386441826820374,True,False
+IG,52,brightness,3,Robust,668,0.7065934538841248,0.00010361522436141968,True,True
+IG,52,brightness,3,Silent Drift,375,0.36134010553359985,1.0583380460739136,True,True
+IG,52,brightness,3,Stubborn Failure,634,0.6108216643333435,0.007271900773048401,True,False
+IG,52,brightness,3,Expected Failure,752,0.37273669242858887,0.3751590847969055,False,False
+IG,52,brightness,5,Robust,292,0.5038832426071167,0.0003216937184333801,True,True
+IG,52,brightness,5,Silent Drift,106,0.07317547500133514,1.3972446918487549,True,True
+IG,52,brightness,5,Stubborn Failure,920,0.49989640712738037,0.010225571691989899,True,False
+IG,52,brightness,5,Expected Failure,399,0.049190159887075424,0.8235711455345154,False,False
+IG,52,fog,1,Robust,61,0.9174739122390747,0.00019774585962295532,True,True
+IG,52,fog,1,Silent Drift,254,0.7066891193389893,0.7440091371536255,True,True
+IG,52,fog,1,Stubborn Failure,295,0.8864505887031555,0.006379812955856323,True,False
+IG,52,fog,1,Expected Failure,765,0.6865189075469971,0.6134966611862183,False,False
+IG,52,fog,2,Robust,42,0.8029091358184814,0.00014331936836242676,True,True
+IG,52,fog,2,Silent Drift,545,0.47745251655578613,0.8650917410850525,True,True
+IG,52,fog,2,Stubborn Failure,295,0.757504403591156,0.0021967291831970215,True,False
+IG,52,fog,2,Expected Failure,765,0.43527477979660034,0.9691028594970703,False,False
+IG,52,fog,3,Robust,82,0.7046095132827759,0.0002800077199935913,True,True
+IG,52,fog,3,Silent Drift,764,0.2177443653345108,0.8401559591293335,True,True
+IG,52,fog,3,Stubborn Failure,84,0.5277441143989563,8.165836334228516e-05,False,False
+IG,52,fog,3,Expected Failure,765,0.21440500020980835,1.0564874410629272,False,False
+IG,52,fog,5,Robust,272,0.5134438872337341,0.002717331051826477,True,True
+IG,52,fog,5,Silent Drift,620,0.028877580538392067,1.4448091983795166,True,True
+IG,52,fog,5,Stubborn Failure,593,0.5142760276794434,0.018908672034740448,False,False
+IG,52,fog,5,Expected Failure,941,0.11798519641160965,1.5305089950561523,False,False
+IG,52,gaussian_noise,1,Robust,234,0.6468976140022278,0.0003928840160369873,True,True
+IG,52,gaussian_noise,1,Silent Drift,815,0.2553153336048126,0.9369809031486511,True,True
+IG,52,gaussian_noise,1,Stubborn Failure,544,0.5789943337440491,0.010373055934906006,True,False
+IG,52,gaussian_noise,1,Expected Failure,925,0.35388055443763733,1.5691509246826172,False,False
+IG,52,gaussian_noise,2,Robust,213,0.5976715683937073,0.0008006840944290161,True,True
+IG,52,gaussian_noise,2,Silent Drift,667,0.2566605806350708,1.0764251947402954,True,True
+IG,52,gaussian_noise,2,Stubborn Failure,907,0.4968186616897583,0.002087891101837158,False,False
+IG,52,gaussian_noise,2,Expected Failure,920,0.09674547612667084,1.6221290826797485,False,False
+IG,52,gaussian_noise,3,Robust,706,0.6015949845314026,0.0011775493621826172,True,True
+IG,52,gaussian_noise,3,Silent Drift,584,0.19677191972732544,1.0885895490646362,True,True
+IG,52,gaussian_noise,3,Stubborn Failure,389,0.5028999447822571,0.0005955696105957031,False,False
+IG,52,gaussian_noise,3,Expected Failure,642,0.19794026017189026,1.571831464767456,False,False
+IG,52,gaussian_noise,5,Robust,669,0.47897589206695557,0.00032098591327667236,True,True
+IG,52,gaussian_noise,5,Silent Drift,840,0.14712025225162506,1.4718821048736572,True,True
+IG,52,gaussian_noise,5,Stubborn Failure,361,0.47507792711257935,0.009088501334190369,False,False
+IG,52,gaussian_noise,5,Expected Failure,105,0.17853718996047974,1.665724754333496,False,False
+IG,128,brightness,1,Robust,454,0.9221881031990051,8.665025234222412e-06,True,True
+IG,128,brightness,1,Silent Drift,25,0.7158170342445374,0.3464502692222595,True,True
+IG,128,brightness,1,Stubborn Failure,150,0.905508816242218,0.00023103505373001099,True,False
+IG,128,brightness,1,Expected Failure,946,0.712408721446991,0.2154761552810669,True,False
+IG,128,brightness,2,Robust,107,0.7865403294563293,0.00011659786105155945,True,True
+IG,128,brightness,2,Silent Drift,870,0.46241500973701477,0.6307386755943298,True,True
+IG,128,brightness,2,Stubborn Failure,150,0.7993482351303101,4.9173831939697266e-06,True,False
+IG,128,brightness,2,Expected Failure,946,0.5369007587432861,0.6266419887542725,True,False
+IG,128,brightness,3,Robust,832,0.7685429453849792,0.0003721192479133606,True,True
+IG,128,brightness,3,Silent Drift,870,0.22950415313243866,1.2343151569366455,True,True
+IG,128,brightness,3,Stubborn Failure,768,0.664750337600708,0.0005522966384887695,False,False
+IG,128,brightness,3,Expected Failure,924,0.2881343364715576,1.203339695930481,True,False
+IG,128,brightness,5,Robust,17,0.5025472640991211,0.00024247169494628906,True,True
+IG,128,brightness,5,Silent Drift,789,0.1102542132139206,1.7985332012176514,True,True
+IG,128,brightness,5,Stubborn Failure,559,0.4994892179965973,0.010237164795398712,True,False
+IG,128,brightness,5,Expected Failure,870,0.08765553683042526,1.5227792263031006,False,False
+IG,128,fog,1,Robust,792,0.921241283416748,3.6559998989105225e-05,True,True
+IG,128,fog,1,Silent Drift,483,0.7064560055732727,0.7435985803604126,True,True
+IG,128,fog,1,Stubborn Failure,396,0.9103769659996033,0.0009546950459480286,True,False
+IG,128,fog,1,Expected Failure,350,0.6568170785903931,0.4590761661529541,False,False
+IG,128,fog,2,Robust,936,0.8188329935073853,0.00045271217823028564,True,True
+IG,128,fog,2,Silent Drift,740,0.4835987687110901,0.9412652850151062,True,True
+IG,128,fog,2,Stubborn Failure,384,0.7376289963722229,0.005893200635910034,True,False
+IG,128,fog,2,Expected Failure,350,0.3884444236755371,1.536062479019165,False,False
+IG,128,fog,3,Robust,227,0.739611029624939,4.291534423828125e-06,True,True
+IG,128,fog,3,Silent Drift,805,0.36069798469543457,1.2719688415527344,True,True
+IG,128,fog,3,Stubborn Failure,768,0.6088346242904663,0.007719635963439941,True,False
+IG,128,fog,3,Expected Failure,350,0.31755325198173523,1.6049023866653442,False,False
+IG,128,fog,5,Robust,980,0.5671258568763733,0.0012037530541419983,True,True
+IG,128,fog,5,Silent Drift,240,0.06797607988119125,1.6916472911834717,True,True
+IG,128,fog,5,Stubborn Failure,694,0.5108345150947571,0.006709486246109009,True,False
+IG,128,fog,5,Expected Failure,350,0.0865086242556572,1.5904529094696045,False,False
+IG,128,gaussian_noise,1,Robust,632,0.6942631602287292,0.0009583644568920135,True,True
+IG,128,gaussian_noise,1,Silent Drift,769,0.24721449613571167,1.3375874757766724,True,True
+IG,128,gaussian_noise,1,Stubborn Failure,150,0.6147356629371643,0.001821570098400116,True,False
+IG,128,gaussian_noise,1,Expected Failure,408,0.3318352699279785,1.1254585981369019,False,False
+IG,128,gaussian_noise,2,Robust,156,0.6397554874420166,0.0010171234607696533,True,True
+IG,128,gaussian_noise,2,Silent Drift,485,0.16768528521060944,1.2420986890792847,True,True
+IG,128,gaussian_noise,2,Stubborn Failure,399,0.524757981300354,0.006788626313209534,False,False
+IG,128,gaussian_noise,2,Expected Failure,559,0.09641851484775543,1.622140645980835,False,False
+IG,128,gaussian_noise,3,Robust,632,0.5921115279197693,0.004996743053197861,True,True
+IG,128,gaussian_noise,3,Silent Drift,381,0.2357596457004547,1.451922059059143,True,True
+IG,128,gaussian_noise,3,Stubborn Failure,703,0.5289022326469421,0.011445999145507812,False,False
+IG,128,gaussian_noise,3,Expected Failure,755,0.13834254443645477,1.802160382270813,False,False
+IG,128,gaussian_noise,5,Robust,292,0.4867101013660431,0.0003232434391975403,True,True
+IG,128,gaussian_noise,5,Silent Drift,998,0.16936393082141876,1.7363874912261963,True,True
+IG,128,gaussian_noise,5,Stubborn Failure,328,0.504727303981781,0.019201211631298065,False,False
+IG,128,gaussian_noise,5,Expected Failure,596,0.1433580219745636,1.6671252250671387,False,False
+IG,1200,brightness,1,Robust,165,0.9251588582992554,0.00012725591659545898,True,True
+IG,1200,brightness,1,Silent Drift,503,0.7405273914337158,0.24888554215431213,True,True
+IG,1200,brightness,1,Stubborn Failure,224,0.8769615292549133,0.00011871755123138428,True,False
+IG,1200,brightness,1,Expected Failure,246,0.7586613893508911,0.43059003353118896,True,False
+IG,1200,brightness,2,Robust,165,0.8305152058601379,0.0001852288842201233,True,True
+IG,1200,brightness,2,Silent Drift,980,0.5438598394393921,0.7796187996864319,True,True
+IG,1200,brightness,2,Stubborn Failure,489,0.7538996934890747,0.007204487919807434,True,False
+IG,1200,brightness,2,Expected Failure,295,0.5477373003959656,1.1272361278533936,False,False
+IG,1200,brightness,3,Robust,317,0.683343768119812,0.00022551417350769043,True,True
+IG,1200,brightness,3,Silent Drift,980,0.4102843999862671,0.9959690570831299,True,True
+IG,1200,brightness,3,Stubborn Failure,176,0.6767696142196655,0.019222021102905273,True,False
+IG,1200,brightness,3,Expected Failure,295,0.33696913719177246,1.4260584115982056,False,False
+IG,1200,brightness,5,Robust,66,0.514715850353241,0.001340910792350769,True,True
+IG,1200,brightness,5,Silent Drift,746,0.08744575828313828,1.224900484085083,True,True
+IG,1200,brightness,5,Stubborn Failure,637,0.45649537444114685,0.03895734250545502,True,False
+IG,1200,brightness,5,Expected Failure,233,0.08140525221824646,1.2738316059112549,False,False
+IG,1200,fog,1,Robust,223,0.9229271411895752,0.00018656253814697266,True,True
+IG,1200,fog,1,Silent Drift,886,0.7064763307571411,0.7435985803604126,True,True
+IG,1200,fog,1,Stubborn Failure,275,0.9216606020927429,0.00416874885559082,True,False
+IG,1200,fog,1,Expected Failure,824,0.6965009570121765,0.45421868562698364,False,False
+IG,1200,fog,2,Robust,736,0.8813459873199463,0.0009576231241226196,True,True
+IG,1200,fog,2,Silent Drift,796,0.510861873626709,0.9212863445281982,True,True
+IG,1200,fog,2,Stubborn Failure,275,0.7737202048301697,0.014947131276130676,True,False
+IG,1200,fog,2,Expected Failure,295,0.388906866312027,1.170097827911377,False,False
+IG,1200,fog,3,Robust,455,0.7571882009506226,5.217641592025757e-05,True,True
+IG,1200,fog,3,Silent Drift,407,0.31213071942329407,0.8452317118644714,True,True
+IG,1200,fog,3,Stubborn Failure,701,0.6126822233200073,0.00011217594146728516,True,False
+IG,1200,fog,3,Expected Failure,251,0.36315780878067017,1.1988176107406616,True,False
+IG,1200,fog,5,Robust,314,0.5671693682670593,0.0012037530541419983,True,True
+IG,1200,fog,5,Silent Drift,861,0.10147030651569366,1.1944576501846313,True,True
+IG,1200,fog,5,Stubborn Failure,423,0.3602898418903351,0.006678394973278046,False,False
+IG,1200,fog,5,Expected Failure,175,0.11101443320512772,1.6019933223724365,False,False
+IG,1200,gaussian_noise,1,Robust,23,0.6697338819503784,5.322694778442383e-05,True,True
+IG,1200,gaussian_noise,1,Silent Drift,114,0.35510432720184326,0.8854987621307373,True,True
+IG,1200,gaussian_noise,1,Stubborn Failure,489,0.6117802858352661,0.008690938353538513,True,False
+IG,1200,gaussian_noise,1,Expected Failure,11,0.2407931536436081,0.9949766397476196,False,False
+IG,1200,gaussian_noise,2,Robust,429,0.5981003642082214,0.0008048191666603088,True,True
+IG,1200,gaussian_noise,2,Silent Drift,407,0.16770625114440918,1.2420986890792847,True,True
+IG,1200,gaussian_noise,2,Stubborn Failure,684,0.5158496499061584,0.015988901257514954,False,False
+IG,1200,gaussian_noise,2,Expected Failure,509,0.216527059674263,1.4468618631362915,False,False
+IG,1200,gaussian_noise,3,Robust,249,0.5921115279197693,0.004996743053197861,True,True
+IG,1200,gaussian_noise,3,Silent Drift,611,0.1881030946969986,1.785071849822998,True,True
+IG,1200,gaussian_noise,3,Stubborn Failure,859,0.4520162343978882,0.0020988434553146362,False,False
+IG,1200,gaussian_noise,3,Expected Failure,379,0.13833186030387878,1.802160382270813,False,False
+IG,1200,gaussian_noise,5,Robust,95,0.5453871488571167,0.007550433278083801,True,True
+IG,1200,gaussian_noise,5,Silent Drift,213,0.17490503191947937,1.9469696283340454,True,True
+IG,1200,gaussian_noise,5,Stubborn Failure,40,0.5544098019599915,0.0002142488956451416,False,False
+IG,1200,gaussian_noise,5,Expected Failure,292,0.17301413416862488,1.688348650932312,False,False

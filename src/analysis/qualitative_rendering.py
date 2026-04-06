@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from configs.global_config import PATHS
-from analysis.analysis_helper import find_experiment_dir
+from analysis.analysis_helper import ZONE_COLORS, corruption_label, find_experiment_dir
 from analysis.sample_level_analysis import _load_payload, _unwrap_payload
 
 try:
@@ -135,20 +134,6 @@ def _load_artifact_arrays(
 # Figure composition
 # ----------------------------------------------------------------------------
 
-ZONE_COLORS = {
-    "robust":            "#1f77b4",
-    "silent_drift":      "#ff7f0e",
-    "expected_failure":  "#2ca02c",
-    "stubborn_failure":  "#d62728",
-}
-
-ZONE_LABELS = {
-    "robust":            "Robust",
-    "silent_drift":      "Silent Drift",
-    "expected_failure":  "Expected Failure",
-    "stubborn_failure":  "Stubborn Failure",
-}
-
 
 def _save_exemplar_figure(
     zone: str,
@@ -162,34 +147,35 @@ def _save_exemplar_figure(
     fig, axes = plt.subplots(1, 4, figsize=(12, 3.4), dpi=300)
 
     axes[0].imshow(img_clean_arr, interpolation="lanczos")
-    axes[0].set_title("Clean", fontsize=9)
+    axes[0].set_title("Clean image", fontsize=9)
     axes[0].axis("off")
 
     axes[1].imshow(img_clean_arr, interpolation="lanczos")
     axes[1].imshow(sal_clean_2d, alpha=0.5, cmap="jet")
-    axes[1].set_title("Clean + explanation", fontsize=9)
+    axes[1].set_title("Clean explanation", fontsize=9)
     axes[1].axis("off")
 
     axes[2].imshow(img_corr_arr, interpolation="lanczos")
-    axes[2].set_title("Corrupt", fontsize=9)
+    axes[2].set_title("Corrupted image", fontsize=9)
     axes[2].axis("off")
 
     axes[3].imshow(img_corr_arr, interpolation="lanczos")
     axes[3].imshow(sal_corr_2d, alpha=0.5, cmap="jet")
-    axes[3].set_title("Corrupt + explanation", fontsize=9)
+    axes[3].set_title("Corrupted explanation", fontsize=9)
     axes[3].axis("off")
 
-    zone_color = ZONE_COLORS.get(zone, "#333333")
-    zone_label = ZONE_LABELS.get(zone, zone)
+    zone_label = zone
+    zone_color = ZONE_COLORS.get(zone_label, "#333333")
 
     meta = (
-        f"{row['explainer']} · {row['corruption']} · sev={int(row['severity'])} · "
-        f"seed={int(row['seed'])} · sample_idx={int(row['sample_idx'])}"
+        f"{row['explainer']} · {corruption_label(row['corruption'])} · "
+        f"Severity {int(row['severity'])} · Seed {int(row['seed'])} · "
+        f"Sample {int(row['sample_idx'])}"
     )
     metrics = (
-        f"sim={row['similarity']:.3f}  ·  "
-        f"|ΔH|={row['abs_dH']:.3f}  ·  "
-        f"both_correct={row['both_correct']}"
+        f"Similarity = {row['similarity']:.3f}  ·  "
+        f"|ΔH| = {row['abs_dH']:.3f}  ·  "
+        f"Both correct = {bool(row['both_correct'])}"
     )
     fig.text(0.5, 1.06, zone_label, ha="center", va="bottom",
              fontsize=13, fontweight="bold", color=zone_color)
@@ -213,34 +199,19 @@ def render_trust_zone_exemplars(
     output_dir: str | Path,
     image_loader_clean: Callable[[np.ndarray], torch.Tensor],
     image_loader_corr: Callable[[np.ndarray, str, int], torch.Tensor],
-    zones: Iterable[str] = ("robust", "silent_drift",
-                            "stubborn_failure", "expected_failure"),
+    zones: Iterable[str] = ("Robust", "Silent Drift",
+                            "Stubborn Failure", "Expected Failure"),
     corruptions: list[str] | None = None,
     severities: list[int] | None = None,
     explainers: list[str] | None = None,
     seeds: list[int] | None = None,
 ) -> None:
-    """Render one PNG per (condition × zone) exemplar from a trust-zone CSV.
-
-    Parameters
-    ----------
-    exemplars_csv : path
-        CSV written by ``auxiliary_analysis.export_trust_zone_exemplars``.
-    experiments_dir : path
-        Root containing ``experiment__n{N}__{EXPL}__seed{S}/`` dirs.
-    output_dir : path
-        PNGs go into ``{output_dir}/qualitative/``.
-    image_loader_clean : callable
-        ``(pair_idx: ndarray) -> Tensor[N, C, H, W]``. Called once per condition.
-    image_loader_corr : callable
-        ``(pair_idx: ndarray, corruption: str, severity: int) -> Tensor[N, C, H, W]``.
-        Called once per condition.
-    zones, corruptions, severities, explainers, seeds : optional filters
-        Only rows matching all given filters are rendered. ``None`` = no filter.
+    """
     """
     exemplars_csv = Path(exemplars_csv)
     experiments_dir = Path(experiments_dir)
     output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     df = pd.read_csv(exemplars_csv)
     df = df.dropna(subset=["sample_idx"]).copy()
@@ -309,7 +280,7 @@ def render_trust_zone_exemplars(
                     img_corr_arr=img_corr_arr,
                     sal_clean_2d=sal_clean_2d,
                     sal_corr_2d=sal_corr_2d,
-                    out_path= PATHS.results / "qualitative_imgs" / fname,
+                    out_path= output_dir / fname,
                 )
                 n_rendered += 1
 

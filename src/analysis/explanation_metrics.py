@@ -1,41 +1,3 @@
-"""
-RQ3 — Trackt ΔQ das ΔE?
-=======================
-
-Reads the per-experiment Quantus result CSVs
-
-    experiments/experiment__n{N}__{EXPLAINER}__seed{SEED}/03__quantus/
-        03__quantus_results__clean.csv   (slices: only __all)
-        03__quantus_results__corr.csv    (slices: __all, __inv, __both_corr)
-
-and produces the RQ3 figures:
-
-Figure 6 — ΔQ vs. ΔE scatter, one panel per metric.
-Figure 7 — ΔQ across the three slices, per metric.
-Figure 8 — Paired severity curves of ΔQ and ΔE, z-scored.
-
-Active metrics
---------------
-Only the two metrics used in the paper are kept:
-
-    - complexity__sparseness
-    - faithfulness__corr
-
-`randomisation` and all other metrics are dropped centrally and never appear
-in plots, exports, or logging.
-
-ΔQ definition
--------------
-Because the clean-baseline CSV only stores the `__all` slice, we define
-
-    ΔQ[slice]  :=  | Q_shifted[slice]  −  Q_clean[all] |
-
-for every slice. On `both_corr`, model behaviour is stable by construction,
-so a non-zero ΔQ there is the protocol-artefact signature we care about.
-
-Use ``--signed`` to switch from |ΔQ| to signed ΔQ = Q_shifted − Q_clean.
-"""
-
 import re
 from pathlib import Path
 import matplotlib.pyplot as plt
@@ -46,10 +8,11 @@ from matplotlib.lines import Line2D
 from analysis.analysis_helper import (
     SLICES,
     EXPERIMENT_DIR_RE,
-    DE_OPTIONS,
-    load_drift_results,
+    SIMILARITY_SPECS,
+    corruption_label,
     corruption_palette,
     filter_excluded_corruptions,
+    load_drift_results,
 )
 from analysis.decoupling import compute_deltas
 
@@ -286,8 +249,9 @@ def merge_with_drift(
 # Figure 6 — ΔQ vs. ΔE scatter per metric
 # ----------------------------------------------------------------------------
 
-def plot_figure6_scatter(
+def plot_metrics_drift_scatter(
     merged: pd.DataFrame,
+    de: str = "rho",
     slice_key: str = "all",
     signed: bool = False,
     sparseness_only: bool = False,
@@ -357,9 +321,9 @@ def plot_figure6_scatter(
                 )
 
             ax.set_title(explainer, fontsize=11, fontweight="bold")
-            ax.set_xlabel(r"$\Delta E$ (explanation drift)")
+            ax.set_xlabel(SIMILARITY_SPECS[de]["drift_axis"])
             if j == 0:
-                ax.set_ylabel(f"{metric_display(cat, name)}\n{dq_symbol}", fontsize=10)
+                ax.set_ylabel(f"{metric_display(cat, name)}\n{dq_symbol}", fontsize=10, linespacing=1.5, labelpad=10,)
             ax.grid(True, alpha=0.3, linewidth=0.6)
             ax.set_xlim(left=0)
             if signed:
@@ -410,9 +374,9 @@ def plot_figure6_scatter(
                 if i == 0:
                     ax.set_title(metric_display(cat, name), fontsize=11, fontweight="bold")
                 if i == n_rows - 1:
-                    ax.set_xlabel(r"$\Delta E$ (explanation drift)")
+                    ax.set_xlabel(SIMILARITY_SPECS[de]["drift_axis"], labelpad=6)
                 if j == 0:
-                    ax.set_ylabel(f"{explainer}\n{dq_symbol}", fontsize=10)
+                    ax.set_ylabel(f"{explainer}\n{dq_symbol}", fontsize=10, linespacing=1.5, labelpad=6)
                 ax.grid(True, alpha=0.3, linewidth=0.6)
                 ax.set_xlim(left=0)
                 if signed:
@@ -422,34 +386,33 @@ def plot_figure6_scatter(
 
     corr_handles = [
         Line2D([], [], marker="o", linestyle="", color=palette[c],
-               markersize=9, markeredgecolor="white", label=c)
+            markersize=9, markeredgecolor="white", label=corruption_label(c))
         for c in sorted(sub["corruption"].unique())
     ]
     sev_handles = [
         Line2D([], [], marker="o", linestyle="", color="gray",
-               markersize=np.sqrt(sev_sizes[s]), markeredgecolor="white",
-               label=f"severity {s}")
+            markersize=np.sqrt(sev_sizes[s]), markeredgecolor="white",
+            label=f"Severity {s}")
         for s in severities
     ]
-    leg1 = fig.legend(
-        handles=corr_handles, loc="lower center",
-        bbox_to_anchor=(0.5, -0.035), ncol=len(corr_handles),
-        frameon=False, fontsize=9, title="Corruption",
-    )
-    fig.add_artist(leg1)
+
+    legend_handles = corr_handles + sev_handles
     fig.legend(
-        handles=sev_handles, loc="lower center",
-        bbox_to_anchor=(0.5, -0.095), ncol=len(sev_handles),
-        frameon=False, fontsize=9, title="Severity",
+        handles=legend_handles,
+        loc="lower center",
+        bbox_to_anchor=(0.5, -0.045),
+        ncol=len(legend_handles),
+        frameon=False,
+        fontsize=9,
     )
 
-    fig_name = "Figure 6 — Does ΔQ track ΔE?"
+    fig_name = "Does metric change track explanation drift?"
     if sparseness_only:
         fig_name += " (Sparseness only)"
 
     fig.suptitle(
         f"{fig_name}  ·  slice: {SLICES[slice_key]}",
-        y=1.02, fontsize=12,
+        y=1.0, fontsize=12,
     )
     fig.tight_layout()
 
@@ -461,14 +424,16 @@ def plot_figure6_scatter(
     return fig
 
 
-def plot_figure6_sparseness(
+def plot_metrics_drift_scatter_sparseness(
     merged: pd.DataFrame,
+    de: str = "rho",
     slice_key: str = "both_corr",
     signed: bool = False,
     output_path: str | Path | None = None,
 ) -> plt.Figure:
-    return plot_figure6_scatter(
+    return plot_metrics_drift_scatter(
         merged=merged,
+        de=de,
         slice_key=slice_key,
         signed=signed,
         sparseness_only=True,
@@ -480,7 +445,7 @@ def plot_figure6_sparseness(
 # Figure 7 — ΔQ across the three slices, per metric
 # ----------------------------------------------------------------------------
 
-def plot_figure7_slices(
+def plot_metric_change_slices(
     quantus_df: pd.DataFrame,
     signed: bool = False,
     sparseness_only: bool = False,
@@ -561,14 +526,16 @@ def plot_figure7_slices(
                 if signed:
                     ax.axhline(0, color="gray", linewidth=0.5, alpha=0.6)
                 if row == 0:
-                    ax.set_title(corruption, fontsize=10, fontweight="bold")
+                    ax.set_title(corruption_label(corruption), fontsize=10, fontweight="bold")
                 if row == n_rows - 1:
                     ax.set_xlabel("Severity")
                     ax.set_xticks(severities)
                 if j == 0:
                     ax.set_ylabel(
-                        f"{explainer}\n{metric_display(cat, name)}\n{dq_symbol}",
+                        f"{explainer}\n{metric_display(cat, name)} {dq_symbol}",
                         fontsize=9,
+                        linespacing=1.4,
+                        labelpad=6,
                     )
                 ax.grid(True, alpha=0.3, linewidth=0.6)
                 ax.set_ylim(y_lo_row, y_hi_row)
@@ -585,10 +552,10 @@ def plot_figure7_slices(
     fig.legend(
         handles=slice_handles,
         loc="lower center", ncol=len(SLICE_STYLES), frameon=False,
-        bbox_to_anchor=(0.5, -0.015), fontsize=10,
+        bbox_to_anchor=(0.5, -0.03), fontsize=10,
     )
 
-    fig_name = "Figure 7 — ΔQ across slices"
+    fig_name = "Metric change across slices"
     if sparseness_only:
         fig_name += " (Sparseness only)"
 
@@ -606,144 +573,18 @@ def plot_figure7_slices(
     return fig
 
 
-def plot_figure7_sparseness(
+def plot_metric_change_slices_sparseness(
     quantus_df: pd.DataFrame,
     signed: bool = False,
     output_path: str | Path | None = None,
 ) -> plt.Figure:
-    return plot_figure7_slices(
+    return plot_metric_change_slices(
         quantus_df=quantus_df,
         signed=signed,
         sparseness_only=True,
         output_path=output_path,
     )
 
-# !TODO: drop
-"""
-# ----------------------------------------------------------------------------
-# Figure 8 — paired severity curves: ΔQ (per metric) vs. ΔE, z-scored
-# ----------------------------------------------------------------------------
-
-def plot_figure8_paired(
-    merged: pd.DataFrame,
-    slice_key: str = "all",
-    signed: bool = False,
-    sparseness_only: bool = False,
-    output_path: str | Path | None = None,
-) -> plt.Figure:
-    sub = merged[merged["slice"] == slice_key].copy()
-    sub = filter_active_quantus_metrics(sub, sparseness_only=sparseness_only)
-    if sub.empty:
-        raise ValueError(f"no rows for slice={slice_key!r}")
-
-    dq_col = "delta_q_signed" if signed else "delta_q_abs"
-
-    agg = (
-        sub.groupby(["explainer", "category", "metric", "corruption", "severity"],
-                    as_index=False)
-           .agg(dq=(dq_col, "mean"),
-                dq_sd=(dq_col, "std"),
-                de=("delta_e", "mean"),
-                de_sd=("delta_e", "std"))
-           .fillna({"dq_sd": 0.0, "de_sd": 0.0})
-    )
-
-    for explainer in agg["explainer"].unique():
-        emask = agg["explainer"] == explainer
-        mu_e, sd_e = agg.loc[emask, "de"].mean(), agg.loc[emask, "de"].std() or 1.0
-        agg.loc[emask, "de_z"] = (agg.loc[emask, "de"] - mu_e) / sd_e
-        agg.loc[emask, "de_z_sd"] = agg.loc[emask, "de_sd"] / sd_e
-
-        for (cat, name) in active_cat_metrics(agg[emask], sparseness_only=sparseness_only):
-            mask = emask & (agg["category"] == cat) & (agg["metric"] == name)
-            mu_q = agg.loc[mask, "dq"].mean()
-            sd_q = agg.loc[mask, "dq"].std() or 1.0
-            agg.loc[mask, "dq_z"] = (agg.loc[mask, "dq"] - mu_q) / sd_q
-            agg.loc[mask, "dq_z_sd"] = agg.loc[mask, "dq_sd"] / sd_q
-
-    explainers = sorted(agg["explainer"].unique())
-    cat_metrics = active_cat_metrics(agg, sparseness_only=sparseness_only)
-    corruptions = sorted(agg["corruption"].unique())
-    severities = sorted(agg["severity"].unique())
-
-    n_rows = len(explainers) * len(cat_metrics)
-    n_cols = len(corruptions)
-
-    fig, axes = plt.subplots(
-        n_rows, n_cols,
-        figsize=(3.3 * n_cols, 2.6 * n_rows),
-        sharex=True, sharey=True, squeeze=False,
-    )
-
-    dq_color, de_color = "#1f77b4", "#d62728"
-    row = 0
-    for explainer in explainers:
-        for (cat, name) in cat_metrics:
-            for j, corruption in enumerate(corruptions):
-                ax = axes[row, j]
-                s = agg[
-                    (agg["explainer"] == explainer)
-                    & (agg["category"] == cat)
-                    & (agg["metric"] == name)
-                    & (agg["corruption"] == corruption)
-                ].sort_values("severity")
-                if s.empty:
-                    continue
-
-                x = s["severity"].to_numpy()
-
-                yq = s["dq_z"].to_numpy()
-                yq_err = s["dq_z_sd"].to_numpy()
-                ax.plot(x, yq, marker="s", ls="--", color=dq_color, linewidth=1.9,
-                        label="ΔQ (z)")
-                ax.fill_between(x, yq - yq_err, yq + yq_err,
-                                color=dq_color, alpha=0.12, linewidth=0)
-
-                ye = s["de_z"].to_numpy()
-                ye_err = s["de_z_sd"].to_numpy()
-                ax.plot(x, ye, marker="o", ls="-", color=de_color, linewidth=1.9,
-                        label="ΔE (z)")
-                ax.fill_between(x, ye - ye_err, ye + ye_err,
-                                color=de_color, alpha=0.12, linewidth=0)
-
-                ax.axhline(0, color="gray", linewidth=0.6, alpha=0.6)
-                if row == 0:
-                    ax.set_title(corruption, fontsize=10, fontweight="bold")
-                if row == n_rows - 1:
-                    ax.set_xlabel("Severity")
-                    ax.set_xticks(severities)
-                if j == 0:
-                    ax.set_ylabel(
-                        f"{explainer}\n{metric_display(cat, name)}\nz-score",
-                        fontsize=9,
-                    )
-                ax.grid(True, alpha=0.3, linewidth=0.6)
-            row += 1
-
-    handles, labels = axes[0, 0].get_legend_handles_labels()
-    fig.legend(
-        handles, labels,
-        loc="lower center", ncol=2, frameon=False,
-        bbox_to_anchor=(0.5, -0.015), fontsize=10,
-    )
-
-    fig_name = "Figure 8 — Paired ΔQ & ΔE severity curves (z-scored)"
-    if sparseness_only:
-        fig_name += " (Sparseness only)"
-
-    fig.suptitle(
-        f"{fig_name}  ·  slice: {SLICES[slice_key]}",
-        y=1.005, fontsize=12,
-    )
-    fig.tight_layout()
-
-    if output_path is not None:
-        output_path = Path(output_path)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(output_path, bbox_inches="tight", dpi=200)
-        fig.savefig(output_path.with_suffix(".png"), bbox_inches="tight", dpi=200)
-    return fig
-"""
 
 # ----------------------------------------------------------------------------
 # CSV export (aggregated ΔQ per slice, including matched ΔE for convenience)
@@ -792,7 +633,7 @@ def run_quantus_analysis(
     scatter_slice: str = "all",
     signed: bool = False,
 ) -> None:
-    if de not in DE_OPTIONS:
+    if de not in SIMILARITY_SPECS:
         raise ValueError(f"unknown --de {de!r}")
     if scatter_slice not in SLICES:
         raise ValueError(f"unknown --scatter-slice {scatter_slice!r}")
@@ -806,28 +647,23 @@ def run_quantus_analysis(
     merged = merge_with_drift(quantus_df, drift_df, de=de)
 
     # Standard outputs
-    plot_figure6_scatter(
-        merged, slice_key=scatter_slice, signed=signed,
+    plot_metrics_drift_scatter(
+        merged, de=de, slice_key=scatter_slice, signed=signed,
         output_path=output_dir / f"fig6_dq_vs_de_scatter_{scatter_slice}.pdf",
     )
-    plot_figure7_slices(
+    plot_metric_change_slices(
         quantus_df, signed=signed,
         output_path=output_dir / "fig7_dq_across_slices.pdf",
     )
-    
-    #plot_figure8_paired(
-    #    merged, slice_key=scatter_slice, signed=signed,
-    #    output_path=output_dir / f"fig8_paired_dq_de_severity_{scatter_slice}.pdf",
-    #)
 
-    # Optional focused variants for paper use
-    plot_figure6_sparseness(
+    plot_metrics_drift_scatter_sparseness(
         merged=merged,
+        de=de,
         slice_key="both_corr",
         signed=signed,
         output_path=output_dir / "fig6_sparseness_both_corr.pdf",
     )
-    plot_figure7_sparseness(
+    plot_metric_change_slices_sparseness(
         quantus_df=quantus_df,
         signed=signed,
         output_path=output_dir / "fig7_sparseness_across_slices.pdf",

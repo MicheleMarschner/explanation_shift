@@ -1,28 +1,3 @@
-"""
-RQ2 — Entkoppeln sich ΔP und ΔE?
-=================================
-
-Three figures that together form the core decoupling evidence:
-
-Figure 3 — ΔE on the three slices (all / invariant / both-correct) vs. severity.
-           If ΔE on `both_corr` stays substantial, predictions did NOT flip
-           (both correct on clean *and* shifted by construction) yet explanations
-           still drifted. This is the strongest single piece of evidence for
-           decoupling.
-
-Figure 4 — Scatter of ΔP vs. ΔE, one point per (corruption × severity × seed).
-           Shows overall coupling. A diagonal cloud ⇒ proportional coupling;
-           orthogonal or dispersed ⇒ decoupling. Colour = corruption,
-           marker size = severity, Pearson r per panel.
-
-!TODO: Drop 
-Figure 5 — Per-corruption paired severity curves of ΔP and ΔE, both z-scored.
-           Grid = explainers × corruptions. Makes mismatch visually obvious:
-           rising ΔE with flat ΔP, or vice versa.
-
-Reuses loader, slice config, palette and axis helpers from ``drift_analysis``.
-"""
-
 from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,13 +5,13 @@ import pandas as pd
 from matplotlib.lines import Line2D
 
 from analysis.analysis_helper import (
-    DE_OPTIONS,
     DP_OPTIONS,
-    DRIFT_LABELS,
+    SIMILARITY_SPECS,
     SLICE_STYLES,
     SLICES,
-    load_drift_results,
+    corruption_label,
     corruption_palette,
+    load_drift_results,
 )
 
 
@@ -59,8 +34,8 @@ def compute_deltas(
       because it is a single global performance signal — slicing it defeats
       the purpose of the decoupling argument.
     """
-    if de not in DE_OPTIONS:
-        raise ValueError(f"unknown --de {de!r}, choose from {list(DE_OPTIONS)}")
+    if de not in SIMILARITY_SPECS:
+        raise ValueError(f"unknown --de {de!r}, choose from {list(SIMILARITY_SPECS)}")
     if dp not in DP_OPTIONS:
         raise ValueError(f"unknown --dp {dp!r}, choose from {list(DP_OPTIONS)}")
     if slice_key not in SLICES:
@@ -93,7 +68,7 @@ def compute_deltas(
 # Figure 3 — ΔE across the three slices, per (explainer, corruption) panel
 # ----------------------------------------------------------------------------
 
-def plot_figure3(
+def plot_explanation_drift_slices(
     df: pd.DataFrame,
     de: str = "rho",
     output_path: str | Path | None = None,
@@ -144,12 +119,12 @@ def plot_figure3(
                 ax.fill_between(x, y - err, y + err, color=style["color"], alpha=0.12,
                                 linewidth=0)
             if i == 0:
-                ax.set_title(corruption, fontsize=11, fontweight="bold")
+                ax.set_title(corruption_label(corruption), fontsize=11, fontweight="bold")
             if i == n_rows - 1:
                 ax.set_xlabel("Severity")
                 ax.set_xticks(severities)
             if j == 0:
-                ax.set_ylabel(f"{explainer}\nΔE = {DRIFT_LABELS[de]}", fontsize=10)
+                ax.set_ylabel(f"{explainer}\n{SIMILARITY_SPECS[de]['drift_axis']}", fontsize=10, linespacing=1.6)
             ax.grid(True, alpha=0.3, linewidth=0.6)
 
     # Global y-limits: 0 to (max + headroom), propagated via sharey.
@@ -160,11 +135,10 @@ def plot_figure3(
     fig.legend(
         handles, labels,
         loc="lower center", ncol=len(SLICES), frameon=False,
-        bbox_to_anchor=(0.5, -0.03), fontsize=10,
+        bbox_to_anchor=(0.5, -0.06), fontsize=10,
     )
     fig.suptitle(
-        "Figure 3 — Explanation drift across slices  "
-        "(decoupling visible when both-correct stays non-zero)",
+        "Explanation drift across slices",
         y=1.01, fontsize=12,
     )
     fig.tight_layout()
@@ -181,7 +155,7 @@ def plot_figure3(
 # Figure 4 — ΔP vs. ΔE scatter, one point per (corruption × severity × seed)
 # ----------------------------------------------------------------------------
 
-def plot_figure4_scatter(
+def plot_deltaP_deltaE_scatter(
     df: pd.DataFrame,
     de: str = "rho",
     dp: str = "flip_rate",
@@ -246,23 +220,23 @@ def plot_figure4_scatter(
             )
 
         ax.set_title(explainer, fontsize=12, fontweight="bold")
-        ax.set_xlabel(f"ΔP  ({DP_OPTIONS[dp][0]})")
+        ax.set_xlabel(f"ΔP = {DP_OPTIONS[dp][0]}")
         ax.grid(True, alpha=0.3, linewidth=0.6)
         ax.set_xlim(left=0)
         ax.set_ylim(bottom=0)
 
-    axes[0].set_ylabel(f"ΔE  ({DE_OPTIONS[de][0]})")
+    axes[0].set_ylabel(SIMILARITY_SPECS[de]["drift_axis"])
 
     # Two legends: corruption colors + severity sizes
     corr_handles = [
         Line2D([], [], marker="o", linestyle="", color=palette[c],
-               markersize=9, markeredgecolor="white", label=c)
+               markersize=9, markeredgecolor="white", label=corruption_label(c))
         for c in corruptions
     ]
     sev_handles = [
         Line2D([], [], marker="o", linestyle="", color="gray",
                markersize=np.sqrt(sev_sizes[s]), markeredgecolor="white",
-               label=f"severity {s}")
+               label=f"Severity {s}")
         for s in severities
     ]
     leg1 = fig.legend(
@@ -278,7 +252,7 @@ def plot_figure4_scatter(
     )
 
     fig.suptitle(
-        f"Figure 4 — ΔP vs. ΔE  ·  slice: {SLICES[slice_key]}  ·  one marker per seed",
+        f"Performance drift vs. explanation drift  ·  slice: {SLICES[slice_key]}  ·  one marker per seed",
         y=1.02, fontsize=12,
     )
     fig.tight_layout()
@@ -289,110 +263,6 @@ def plot_figure4_scatter(
         fig.savefig(output_path, bbox_inches="tight", dpi=200)
         fig.savefig(output_path.with_suffix(".png"), bbox_inches="tight", dpi=200)
     return fig
-
-
-# !TODO: Drop 
-
-"""
-# ----------------------------------------------------------------------------
-# Figure 5 — paired severity curves of ΔP and ΔE, z-scored
-# ----------------------------------------------------------------------------
-
-def plot_figure5_paired(
-    df: pd.DataFrame,
-    de: str = "rho",
-    dp: str = "flip_rate",
-    slice_key: str = "all",
-    output_path: str | Path | None = None,
-) -> plt.Figure:
-    '''Side-by-side (per corruption) severity curves for ΔP and ΔE,
-    z-standardized per explainer across all (corruption × severity).'''
-    sub = compute_deltas(df, de=de, dp=dp, slice_key=slice_key)
-    agg = (
-        sub.groupby(["explainer", "corruption", "severity"], as_index=False)
-           .agg(delta_e=("delta_e", "mean"),
-                delta_e_sd=("delta_e", "std"),
-                delta_p=("delta_p", "mean"),
-                delta_p_sd=("delta_p", "std"))
-           .fillna({"delta_e_sd": 0.0, "delta_p_sd": 0.0})
-    )
-
-    # z-score per explainer (across corruptions × severities) for each quantity
-    for explainer in agg["explainer"].unique():
-        mask = agg["explainer"] == explainer
-        for col in ("delta_p", "delta_e"):
-            mu = agg.loc[mask, col].mean()
-            sd = agg.loc[mask, col].std()
-            denom = sd if sd > 0 else 1.0
-            agg.loc[mask, f"{col}_z"] = (agg.loc[mask, col] - mu) / denom
-            agg.loc[mask, f"{col}_z_sd"] = agg.loc[mask, f"{col}_sd"] / denom
-
-    explainers = sorted(agg["explainer"].unique())
-    corruptions = sorted(agg["corruption"].unique())
-    severities = sorted(agg["severity"].unique())
-    n_rows, n_cols = len(explainers), len(corruptions)
-
-    fig, axes = plt.subplots(
-        n_rows, n_cols,
-        figsize=(3.4 * n_cols, 3.0 * n_rows),
-        sharex=True, sharey=True, squeeze=False,
-    )
-
-    dp_color, de_color = "#1f77b4", "#d62728"
-
-    for i, explainer in enumerate(explainers):
-        for j, corruption in enumerate(corruptions):
-            ax = axes[i, j]
-            s = agg[(agg["explainer"] == explainer)
-                    & (agg["corruption"] == corruption)].sort_values("severity")
-            if s.empty:
-                continue
-            x = s["severity"].to_numpy()
-
-            yp = s["delta_p_z"].to_numpy()
-            yp_err = s["delta_p_z_sd"].to_numpy()
-            ax.plot(x, yp, marker="s", ls="--", color=dp_color,
-                    linewidth=1.9, label="ΔP (z)")
-            ax.fill_between(x, yp - yp_err, yp + yp_err,
-                            color=dp_color, alpha=0.12, linewidth=0)
-
-            ye = s["delta_e_z"].to_numpy()
-            ye_err = s["delta_e_z_sd"].to_numpy()
-            ax.plot(x, ye, marker="o", ls="-", color=de_color,
-                    linewidth=1.9, label="ΔE (z)")
-            ax.fill_between(x, ye - ye_err, ye + ye_err,
-                            color=de_color, alpha=0.12, linewidth=0)
-
-            ax.axhline(0, color="gray", linewidth=0.6, alpha=0.6)
-            if i == 0:
-                ax.set_title(corruption, fontsize=11, fontweight="bold")
-            if i == n_rows - 1:
-                ax.set_xlabel("Severity")
-                ax.set_xticks(severities)
-            if j == 0:
-                ax.set_ylabel(f"{explainer}\nz-score", fontsize=10)
-            ax.grid(True, alpha=0.3, linewidth=0.6)
-
-    handles, labels = axes[0, 0].get_legend_handles_labels()
-    fig.legend(
-        handles, labels,
-        loc="lower center", ncol=2, frameon=False,
-        bbox_to_anchor=(0.5, -0.02), fontsize=10,
-    )
-    fig.suptitle(
-        "Figure 5 — Paired ΔP & ΔE severity curves (z-scored per explainer)  ·  "
-        f"ΔE={DE_OPTIONS[de][0]}, ΔP={DP_OPTIONS[dp][0]}",
-        y=1.01, fontsize=12,
-    )
-    fig.tight_layout()
-
-    if output_path is not None:
-        output_path = Path(output_path)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(output_path, bbox_inches="tight", dpi=200)
-        fig.savefig(output_path.with_suffix(".png"), bbox_inches="tight", dpi=200)
-    return fig
-"""
 
 # ----------------------------------------------------------------------------
 # Aggregated CSV export (for later stats / tables)
@@ -442,18 +312,14 @@ def run_decoupling_analysis(
 
     df = load_drift_results(experiments_dir, n=n)
 
-    plot_figure3(
+    plot_explanation_drift_slices(
         df, de=de,
         output_path=output_dir / f"fig3_de_across_slices_{de}.pdf",
     )
-    plot_figure4_scatter(
+    plot_deltaP_deltaE_scatter(
         df, de=de, dp=dp, slice_key=scatter_slice,
         output_path=output_dir / f"fig4_dp_vs_de_scatter_{scatter_slice}_{dp}_{de}.pdf",
     )
-    #plot_figure5_paired(
-    #    df, de=de, dp=dp, slice_key=scatter_slice,
-    #    output_path=output_dir / f"fig5_paired_severity_curves_{scatter_slice}_{dp}_{de}.pdf",
-    #)
     export_aggregated_csv(df, output_dir, de=de, dp=dp)
 
     plt.close("all")

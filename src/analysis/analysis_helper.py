@@ -9,44 +9,61 @@ import numpy as np
 # Config
 # ----------------------------------------------------------------------------
 
-SLICES: dict[str, str] = {
-    "all": "all samples",
-    "inv": "invariant predictions",
-    "both_corr": "both correct (clean & shifted)",
-}
-
 SLICE_STYLES: dict[str, dict] = {
     "all":       dict(color="#444444", ls="-",  marker="o", label="all samples"),
     "inv":       dict(color="#1f77b4", ls="--", marker="s", label="invariant"),
     "both_corr": dict(color="#d62728", ls="-.", marker="^", label="both correct"),
 }
 
-SIM_MEASURES: list[tuple[str, str]] = [
-    ("rho", r"Spearman $\rho$"),
-    ("cos", "Cosine similarity"),
-    ("iou", "Top-$k$ IoU"),
-]
+SLICES: dict[str, str] = {
+    "all": "all samples",
+    "inv": "invariant predictions",
+    "both_corr": "both correct (clean & shifted)",
+}
 
-PRIMARY_MEASURE = "rho"
-PRIMARY_LABEL = r"Spearman $\rho$ (explanation similarity)"
+# ----------------------------------------------------------------------------
+# Similarity specs 
+# ----------------------------------------------------------------------------
+
+SIMILARITY_KEYS: tuple[str, ...] = ("rho", "cos", "iou")
+
+SIMILARITY_SPECS: dict[str, dict[str, str]] = {
+    "rho": {
+        "similarity": "Spearman correlation",
+        "drift_axis": r"$\Delta E = 1 - \rho$",
+        "tensor_col": "rho",
+    },
+    "cos": {
+        "similarity": "Cosine similarity",
+        "drift_axis": r"$\Delta E = 1 - \cos$",
+        "tensor_col": "cos",
+    },
+    "iou": {
+        "similarity": "Top-$k$ IoU",
+        "drift_axis": r"$\Delta E = 1 - \mathrm{IoU}$",
+        "tensor_col": "iou",
+    },
+}
+
+CORRUPTION_LABELS: dict[str, str] = {
+    "brightness": "Brightness",
+    "fog": "Fog",
+    "gaussian_noise": "Gaussian Noise",
+    "gaussian_blur": "Gaussian Blur",
+    "defocus_blur": "Defocus Blur",
+}
+
+def human_readable_label(text: str) -> str:
+    return str(text).replace("_", " ").replace("-", " ").strip().title()
+
+
+def corruption_label(corruption: str) -> str:
+    return CORRUPTION_LABELS.get(corruption, human_readable_label(corruption))
+
 
 EXPERIMENT_DIR_RE = re.compile(
     r"experiment__n(?P<n>\d+)__(?P<explainer>[A-Za-z0-9]+)__seed(?P<seed>\d+)$"
 )
-
-DRIFT_LABELS = {
-    "rho": r"$1 - \rho$",
-    "cos": r"$1 - \cos$",
-    "iou": r"$1 - \mathrm{IoU}$",
-}
-
-# ΔE is defined as 1 − similarity. User picks which similarity to use.
-DE_OPTIONS: dict[str, tuple[str, str]] = {
-    # key: (label for plots, column stem in CSV)
-    "rho": (r"$1-\rho$ (Spearman)", "rho"),
-    "cos": (r"$1-\cos$ (cosine)", "cos"),
-    "iou": (r"$1-\mathrm{IoU}$ (top-$k$)", "iou"),
-}
 
 # ΔP has four reasonable operationalisations. Default is flip_rate because it
 # ties cleanly to the "both-correct ⇒ ΔP = 0 by construction" argument.
@@ -54,7 +71,7 @@ DP_OPTIONS: dict[str, tuple[str, str]] = {
     "flip_rate":   ("1 − invariant rate", "__derived__"),
     "err_rate":    ("1 − both-correct rate", "__derived__"),
     "p_shift":     (r"$|\Delta p_{\mathrm{pred}}|$", "conf_all__p_shift_mean"),
-    "margin_shift":(r"$|\Delta\,\mathrm{margin}|$", "conf_all__margin_shift_mean"),
+    "margin_shift":(r"$|\Delta \mathrm{margin}|$", "conf_all__margin_shift_mean"),
 }
 
 TENSOR_KEYS = (
@@ -63,12 +80,7 @@ TENSOR_KEYS = (
     "conf__p_shift_abs", "conf__margin_shift_abs",
 )
 
-DE_BASIS: dict[str, tuple[str, str]] = {
-    # key: (tensor column, plot label)
-    "rho": ("rho", r"$\Delta E = 1 - \rho$"),
-    "cos": ("cos", r"$\Delta E = 1 - \cos$"),
-    "iou": ("iou", r"$\Delta E = 1 - \mathrm{IoU}$"),
-}
+PRIMARY_MEASURE = "rho"
 
 # Trust-zone colours: robust / silent / expected / stubborn
 ZONE_COLORS = {
@@ -88,8 +100,6 @@ CORRELATION_METRICS: list[tuple[str, str]] = [
     ("margin_shift", r"$|\Delta\mathrm{margin}|$"),
 ]
 
-DE_SIM_COLS = {"cos": "cos", "rho": "rho", "iou": "iou"}
-
 # ----------------------------------------------------------------------------
 # Global corruption filter
 # ----------------------------------------------------------------------------
@@ -97,7 +107,6 @@ DE_SIM_COLS = {"cos": "cos", "rho": "rho", "iou": "iou"}
 EXCLUDED_CORRUPTIONS: frozenset[str] = frozenset({
     "defocus_blur",
 })
-
 
 def filter_excluded_corruptions(
     df: pd.DataFrame,
@@ -194,7 +203,7 @@ def _x_values(frame: pd.DataFrame, x_axis: str) -> np.ndarray:
 
 
 def x_label(x_axis: str) -> str:
-    return "Corruption severity" if x_axis == "severity" else r"max MMD$^2$ (feature-space)"
+    return "Severity" if x_axis == "severity" else r"max MMD$^2$ (feature-space)"
 
 
 def draw_corruption_lines(
@@ -212,7 +221,7 @@ def draw_corruption_lines(
         y = cdf[f"{metric_key}_mean"].to_numpy()[order]
         err = cdf[f"{metric_key}_sd"].to_numpy()[order]
         color = palette[corr]
-        ax.plot(x, y, marker="o", linewidth=1.8, color=color, label=corr, zorder=3)
+        ax.plot(x, y, marker="o", linewidth=1.8, color=color, label=corruption_label(corr), zorder=3)
         ax.fill_between(x, y - err, y + err, color=color, alpha=0.15, linewidth=0, zorder=2)
 
 
@@ -223,7 +232,7 @@ def similarity_to_drift_agg(agg: pd.DataFrame) -> pd.DataFrame:
     """
     out = agg.copy()
 
-    for key, _ in SIM_MEASURES:
+    for key in SIMILARITY_KEYS:
         mean_col = f"{key}_mean"
         if mean_col in out.columns:
             out[mean_col] = (1.0 - out[mean_col]).clip(lower=0.0, upper=1.0)

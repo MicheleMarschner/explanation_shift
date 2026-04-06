@@ -1,38 +1,3 @@
-"""
-Sample-level analyses
-================================
-
-Goes beyond the aggregated results by loading the per-sample
-tensor payloads.
-
-Figures
--------
-Figure 9  — Trust Zones (stacked bars): per-sample 2×2 of correctness × drift.
-            "Silent Drift" = correct-on-both yet drifted ⇒ sample-level decoupling.
-Figure 10 — Violins of per-sample ρ by severity. Exposes distribution shape
-            that RQ1 Fig 1 (mean ± seed-SD) cannot.
-
-Figure 14 — Metric correlation heatmap
-    Spearman correlation of all drift/uncertainty metrics. Answers in one image:
-    are the three similarity bases redundant (→ choice doesn't matter), and
-    how strongly are ΔE, |ΔH| and confidence metrics coupled.
-
-Trust-zone exemplars (CSV only)
-    For every (explainer, seed, corruption, severity), picks one
-    representative sample_idx per Trust Zone (robust / silent_drift /
-    expected_failure / stubborn_failure) via rank-based selection on
-    similarity + |ΔH|. Writes a CSV that feeds directly into the user's
-    existing saliency-rendering pipeline — this module does NOT render
-    saliency maps itself.
-
-!TODO: Drop           
-Figure 11 — Per-pair |ΔH| vs ΔE scatter (pooled). Tests coupling at sample
-            resolution, complementary to RQ2 Fig 4 which pools to seed means.
-Figure 12 — Failure detection. GT = ~both_correct; scores = ΔE vs confidence
-            drift vs entropy drift. (a) AUC vs severity line grid,
-            (b) ROC curves at selected hard conditions.
-"""
-
 import re
 from pathlib import Path
 from typing import Iterable
@@ -53,13 +18,13 @@ except ImportError:
 
 from analysis.analysis_helper import (
     CORRELATION_METRICS,
-    DE_BASIS,
-    DE_SIM_COLS,
     EXPERIMENT_DIR_RE,
+    SIMILARITY_SPECS,
     SLICES,
     TENSOR_KEYS,
     ZONE_COLORS,
     ZONE_ORDER,
+    corruption_label,
     corruption_palette,
     EXCLUDED_CORRUPTIONS,
     filter_excluded_corruptions,
@@ -241,42 +206,12 @@ def slice_mask(df: pd.DataFrame, slice_key: str) -> pd.Series:
 
 def add_delta_e(df: pd.DataFrame, basis: str = "cos") -> pd.DataFrame:
     """Attach a `delta_e` column based on the requested similarity basis."""
-    if basis not in DE_BASIS:
-        raise ValueError(f"unknown --de {basis!r}, choose from {list(DE_BASIS)}")
-    sim_col = DE_BASIS[basis][0]
+    if basis not in SIMILARITY_SPECS:
+        raise ValueError(f"unknown --de {basis!r}, choose from {list(SIMILARITY_SPECS)}")
+    sim_col = SIMILARITY_SPECS[basis]["tensor_col"]
     out = df.copy()
     out["delta_e"] = (1.0 - out[sim_col]).clip(lower=0.0)
     return out
-
-
-# ----------------------------------------------------------------------------
-# Manual AUC / ROC (no sklearn dependency)
-# ----------------------------------------------------------------------------
-
-def _auc_roc(scores: np.ndarray, labels: np.ndarray) -> tuple[float, np.ndarray, np.ndarray]:
-    """Return (AUC, fpr, tpr). Higher score ⇒ more likely positive.
-    NaN scores are dropped. Returns (nan, …) if one class is empty or all NaN.
-    """
-    mask = ~np.isnan(scores)
-    scores = scores[mask]
-    labels = labels[mask].astype(bool)
-    n_pos = int(labels.sum())
-    n_neg = len(labels) - n_pos
-    if n_pos == 0 or n_neg == 0 or len(labels) == 0:
-        return (float("nan"), np.array([0.0, 1.0]), np.array([0.0, 1.0]))
-    order = np.argsort(-scores, kind="mergesort")
-    ls = labels[order]
-    tpr = np.concatenate([[0.0], np.cumsum(ls) / n_pos])
-    fpr = np.concatenate([[0.0], np.cumsum(~ls) / n_neg])
-    auc = float(_trapezoid(tpr, fpr))
-    return auc, fpr, tpr
-
-
-# numpy 2.x renamed trapz → trapezoid; keep a shim for older versions.
-_trapezoid = getattr(np, "trapezoid", getattr(np, "trapz", None))
-if _trapezoid is None:  # pragma: no cover
-    def _trapezoid(y, x):  # type: ignore
-        return float(np.sum((x[1:] - x[:-1]) * 0.5 * (y[1:] + y[:-1])))
 
 
 # ----------------------------------------------------------------------------
@@ -333,7 +268,7 @@ def compute_trust_zones(
     return agg, thr
 
 
-def plot_figure9_trust_zones(
+def plot_trust_zones(
     df: pd.DataFrame,
     de_basis: str = "cos",
     threshold_quantile: float = 0.75,
@@ -379,11 +314,11 @@ def plot_figure9_trust_zones(
             ax.set_xticklabels([str(s) for s in severities])
             ax.set_ylim(0, 100)
             if i == 0:
-                ax.set_title(corruption, fontsize=11, fontweight="bold")
+                ax.set_title(corruption_label(corruption), fontsize=11, fontweight="bold")
             if i == n_rows - 1:
                 ax.set_xlabel("Severity")
             if j == 0:
-                ax.set_ylabel(f"{explainer}\nshare of samples (%)", fontsize=10)
+                ax.set_ylabel(f"{explainer}\nshare of samples (%)", fontsize=10, linespacing=1.6)
             ax.grid(True, axis="y", alpha=0.3, linewidth=0.6)
             ax.set_axisbelow(True)
 
@@ -391,11 +326,11 @@ def plot_figure9_trust_zones(
                              label=z) for z in ZONE_ORDER]
     fig.legend(
         handles=legend_handles, loc="lower center", ncol=len(ZONE_ORDER),
-        frameon=False, bbox_to_anchor=(0.5, -0.02), fontsize=10,
+        frameon=False, bbox_to_anchor=(0.5, -0.06), fontsize=10,
     )
-    basis_label = DE_BASIS[de_basis][1]
+    basis_label = SIMILARITY_SPECS[de_basis]["drift_axis"]
     fig.suptitle(
-        f"Figure 9 — Trust zones  ·  high drift = "
+        f"Trust zones  ·  high drift: "
         f"{basis_label}  $\\geq$ q$_{{{threshold_quantile:.2f}}}$ = {thr:.3f}",
         y=1.005, fontsize=12,
     )
@@ -413,7 +348,7 @@ def plot_figure9_trust_zones(
 # Figure 10 — Violins of per-sample ρ (or cos / iou)
 # ----------------------------------------------------------------------------
 
-def plot_figure10_violins(
+def plot_violins(
     df: pd.DataFrame,
     slice_key: str = "inv",
     similarity: str = "rho",
@@ -475,14 +410,14 @@ def plot_figure10_violins(
                         fontsize=7, color="#555555", transform=trans)
 
             if i == 0:
-                ax.set_title(corruption, fontsize=11, fontweight="bold")
+                ax.set_title(corruption_label(corruption), fontsize=11, fontweight="bold")
             if i == n_rows - 1:
-                ax.set_xlabel("Severity", labelpad=18)
+                ax.set_xlabel("Severity", labelpad=24)
             if j == 0:
-                ax.set_ylabel(f"{explainer}\nper-sample {similarity}", fontsize=10)
+                ax.set_ylabel(f"{explainer}\nper-sample {similarity}", fontsize=10, linespacing=1.6)
 
     fig.suptitle(
-        f"Figure 10 — Distribution of per-sample {similarity} by severity  ·  "
+        f"Distribution of per-sample {SIMILARITY_SPECS[similarity]['similarity']} by severity  ·  "
         f"slice: {SLICES[slice_key]}",
         y=1.005, fontsize=12,
     )
@@ -496,366 +431,6 @@ def plot_figure10_violins(
     return fig
 
 
-
-# !TODO: Drop 
-
-"""
-# ----------------------------------------------------------------------------
-# Figure 11 — Per-pair |ΔH| vs ΔE scatter (pooled)
-# ----------------------------------------------------------------------------
-
-def plot_figure11_entropy_scatter(
-    df: pd.DataFrame,
-    slice_key: str = "inv",
-    de_basis: str = "cos",
-    max_points_per_panel: int = 20_000,
-    output_path: str | Path | None = None,
-) -> plt.Figure:
-    sub = df[slice_mask(df, slice_key)].copy()
-    sub = add_delta_e(sub, basis=de_basis)
-    sub["abs_dH"] = sub["dH"].abs()
-    sub = sub.dropna(subset=["abs_dH", "delta_e"])
-
-    explainers = sorted(sub["explainer"].unique())
-    severities = sorted(sub["severity"].unique())
-
-    # Severity-ordered palette (viridis-ish)
-    cmap = plt.get_cmap("viridis")
-    sev_colors = {s: cmap(i / max(len(severities) - 1, 1))
-                  for i, s in enumerate(severities)}
-
-    fig, axes = plt.subplots(1, len(explainers),
-                              figsize=(5.6 * len(explainers), 4.8),
-                              sharex=True, sharey=True, squeeze=False)
-    axes = axes[0]
-
-    rng = np.random.default_rng(0)
-
-    for ax, explainer in zip(axes, explainers):
-        panel = sub[sub["explainer"] == explainer]
-        if len(panel) > max_points_per_panel:
-            idx = rng.choice(len(panel), size=max_points_per_panel, replace=False)
-            panel_plot = panel.iloc[idx]
-        else:
-            panel_plot = panel
-
-        for sev in severities:
-            d = panel_plot[panel_plot["severity"] == sev]
-            if d.empty:
-                continue
-            ax.scatter(d["abs_dH"], d["delta_e"],
-                        s=8, alpha=0.35, color=sev_colors[sev],
-                        linewidths=0, label=f"severity {sev}")
-
-        # Pooled Spearman ρ on full (unsubsampled) panel
-        if len(panel) >= 2:
-            rho_val = panel[["abs_dH", "delta_e"]].corr(method="spearman").iloc[0, 1]
-            ax.text(
-                0.04, 0.96,
-                f"Spearman $\\rho$ = {rho_val:+.3f}\n$n$ = {len(panel):,}",
-                transform=ax.transAxes, va="top", ha="left", fontsize=10,
-                bbox=dict(boxstyle="round,pad=0.35",
-                          facecolor="white", edgecolor="#cccccc", alpha=0.92),
-            )
-
-        ax.set_title(explainer, fontsize=12, fontweight="bold")
-        ax.set_xlabel(r"$|\Delta H|$ per sample")
-        ax.grid(True, alpha=0.3, linewidth=0.6)
-        ax.set_xlim(left=0)
-        ax.set_ylim(bottom=0)
-
-    axes[0].set_ylabel(DE_BASIS[de_basis][1] + "  (per sample)")
-
-    handles = [
-        Line2D([], [], marker="o", linestyle="", color=sev_colors[s],
-               markersize=8, label=f"severity {s}")
-        for s in severities
-    ]
-    fig.legend(handles=handles, loc="lower center", ncol=len(severities),
-               frameon=False, bbox_to_anchor=(0.5, -0.03), fontsize=9)
-    fig.suptitle(
-        f"Figure 11 — Per-pair entropy drift vs. explanation drift (pooled)  ·  "
-        f"slice: {SLICES[slice_key]}",
-        y=1.02, fontsize=12,
-    )
-    fig.tight_layout()
-
-    if output_path is not None:
-        output_path = Path(output_path)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(output_path, bbox_inches="tight", dpi=200)
-        fig.savefig(output_path.with_suffix(".png"), bbox_inches="tight", dpi=200)
-    return fig
-
-
-# !TODO: Drop 
-# ----------------------------------------------------------------------------
-# Figure 12 — Failure detection: AUC lines + ROC curves
-# ----------------------------------------------------------------------------
-
-# score name → (column constructor, display label, colour)
-def _score_spec(de_basis: str) -> list[tuple[str, callable, str, str]]:
-    sim_col = DE_BASIS[de_basis][0]
-    return [
-        ("explanation_drift",
-            lambda d: (1.0 - d[sim_col]).clip(lower=0.0).to_numpy(),
-            f"Explanation drift ({DE_BASIS[de_basis][1]})",
-            "#ff7f0e"),
-        ("confidence_drift",
-            lambda d: d["p_shift"].to_numpy(),
-            "Confidence drift",
-            "#2ca02c"),
-        ("entropy_drift",
-            lambda d: d["dH"].abs().to_numpy(),
-            r"Entropy drift $|\Delta H|$",
-            "#1f77b4"),
-    ]
-
-
-def _restrict_to_clean_correct_and_failure_labels(
-    grp: pd.DataFrame,
-) -> tuple[pd.DataFrame, np.ndarray]:
-    '''Restrict to samples that were correct on the clean input.
-
-    Target:
-        1 = became wrong under corruption
-        0 = stayed correct under corruption
-
-    Since both_correct = clean_correct & corr_correct,
-    within the clean-correct subset we can use:
-        failure = ~both_correct
-    '''
-    if "clean_correct" not in grp.columns:
-        raise KeyError(
-            "Figure 12 now requires a 'clean_correct' column. "
-            "Make sure load_clean_references(...) and attach_clean_msp(...) "
-            "were run before compute_failure_aucs / plot_figure12b_rocs."
-        )
-
-    clean_mask = grp["clean_correct"].fillna(False).astype(bool)
-    sub = grp.loc[clean_mask].copy()
-
-    if sub.empty:
-        return sub, np.array([], dtype=bool)
-
-    labels = (~sub["both_correct"]).to_numpy(dtype=bool)
-    return sub, labels
-
-def compute_failure_aucs(
-    df: pd.DataFrame,
-    de_basis: str = "cos",
-) -> pd.DataFrame:
-    '''AUC per (explainer, corruption, severity, score) for the task
-
-        clean-correct -> corrupted failure
-
-    i.e.:
-        restrict to samples that were correct on clean,
-        then predict whether they fail under corruption.
-
-    Averages AUCs over seeds.
-    '''
-    specs = _score_spec(de_basis)
-    records = []
-
-    for (explainer, corruption, severity, seed), grp in df.groupby(
-        ["explainer", "corruption", "severity", "seed"]
-    ):
-        sub, labels = _restrict_to_clean_correct_and_failure_labels(grp)
-
-        # Skip empty or degenerate cases after filtering
-        if sub.empty or np.unique(labels).size < 2:
-            continue
-
-        for name, fn, _, _ in specs:
-            scores = fn(sub)
-            auc, _, _ = _auc_roc(scores, labels)
-            records.append({
-                "explainer": explainer,
-                "corruption": corruption,
-                "severity": severity,
-                "seed": seed,
-                "score": name,
-                "auc": auc,
-                "n_pos": int(labels.sum()),
-                "n_neg": int((~labels).sum()),
-                "n_clean_correct": int(len(sub)),
-            })
-
-    rec = pd.DataFrame.from_records(records)
-    if rec.empty:
-        return pd.DataFrame(columns=[
-            "explainer", "corruption", "severity", "score",
-            "auc_mean", "auc_sd", "n_seeds"
-        ])
-
-    agg = (
-        rec.groupby(["explainer", "corruption", "severity", "score"],
-                    as_index=False)
-           .agg(auc_mean=("auc", "mean"),
-                auc_sd=("auc", "std"),
-                n_seeds=("seed", "nunique"))
-           .fillna({"auc_sd": 0.0})
-    )
-    return agg
-
-def plot_figure12a_auc_lines(
-    df: pd.DataFrame,
-    de_basis: str = "cos",
-    output_path: str | Path | None = None,
-) -> plt.Figure:
-    agg = compute_failure_aucs(df, de_basis=de_basis)
-    specs = _score_spec(de_basis)
-    score_color = {name: color for (name, _, _, color) in specs}
-    score_label = {name: label for (name, _, label, _) in specs}
-
-    explainers = sorted(agg["explainer"].unique())
-    corruptions = sorted(agg["corruption"].unique())
-    severities = sorted(agg["severity"].unique())
-    n_rows, n_cols = len(explainers), len(corruptions)
-
-    fig, axes = plt.subplots(
-        n_rows, n_cols,
-        figsize=(3.3 * n_cols, 2.9 * n_rows),
-        sharex=True, sharey=True, squeeze=False,
-    )
-
-    for i, explainer in enumerate(explainers):
-        for j, corruption in enumerate(corruptions):
-            ax = axes[i, j]
-            for name, _, _, _ in specs:
-                s = agg[
-                    (agg["explainer"] == explainer)
-                    & (agg["corruption"] == corruption)
-                    & (agg["score"] == name)
-                ].sort_values("severity")
-                if s.empty:
-                    continue
-                x = s["severity"].to_numpy()
-                y = s["auc_mean"].to_numpy()
-                err = s["auc_sd"].to_numpy()
-                ax.plot(x, y, marker="o", linewidth=1.9,
-                        color=score_color[name], label=score_label[name])
-                ax.fill_between(x, y - err, y + err,
-                                color=score_color[name], alpha=0.15, linewidth=0)
-            ax.axhline(0.5, color="gray", linestyle=":", linewidth=0.8, alpha=0.7)
-            ax.set_ylim(0.35, 1.02)
-            ax.set_xticks(severities)
-            ax.grid(True, alpha=0.3, linewidth=0.6)
-            if i == 0:
-                ax.set_title(corruption, fontsize=11, fontweight="bold")
-            if i == n_rows - 1:
-                ax.set_xlabel("Severity")
-            if j == 0:
-                ax.set_ylabel(f"{explainer}\nROC AUC", fontsize=10)
-
-    handles = [Line2D([], [], color=c, linewidth=2.2, marker="o",
-                       label=score_label[n])
-               for (n, _, _, c) in specs]
-    fig.legend(handles=handles, loc="lower center", ncol=len(specs),
-               frameon=False, bbox_to_anchor=(0.5, -0.05), fontsize=10)
-    fig.suptitle(
-        "Figure 12a — Failure detection AUC (target: clean-correct → corrupted failure)",
-        y=1.005, fontsize=12,
-    )
-    fig.tight_layout()
-
-    if output_path is not None:
-        output_path = Path(output_path)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(output_path, bbox_inches="tight", dpi=200)
-        fig.savefig(output_path.with_suffix(".png"), bbox_inches="tight", dpi=200)
-    return fig
-
-
-def plot_figure12b_rocs(
-    df: pd.DataFrame,
-    conditions: list[tuple[str, int]] | None = None,
-    de_basis: str = "cos",
-    output_path: str | Path | None = None,
-) -> plt.Figure:
-    '''ROC curves at selected (corruption, severity) conditions, per explainer.
-    Curves are computed on seed-pooled samples for a cleaner line.'''
-    if conditions is None:
-        # Default: mid-severity of every corruption where failures exist.
-        corruptions = sorted(df["corruption"].unique())
-        target_sev = 3 if 3 in df["severity"].unique() else max(df["severity"].unique())
-        conditions = [(c, target_sev) for c in corruptions]
-
-    specs = _score_spec(de_basis)
-    explainers = sorted(df["explainer"].unique())
-    n_rows, n_cols = len(explainers), len(conditions)
-
-    fig, axes = plt.subplots(
-        n_rows, n_cols,
-        figsize=(3.0 * n_cols, 3.0 * n_rows),
-        sharex=True, sharey=True, squeeze=False,
-    )
-
-    for i, explainer in enumerate(explainers):
-        for j, (corruption, severity) in enumerate(conditions):
-            ax = axes[i, j]
-            grp = df[
-                (df["explainer"] == explainer)
-                & (df["corruption"] == corruption)
-                & (df["severity"] == severity)
-            ]
-            if grp.empty:
-                ax.text(0.5, 0.5, "no data", ha="center", va="center",
-                        transform=ax.transAxes)
-                continue
-
-            sub, labels = _restrict_to_clean_correct_and_failure_labels(grp)
-
-            if sub.empty or np.unique(labels).size < 2:
-                ax.text(0.5, 0.5, "no valid failures", ha="center", va="center",
-                        transform=ax.transAxes)
-                continue
-
-            ax.plot([0, 1], [0, 1], color="lightgray", linewidth=1.0, zorder=1)
-            auc_lines = []
-            for name, fn, label, color in specs:
-                auc, fpr, tpr = _auc_roc(fn(sub), labels)
-                ax.plot(fpr, tpr, color=color, linewidth=1.9, zorder=3)
-                auc_s = f"{auc:.3f}" if not np.isnan(auc) else "n/a"
-                auc_lines.append((color, auc_s))
-            # In-panel AUC box, one coloured line per score
-            for k, (color, auc_s) in enumerate(auc_lines):
-                ax.text(
-                    0.97, 0.04 + k * 0.07, f"AUC = {auc_s}",
-                    transform=ax.transAxes, ha="right", va="bottom",
-                    fontsize=8, color=color, fontweight="bold",
-                )
-            ax.set_xlim(0, 1)
-            ax.set_ylim(0, 1.02)
-            ax.set_aspect("equal")
-            ax.grid(True, alpha=0.3, linewidth=0.6)
-            if i == 0:
-                ax.set_title(f"{corruption}, sev={severity}",
-                             fontsize=10, fontweight="bold")
-            if i == n_rows - 1:
-                ax.set_xlabel("FPR")
-            if j == 0:
-                ax.set_ylabel(f"{explainer}\nTPR", fontsize=10)
-
-    handles = [Line2D([], [], color=color, linewidth=2.0, label=label)
-               for (_, _, label, color) in specs]
-    fig.legend(handles=handles, loc="lower center", ncol=len(specs),
-               frameon=False, bbox_to_anchor=(0.5, -0.02), fontsize=9)
-    fig.suptitle(
-        "Figure 12b — ROC curves for corruption-induced failure  "
-        "(restricted to clean-correct samples; seed-pooled)",
-        y=1.005, fontsize=12,
-    )
-    fig.tight_layout()
-
-    if output_path is not None:
-        output_path = Path(output_path)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(output_path, bbox_inches="tight", dpi=200)
-        fig.savefig(output_path.with_suffix(".png"), bbox_inches="tight", dpi=200)
-    return fig
-"""
 
 # ----------------------------------------------------------------------------
 # Clean reference loader — provides MSP on clean inputs for Fig 13
@@ -987,7 +562,7 @@ def attach_clean_msp(
 # Figure 13 — Clean confidence vs. vulnerability (per-sample null-result test)
 # ----------------------------------------------------------------------------
 
-def plot_figure13_clean_msp_vs_vulnerability(
+def plot_clean_msp_vs_vulnerability(
     df: pd.DataFrame,
     slice_key: str = "all",
     de_basis: str = "rho",
@@ -1047,27 +622,27 @@ def plot_figure13_clean_msp_vs_vulnerability(
                     linewidths=0,
                 )
 
-            # Spearman on the full (unsubsampled) panel
+            # Pearson on the full (unsubsampled) panel
             if len(panel) >= 2 and panel["msp_clean"].std() > 0 \
                     and panel["delta_e"].std() > 0:
-                rx = panel["msp_clean"].rank(method="average").to_numpy()
-                ry = panel["delta_e"].rank(method="average").to_numpy()
-                rho_val = float(np.corrcoef(rx, ry)[0, 1])
+                r_val = float(panel[["msp_clean", "delta_e"]].corr().iloc[0, 1])
                 ax.text(
                     0.04, 0.96,
-                    f"Spearman $\\rho$ = {rho_val:+.3f}\n$n$ = {len(panel):,}",
+                    f"Pearson $r$ = {r_val:+.3f}\n$n$ = {len(panel):,}",
                     transform=ax.transAxes, va="top", ha="left", fontsize=9,
                     bbox=dict(boxstyle="round,pad=0.32",
-                              facecolor="white", edgecolor="#cccccc", alpha=0.92),
+                            facecolor="white", edgecolor="#cccccc", alpha=0.92),
                 )
 
             if i == 0:
-                ax.set_title(f"severity {sev}", fontsize=11, fontweight="bold")
+                ax.set_title(f"Severity {sev}", fontsize=11, fontweight="bold")
             if i == n_rows - 1:
                 ax.set_xlabel("Clean MSP")
             if j == 0:
-                basis_sym = DE_BASIS[de_basis][1]
-                ax.set_ylabel(f"{explainer}\nvulnerability = {basis_sym}", fontsize=9)
+                ax.set_ylabel(
+                    f"{explainer}\n{SIMILARITY_SPECS[de_basis]['drift_axis']}",
+                    fontsize=9, linespacing=1.6
+                )
             ax.grid(True, alpha=0.3, linewidth=0.6)
             ax.set_xlim(0, 1.02)
 
@@ -1078,15 +653,15 @@ def plot_figure13_clean_msp_vs_vulnerability(
     # Corruption colour legend at the bottom
     legend_handles = [
         Line2D([], [], marker="o", linestyle="", color=palette[c],
-               markersize=8, label=c)
+               markersize=8, label=corruption_label(c))
         for c in corruptions
     ]
     fig.legend(
         handles=legend_handles, loc="lower center", ncol=len(corruptions),
-        frameon=False, bbox_to_anchor=(0.5, -0.03), fontsize=9,
+        frameon=False, bbox_to_anchor=(0.5, -0.06), fontsize=9,
     )
     fig.suptitle(
-        f"Figure 13 — Clean confidence vs. per-sample vulnerability  ·  "
+        f"Clean confidence vs. explanation drift  ·  "
         f"slice: {SLICES[slice_key]}",
         y=1.005, fontsize=12,
     )
@@ -1104,7 +679,7 @@ def plot_figure13_clean_msp_vs_vulnerability(
 # Figure 14 — Metric correlation heatmap
 # ----------------------------------------------------------------------------
 
-def plot_figure14_metric_correlation(
+def plot_metric_correlation(
     df: pd.DataFrame,
     mode: str = "by_corruption",
     slice_key: str = "all",
@@ -1121,6 +696,8 @@ def plot_figure14_metric_correlation(
     """
     if mode not in ("pooled", "by_corruption"):
         raise ValueError(f"mode must be 'pooled' or 'by_corruption', got {mode!r}")
+    
+    mode_display = mode.replace("_", " ")
 
     sub = df[slice_mask(df, slice_key)].copy()
     sub = _augment_metric_columns(sub)
@@ -1175,7 +752,7 @@ def plot_figure14_metric_correlation(
                 ax.text(jj, ii, f"{val:.2f}", ha="center", va="center",
                         color=text_color, fontsize=7)
 
-        title = explainer if corruption is None else f"{explainer} · {corruption}"
+        title = explainer if corruption is None else f"{explainer} · {corruption_label(corruption)}"
         ax.set_title(title, fontsize=10, fontweight="bold")
 
     if im is not None:
@@ -1184,8 +761,8 @@ def plot_figure14_metric_correlation(
                             pad=0.02)
 
     fig.suptitle(
-        f"Figure 14 — Metric correlation  ·  slice: {SLICES[slice_key]}  ·  mode: {mode}",
-        y=1.02, fontsize=12,
+        f"Metric correlation  ·  slice: {SLICES[slice_key]}  ·  mode: {mode_display}",
+        y=0.98, fontsize=12,
     )
 
     if output_path is not None:
@@ -1244,19 +821,19 @@ def find_trust_zone_exemplars(
 
     Zone definitions (same as Figure 9 in sample_level_analysis):
 
-    - **robust**: both_correct ∧ stable explanation (high sim, low |ΔH|)
-    - **silent_drift**: both_correct ∧ unstable explanation — the decoupling signal
-    - **stubborn_failure**: ¬both_correct ∧ stable explanation — wrong but the
+    - **Robust**: both_correct ∧ stable explanation (high sim, low |ΔH|)
+    - **Silent Drift**: both_correct ∧ unstable explanation — the decoupling signal
+    - **Stubborn Failure**: ¬both_correct ∧ stable explanation — wrong but the
       saliency didn't even react
-    - **expected_failure**: ¬both_correct ∧ unstable explanation
+    - **Expected Failure**: ¬both_correct ∧ unstable explanation
 
     Returns
     -------
     dict of zone name → sample_idx (or None if the zone is empty)
     """
-    if de_basis not in DE_SIM_COLS:
+    if de_basis not in SIMILARITY_SPECS:
         raise ValueError(f"unknown de_basis {de_basis!r}")
-    sim_col = DE_SIM_COLS[de_basis]
+    sim_col = SIMILARITY_SPECS[de_basis]["tensor_col"]
 
     sub = df[
         (df["explainer"] == explainer)
@@ -1273,13 +850,13 @@ def find_trust_zone_exemplars(
     sample_idx = sub["sample_idx"].to_numpy()
 
     return {
-        "robust":
-            _pick_exemplar(both_correct,  similarity, abs_dH, sample_idx, want_stable=True),
-        "silent_drift":
-            _pick_exemplar(both_correct,  similarity, abs_dH, sample_idx, want_stable=False),
-        "stubborn_failure":
+        "Robust":
+            _pick_exemplar(both_correct, similarity, abs_dH, sample_idx, want_stable=True),
+        "Silent Drift":
+            _pick_exemplar(both_correct, similarity, abs_dH, sample_idx, want_stable=False),
+        "Stubborn Failure":
             _pick_exemplar(~both_correct, similarity, abs_dH, sample_idx, want_stable=True),
-        "expected_failure":
+        "Expected Failure":
             _pick_exemplar(~both_correct, similarity, abs_dH, sample_idx, want_stable=False),
     }
 
@@ -1293,9 +870,9 @@ def export_trust_zone_exemplars(
     including the metric values of the picked sample so the downstream
     rendering pipeline has full context.
     """
-    if de_basis not in DE_SIM_COLS:
+    if de_basis not in SIMILARITY_SPECS:
         raise ValueError(f"unknown de_basis {de_basis!r}")
-    sim_col = DE_SIM_COLS[de_basis]
+    sim_col = SIMILARITY_SPECS[de_basis]["tensor_col"]
 
     rows: list[dict] = []
     keys = ["explainer", "seed", "corruption", "severity"]
@@ -1330,8 +907,6 @@ def export_trust_zone_exemplars(
     return out
 
 
-
-
 # ----------------------------------------------------------------------------
 # CSV export
 # ----------------------------------------------------------------------------
@@ -1345,8 +920,6 @@ def export_aggregated_csvs(
     zones, _ = compute_trust_zones(df, de_basis=de_basis,
                                    threshold_quantile=threshold_quantile)
     zones.to_csv(output_dir / "trust_zones.csv", index=False)
-    #aucs = compute_failure_aucs(df, de_basis=de_basis)
-    #aucs.to_csv(output_dir / "failure_detection_aucs.csv", index=False)
 
 
 # ----------------------------------------------------------------------------
@@ -1380,30 +953,16 @@ def run_sample_level_analysis(
     if has_clean_msp:
         df = attach_clean_msp(df, clean_ref)
 
-    plot_figure9_trust_zones(
+    plot_trust_zones(
         df, de_basis=de_basis, threshold_quantile=threshold_quantile,
         output_path=output_dir / f"fig9_trust_zones_{de_basis}.pdf",
     )
-    plot_figure10_violins(
+    plot_violins(
         df, slice_key=violin_slice, similarity=violin_similarity,
         output_path=output_dir / f"fig10_similarity_violins_{violin_slice}_{violin_similarity}.pdf",
     )
-    """
-    plot_figure11_entropy_scatter(
-        df, slice_key=scatter_slice, de_basis=de_basis,
-        output_path=output_dir / f"fig11_entropy_drift_scatter_{scatter_slice}_{de_basis}.pdf",
-    )
-    plot_figure12a_auc_lines(
-        df, de_basis=de_basis,
-        output_path=output_dir / f"fig12a_failure_detection_auc_{de_basis}.pdf",
-    )
-    plot_figure12b_rocs(
-        df, conditions=roc_conditions, de_basis=de_basis,
-        output_path=output_dir / f"fig12b_failure_detection_rocs_{de_basis}.pdf",
-    )
-    """
     if has_clean_msp:
-        plot_figure13_clean_msp_vs_vulnerability(
+        plot_clean_msp_vs_vulnerability(
             df, slice_key=vulnerability_slice, de_basis=vulnerability_de,
             output_path=output_dir / f"fig13_clean_msp_vs_vulnerability_{vulnerability_slice}_{vulnerability_de}.pdf",
         )
@@ -1413,7 +972,7 @@ def run_sample_level_analysis(
                            de_basis=de_basis,
                            threshold_quantile=threshold_quantile)
     
-    plot_figure14_metric_correlation(
+    plot_metric_correlation(
         df, mode=heatmap_mode, slice_key=heatmap_slice,
         output_path=output_dir / f"fig14_metric_correlation_{heatmap_slice}_{heatmap_mode}.pdf",
     )

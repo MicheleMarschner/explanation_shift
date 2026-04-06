@@ -54,15 +54,15 @@ def run_analysis_pipeline(experiments_dir):
 
     output_dir = PATHS.results
     n = 1000
-    de = "iou"                      # "cos", "iou", "rho"
+    de = "rho"                      # "cos", "iou", "rho"
     dp = "flip_rate"                # "p_shift", "flip_rate", "err_rate", "margin_shift"
-    slice = "both_corr"             # "all", "inv", "both_corr"
+    slice = "all"             # "all", "inv", "both_corr"
 
     # optional
     x_axis = "severity"             # "mmd", "severity"
     signed = "store_true"   
     threshold_quantile = 0.75       # Global ΔE quantile defining 'high drift' in Fig 9
-    heatmap_mode = "by_corruption"  # "pooled", "by_corruption"
+    heatmap_mode = "pooled"         # "pooled", "by_corruption"
 
     run_explanation_shift_analysis(
         experiments_dir=experiments_dir,
@@ -126,7 +126,7 @@ def run_analysis_pipeline(experiments_dir):
         output_dir=PATHS.results / "qualitative_imgs",
         image_loader_clean=clean_loader,
         image_loader_corr=corr_loader,
-        zones=("silent_drift", "stubborn_failure"),
+        zones=("Silent Drift", "Stubborn Failure"),
         corruptions=["fog", "gaussian_noise"],
         severities=[3, 5],
         seeds=[7],

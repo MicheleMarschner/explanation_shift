@@ -1,44 +1,19 @@
-"""
-RQ1 — Existiert Explanation Shift systematisch?
-================================================
-
-Aggregiert die pro Seed und Explainer gespeicherten Drift-Ergebnisse
-(experiments/experiment__n{N}__{EXPLAINER}__seed{SEED}/02__drift/02__drift_results.csv)
-und erzeugt zwei Figures:
-
-Figure 1 — Primary: Spearman 1 - ρ vs. Severity, eine Linie pro Korruption,
-           ein Panel pro Explainer (GradCAM, IG).
-           Beantwortet: tritt Drift auf, skaliert sie, ist sie korruption-spezifisch?
-
-Figure 2 — Vergleich der drei Ähnlichkeitsmaße (Spearman, Cosine, Top-k IoU).
-           3 Spalten (Maße) × N Zeilen (Explainer). Zeigt, ob das Drift-Muster
-           robust gegenüber der Wahl des Similarity-Maßes ist.
-
-Aggregation erfolgt über Seeds: pro (explainer, corruption, severity) werden die
-per-Seed sample-means gemittelt und deren Seed-Streuung als SD ausgewiesen
-(als Shaded Band in den Plots).
-
-Alle Slices werden geplottet: `all` (alle Samples), `inv` (invariant predictions),
-`both_corr` (both correct clean & shifted).
-"""
-
 from pathlib import Path
 from typing import Iterable
 import matplotlib.pyplot as plt
 import pandas as pd
 
 from analysis.analysis_helper import (
-    DRIFT_LABELS, 
-    PRIMARY_MEASURE, 
-    SIM_MEASURES, 
-    SLICES, 
-    corruption_palette, 
-    draw_corruption_lines, 
-    similarity_to_drift_agg, 
-    x_label, 
-    load_drift_results
+    PRIMARY_MEASURE,
+    SIMILARITY_KEYS,
+    SIMILARITY_SPECS,
+    SLICES,
+    corruption_palette,
+    draw_corruption_lines,
+    similarity_to_drift_agg,
+    x_label,
+    load_drift_results,
 )
-
 
 
 # ----------------------------------------------------------------------------
@@ -105,7 +80,7 @@ def aggregate_over_seeds(df: pd.DataFrame, slice_key: str = "all") -> pd.DataFra
 # ----------------------------------------------------------------------------
 # Figure 1 — Primary (1 - Spearman) vs severity, panel per explainer
 # ----------------------------------------------------------------------------
-def plot_figure1(
+def plot_explanation_drift(
     agg: pd.DataFrame,
     slice_key: str,
     x_axis: str = "severity",
@@ -135,7 +110,7 @@ def plot_figure1(
             sevs = sorted(agg_plot["severity"].unique())
             ax.set_xticks(sevs)
 
-    axes[0].set_ylabel(r"$\Delta E = 1 - \rho$")
+    axes[0].set_ylabel(SIMILARITY_SPECS[PRIMARY_MEASURE]["drift_axis"])
 
     handles, labels = axes[-1].get_legend_handles_labels()
     fig.legend(
@@ -147,7 +122,7 @@ def plot_figure1(
         fontsize=9,
     )
     fig.suptitle(
-        f"Figure 1 — Explanation drift vs. severity  ·  slice: {SLICES[slice_key]}",
+        f"Explanation drift by severity  ·  slice: {SLICES[slice_key]}",
         y=1.02, fontsize=13,
     )
     fig.tight_layout()
@@ -164,7 +139,7 @@ def plot_figure1(
 # Figure 2 — three similarity measures side by side, per explainer row
 # ----------------------------------------------------------------------------
 
-def plot_figure2(
+def plot_explanation_drift_across_similarities(
     agg: pd.DataFrame,
     slice_key: str,
     x_axis: str = "severity",
@@ -176,7 +151,7 @@ def plot_figure2(
     palette = corruption_palette(agg_plot["corruption"].unique())
 
     n_rows = len(explainers)
-    n_cols = len(SIM_MEASURES)
+    n_cols = len(SIMILARITY_KEYS)
     fig, axes = plt.subplots(
         n_rows, n_cols,
         figsize=(4.4 * n_cols, 3.8 * n_rows),
@@ -187,13 +162,13 @@ def plot_figure2(
 
     for i, explainer in enumerate(explainers):
         panel = agg_plot[agg_plot["explainer"] == explainer]
-        for j, (key, label) in enumerate(SIM_MEASURES):
+        for j, key in enumerate(SIMILARITY_KEYS):
             ax = axes[i, j]
             draw_corruption_lines(ax, panel, key, x_axis, palette)
             ax.grid(True, alpha=0.3, linewidth=0.6)
             ax.set_ylim(0, 1.02)
             if i == 0:
-                ax.set_title(DRIFT_LABELS.get(key, label), fontsize=12, fontweight="bold")
+                ax.set_title(SIMILARITY_SPECS[key]["similarity"], fontsize=12, fontweight="bold")
             if i == n_rows - 1:
                 ax.set_xlabel(x_label(x_axis))
                 if x_axis == "severity":
@@ -211,7 +186,7 @@ def plot_figure2(
         fontsize=9,
     )
     fig.suptitle(
-        f"Figure 2 — Robustness across drift measures  ·  slice: {SLICES[slice_key]}",
+        f"Explanation drift across similarity measures  ·  slice: {SLICES[slice_key]}",
         y=1.01, fontsize=13,
     )
     fig.tight_layout()
@@ -245,11 +220,11 @@ def run_explanation_shift_analysis(
         agg = aggregate_over_seeds(df, slice_key=slice_key)
         agg.to_csv(output_dir / f"aggregated__{slice_key}.csv", index=False)
 
-        plot_figure1(
+        plot_explanation_drift(
             agg, slice_key=slice_key, x_axis=x_axis,
             output_path=output_dir / f"fig1_primary_spearman__{slice_key}.pdf",
         )
-        plot_figure2(
+        plot_explanation_drift_across_similarities(
             agg, slice_key=slice_key, x_axis=x_axis,
             output_path=output_dir / f"fig2_similarity_comparison__{slice_key}.pdf",
         )
