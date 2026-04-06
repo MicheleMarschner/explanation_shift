@@ -5,7 +5,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 
-from src.configs.global_config import BATCH_SIZE, PATHS
+from configs.global_config import BATCH_SIZE, PATHS
 
 
 def load_cifar10(cifar10_dir: str):

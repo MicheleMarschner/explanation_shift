@@ -18,9 +18,7 @@ def load_model(device=DEVICE):
 
 def get_gradcam_config(model):
     """
-    Returns the model-specific Grad-CAM configuration.
-
-    For this custom CIFAR ResNet-18, the standard target layer is the
+    Returns the model-specific Grad-CAM configuration, which for ResNet-18 is the
     last residual block in layer4. No reshape transform is needed because
     the activations are already standard CNN feature maps [B, C, H, W].
     """
@@ -31,12 +29,7 @@ def get_gradcam_config(model):
 
 @torch.no_grad()
 def predict_resnet_embeddings(model, dataloader, device=None):
-    """
-    Returns penultimate embeddings [N, D] on CPU for THIS custom ResNet.
-
-    Embedding = output after avgpool+flatten, BEFORE fc.
-    For ResNet-18 on CIFAR, D should be 512.
-    """
+    """Returns penultimate embeddings [N, D] on CPU for the model with D = 512"""
     model.eval()
     outs = []
 
@@ -95,6 +88,7 @@ def transform_logits_to_preds(logits):
     return logits.argmax(dim=1)
 
 
+# measures Uncertainty of model predictions als Verteilung der Wahrscheinlichkeiten über alle Klassen (high: insecure; low: secure) 
 def entropy_from_logits(logits: torch.Tensor, eps: float = 1e-12) -> torch.Tensor:
     # logits: [B, K]
     p = F.softmax(logits, dim=1)

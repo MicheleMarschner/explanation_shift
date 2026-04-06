@@ -7,6 +7,57 @@ from src.distribution_shift import compute_confidence_shift_metrics, compute_shi
 from src.utils import prefix_keys
 
 
+def compute_drift_metrics_unpaired(clean_path: Path, artifact_path: Path, save_path: Path) -> dict:
+    ref = torch.load(clean_path, map_location="cpu", weights_only=False)
+    art = torch.load(artifact_path, map_location="cpu", weights_only=False)
+
+    cr = ref["clean_reference"]
+    cc = art["corrupt_reference"]
+
+    H_clean = cr["entropy_clean"].float()
+    H_corr = cc["entropy_corr"].float()
+
+    logits_clean = cr["logits_clean"]
+    logits_corr = cc["logits_corr"]
+
+    E_clean = cr["E_clean"].float()
+    E_corr = cc["E_corr"].float()
+    sigma_ref = float(cr["sigma_ref"])
+
+    sal_clean = cr["sal_clean"].float()
+    sal_corr = cc["sal_corr"].float()
+
+    mmd2, _ = compute_shift_strength_mmd(E_clean, E_corr, sigma_ref)
+    mmd2 = max(0.0, float(mmd2))
+
+    conf_clean = torch.softmax(logits_clean, dim=1).max(dim=1).values
+    conf_corr = torch.softmax(logits_corr, dim=1).max(dim=1).values
+
+    sal_mass_clean = sal_clean.abs().reshape(sal_clean.size(0), -1).mean(dim=1)
+    sal_mass_corr = sal_corr.abs().reshape(sal_corr.size(0), -1).mean(dim=1)
+
+    row = {
+        "corruption": art["corruption"],
+        "severity": int(art["severity"]),
+        "max_mean_discrepancy": mmd2,
+        "mean_entropy_clean": float(H_clean.mean().item()),
+        "mean_entropy_corr": float(H_corr.mean().item()),
+        "delta_mean_entropy_unpaired": float(H_corr.mean().item() - H_clean.mean().item()),
+        "mean_conf_clean": float(conf_clean.mean().item()),
+        "mean_conf_corr": float(conf_corr.mean().item()),
+        "delta_mean_conf_unpaired": float(conf_corr.mean().item() - conf_clean.mean().item()),
+        "mean_sal_mass_clean": float(sal_mass_clean.mean().item()),
+        "mean_sal_mass_corr": float(sal_mass_corr.mean().item()),
+        "delta_mean_sal_mass_unpaired": float(sal_mass_corr.mean().item() - sal_mass_clean.mean().item()),
+    }
+
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    torch.save({"row": row}, save_path)
+
+    return row
+
+
+
 def compute_drift_metrics(clean_path: Path, artifact_path: Path, save_path: Path) -> tuple[dict, dict]:
     ref = torch.load(clean_path, map_location="cpu", weights_only=False)
     art = torch.load(artifact_path, map_location="cpu", weights_only=False)
@@ -45,6 +96,9 @@ def compute_drift_metrics(clean_path: Path, artifact_path: Path, save_path: Path
     mmd2 = max(0.0, float(mmd2))    # shouldn't be negative, but can happen slightly due to finite sample size
 
     # entropy drift (ΔH)
+    # Measures how the model's prediction uncertainty changes from clean to corrupted inputs.
+    # Entropy is computed from the full softmax distribution over classes.
+    # Positive ΔH means higher uncertainty under corruption; negative ΔH means lower uncertainty.
     dH = (H_corr - H_clean)
     mean_dH = float(dH.mean().item())
     mean_abs_dH = float(dH.abs().mean().item())

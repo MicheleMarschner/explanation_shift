@@ -26,28 +26,7 @@ class ClassTarget:
 
 
 def ig_saliency(x: torch.Tensor, target: torch.Tensor, explainer, device=DEVICE, steps=16, internal_bs=32):
-    """
-    Integrated Gradients (IG) wrapper that returns a *single comparable saliency map per image*.
-
-    Why this wrapper (vs. using ig.attribute directly)?
-    - ig.attribute returns per-feature attributions with the SAME shape as the input:
-        images -> [N, 3, H, W] (one attribution per pixel per channel), signed (+/-).
-    - For downstream similarity metrics (cosine similarity, top-k IoU), we want ONE 2D map per image:
-        [N, H, W], representing "importance magnitude" per pixel.
-    This wrapper:
-      1) runs ig.attribute to get [N,3,H,W] attributions for the chosen target logit,
-      2) converts them to saliency by taking absolute value and summing over RGB channels,
-         producing [N,H,W] maps that are easy to compare across conditions.
-
-    Args:
-        x: [N,3,32,32] normalized images on CPU.
-        target: [N] class indices (on CPU). IG explains these logits (one per sample).
-        steps: number of integration steps along baseline -> input path (more steps = smoother, slower).
-        internal_bs: internal batching used by Captum across integration steps (efficiency / memory).
-
-    Returns:
-        sal: [N,32,32] saliency maps on CPU (|IG| summed over channels).
-    """
+    """Integrated Gradients (IG) wrapper that returns a *single comparable saliency map per image*"""
     # Move to GPU/DEVICE and enable gradients w.r.t. input pixels
     x = x.to(device).requires_grad_(True)
 
@@ -84,17 +63,7 @@ def gradcam_saliency(
     model,
     device=DEVICE,
 ):
-    """
-    Grad-CAM wrapper returning one comparable saliency map per image.
-
-    Args:
-        x: [N,3,H,W] normalized images on CPU.
-        target: [N] class indices (on CPU). Grad-CAM explains these logits.
-        model: classifier model.
-
-    Returns:
-        sal: [N,H,W] saliency maps on CPU.
-    """
+    """Grad-CAM wrapper returning one comparable saliency map per image"""
     model.eval()
 
     target_layer, reshape_transform = get_gradcam_config(model)
@@ -145,16 +114,11 @@ def heatmap(attr):
     return h
 
 
+# Cosine similarity:
+# Measures the overall structural similarity between two saliency maps.
+# High cosine similarity = similar explanation pattern; low = strong explanation change.
 def cosine_sim_maps(a, b, eps=1e-8):
-    """
-    Cosine similarity between two saliency maps per image.
-
-    Args:
-        a,b: [N,H,W] saliency maps
-
-    Returns:
-        sims: [N] cosine similarity in [-1,1] (1 = very similar patterns).
-    """
+    """Cosine similarity in [-1,1] (1 = very similar patterns) between two saliency maps per image"""
     # Flatten each map to a vector
     a = a.reshape(a.shape[0], -1)
     b = b.reshape(b.shape[0], -1)
@@ -167,17 +131,11 @@ def cosine_sim_maps(a, b, eps=1e-8):
     return (a * b).sum(dim=1)  # [N]
 
 
+# Top-k IoU:
+# Measures how much the most salient regions overlap between clean and corrupted explanations.
+# High IoU = focus stays on the same key regions; low IoU = focus shifts.
 def topk_iou(a, b, topk_frac=0.05):
-    """
-    Top-k IoU between saliency maps: do they select the same "most important" pixels?
-
-    Args:
-        a,b: [N,H,W]
-        topk_frac: fraction of pixels to keep as "important" (e.g. 0.05 = top 5%)
-
-    Returns:
-        ious: [N] IoU scores in [0,1]
-    """
+    """Top-k IoU between saliency maps: do they select the same "most important" pixels? scores in [0,1]"""
     N, H, W = a.shape
     k = max(1, int(topk_frac * H * W))
     
@@ -201,22 +159,18 @@ def topk_iou(a, b, topk_frac=0.05):
 
 
 def mask_invariant(pred_a, pred_b):
-    """
-    Label-wise stability mask: True where the predicted class did NOT change.
-
-    Use this to analyze explanation drift only on samples where the decision stayed the same
-    (e.g., clean vs corrupted prediction unchanged).
-    """
+    """Label-wise stability mask: True where the predicted class did not change"""
     return (pred_a == pred_b)
 
 
 def mask_correct(pred_a, pred_b, y_true):
-    """
-    
-    """
+    """Label-wise stability mask: True where predictions are both true"""
     return ((pred_a == y_true) & (pred_b == y_true))
 
 
+# Spearman rho:
+# Measures whether the ranking of important regions stays similar.
+# High rho = similar importance ordering; low rho = ranking changed strongly.
 def spearman_rho_maps(a, b, eps=1e-8):
     N = a.size(0)
     a = a.reshape(N, -1)
@@ -294,14 +248,8 @@ def compute_saliency_maps(
     internal_bs: int = 32,
     batch_size: int = 32,
 ):
-    """
-    Unified saliency dispatcher.
-
-    Returns one saliency map per image [N,H,W] for the requested explainer.
-    """
+    """Unified saliency dispatcher: returns one saliency map per image [N,H,W] for the requested explainer"""
     if explainer_name == "IG":
-        from captum.attr import IntegratedGradients
-
         explainer = IntegratedGradients(model)
         return ig_saliency_batched(
             X,

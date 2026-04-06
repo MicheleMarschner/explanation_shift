@@ -24,6 +24,10 @@ def estimate_sigma(E, max_points=2000, eps=1e-8):
     return sigma
 
 
+# MMD² (Maximum Mean Discrepancy squared):
+# Measures how different the clean and corrupted sample distributions are.
+# Computed in feature / embedding space (E_clean vs. E_corr), not pixel space.
+# Low values mean weak shift; high values mean stronger domain shift.
 def compute_shift_strength_mmd(X, Y, sigma=None, eps=1e-8):
     X = X.float()
     Y = Y.float()
@@ -51,6 +55,10 @@ def compute_shift_strength_mmd(X, Y, sigma=None, eps=1e-8):
     return mmd2.item(), sigma
 
 
+
+# Absolute probability shift:
+# Measures how much the class probability changes from clean to corrupted input.
+# Low values mean stable confidence; high values mean confidence changed strongly.
 def _prob_shift_same_label(logits_a, logits_b):
     """
     Track confidence shift for the label predicted on A.
@@ -66,6 +74,9 @@ def _prob_shift_same_label(logits_a, logits_b):
     return (p_b - p_a).abs()  # [N]
 
 
+# Absolute margin shift:
+# Measures how much the gap between the top class and runner-up changes.
+# Low values mean stable decision sharpness; high values mean the decision became much less/more decisive.
 def _margin_shift_abs(logits_a, logits_b):
     """Absolute shift in top1-top2 logit margin."""
     a2 = logits_a.topk(2, dim=1).values

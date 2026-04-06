@@ -5,7 +5,7 @@ from typing import Dict, Any
 
 
 def build_quantus_metrics() -> Dict[str, Any]:
-    # Adapted from the Quantus climate tutorial defaults. :contentReference[oaicite:5]{index=5}
+    # Adapted from the Quantus climate tutorial defaults
     metrics = {
         "complexity__sparseness": quantus.Sparseness(
             abs=True,
@@ -56,25 +56,8 @@ def build_quantus_metrics() -> Dict[str, Any]:
         #    disable_warnings=False,
         #    display_progressbar=True,
         #),
-    }
-    return metrics
-
-
-
-'''
-Learn first how to use it - might be that model need to be randomly initialized etc. pp.
-"randomisation__param_rnd": quantus.ModelParameterRandomisation(
-            layer_order="independent",
-            similarity_func=quantus.ssim,
-            return_sample_correlation=True,
-            abs=True,
-            normalise=False,
-            aggregate_func=np.mean,
-            return_aggregate=True,
-            disable_warnings=False,
-        ),
-"randomisation__rnd_logit": quantus.RandomLogit(
-            num_classes=1000, # oder eher 10?
+        "randomisation__rnd_logit": quantus.RandomLogit(
+            num_classes=10, 
             similarity_func=quantus.ssim,
             abs=True,   # same
             normalise=True,    # same
@@ -84,4 +67,5 @@ Learn first how to use it - might be that model need to be randomly initialized 
             disable_warnings=True,
             display_progressbar=True, 
         ),
-'''
+    }
+    return metrics

@@ -13,7 +13,7 @@ from src.run_train_pipeline import (
     expand_metaquantus_jobs,
     run_metaquantus_job,
 )
-from src.run_eval_pipeline import run_eval_pipeline
+from src.run_analysis_pipeline import run_analysis_pipeline
 from src.utils import ensure_dirs
 from src.configs.global_config import PATHS
 
@@ -39,14 +39,14 @@ def load_experiment_config(file: str) -> Dict[str, Any]:
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--mode", choices=["train", "eval"], default="train", help="Which mode to run.")
+    p.add_argument("--mode", choices=["train", "analysis"], default="train", help="Which mode to run.")
     p.add_argument(
         "--stage",
         choices=["reference", "artifact", "drift", "quantus", "metaquantus"],
         default="reference",
         help="Which stages to run.",
     )
-    p.add_argument("--config", type=str, required=True, help="Path to config python file, e.g. configs/experiment_config.py")
+    p.add_argument("--config", type=str, help="Path to config python file, e.g. configs/experiment_config.py")
     p.add_argument("--overwrite", action="store_true")
     p.add_argument(
         "--job-type",
@@ -65,9 +65,9 @@ def parse_args():
 def main() -> None:
     args = parse_args()
     ensure_dirs(PATHS)
-    exp_config = load_experiment_config(args.config)
 
     if args.mode == "train":
+        exp_config = load_experiment_config(args.config)
         if args.job_mode == "all":
             run_train_pipeline(
                 exp_config=exp_config,
@@ -131,11 +131,9 @@ def main() -> None:
             )
             return
 
-    if args.mode == "eval":
-        run_eval_pipeline(
-            exp_config=exp_config,
-            stage=args.stage,
-            overwrite=args.overwrite,
+    if args.mode == "analysis":
+        run_analysis_pipeline(
+            experiments_dir = PATHS.runs
         )
 
 if __name__ == "__main__":

@@ -11,15 +11,15 @@ from src.explainers import compute_saliency_maps
 
 
 def run_experiment(
-        pair_idx, 
-        corruption, 
-        severity, 
-        clean_path, 
-        save_path,
-        model, 
-        transform,
-        explainer_name: str,
-    ):
+    pair_idx, 
+    corruption, 
+    severity, 
+    clean_path, 
+    save_path,
+    model, 
+    transform,
+    explainer_name: str,
+):
 
     ref = torch.load(clean_path, map_location="cpu", weights_only=False)
     cr = ref['clean_reference']

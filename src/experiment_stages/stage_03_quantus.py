@@ -16,10 +16,8 @@ from src.metrics import build_quantus_metrics
 from src.explainers import mask_invariant, mask_correct, compute_saliency_maps
 
 
-def to_scalar(x):
-    print(type(x))
-
-    return (float(x[0]))
+def to_scalar(x) -> float:
+    return float(x[0])
 
 
 def run_quantus_metrics(
@@ -124,9 +122,9 @@ def run_quantus_metrics(
         a_batch = cpu(sal_corr.abs().unsqueeze(1)).numpy()  # numpy [N,1,H,W]
 
         masks = {
-            "all": np.ones_like(pred_clean, dtype=bool),
-            "inv": mask_invariant(pred_clean, pred_corr).bool(),
-            "both_corr": mask_correct(pred_clean, pred_corr, y_true).bool()
+            "all": np.ones(len(pred_clean), dtype=bool),
+            "inv": mask_invariant(pred_clean, pred_corr).cpu().numpy().astype(bool),
+            "both_corr": mask_correct(pred_clean, pred_corr, y_true).cpu().numpy().astype(bool),
         }
 
         n_invariant = masks['inv'].sum().item()

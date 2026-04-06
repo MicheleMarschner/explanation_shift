@@ -12,7 +12,7 @@ import metaquantus
 from src.configs.global_config import DEVICE, IG_STEPS, BATCH_SIZE_EXPLAINER, BATCH_SIZE, PATHS
 from src.data import get_clean_data
 from src.models import load_model
-from src.utils import collect_x_from_loader, cpu, to_np_idx
+from src.utils import collect_x_from_loader, cpu
 from src.explainers import compute_saliency_maps
 
 
