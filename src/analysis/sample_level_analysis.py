@@ -239,8 +239,8 @@ def compute_trust_zones(
     zone = np.where(
         correct & ~high_drift, "Robust",
         np.where(correct & high_drift, "Silent Drift",
-                 np.where(~correct & high_drift, "Expected Failure",
-                          "Stubborn Failure"))
+                 np.where(~correct & high_drift, "Visible Failure",
+                          "Hidden Failure"))
     )
     tmp = df[["explainer", "corruption", "severity", "seed"]].copy()
     tmp["zone"] = zone
@@ -305,10 +305,20 @@ def plot_trust_zones(
                     row = panel[(panel["severity"] == sev) & (panel["zone"] == zone)]
                     heights.append(row["share_mean"].iloc[0] * 100 if not row.empty else 0.0)
                 heights = np.array(heights)
-                ax.bar(
+                bars = ax.bar(
                     x_positions, heights, width=bar_width, bottom=bottom,
                     color=ZONE_COLORS[zone], edgecolor="white", linewidth=0.6,
                 )
+
+                labels = [f"{h:.0f}%" if h >= 5 else "" for h in heights]
+                ax.bar_label(
+                    bars,
+                    labels=labels,
+                    label_type="center",
+                    fontsize=8,
+                    color="white",
+                )
+
                 bottom += heights
             ax.set_xticks(x_positions)
             ax.set_xticklabels([str(s) for s in severities])
@@ -330,7 +340,7 @@ def plot_trust_zones(
     )
     basis_label = SIMILARITY_SPECS[de_basis]["drift_axis"]
     fig.suptitle(
-        f"Trust zones  ·  high drift: "
+        f"Prediction–drift regimes  ·  high drift: "
         f"{basis_label}  $\\geq$ q$_{{{threshold_quantile:.2f}}}$ = {thr:.3f}",
         y=1.005, fontsize=12,
     )
@@ -823,9 +833,9 @@ def find_trust_zone_exemplars(
 
     - **Robust**: both_correct ∧ stable explanation (high sim, low |ΔH|)
     - **Silent Drift**: both_correct ∧ unstable explanation — the decoupling signal
-    - **Stubborn Failure**: ¬both_correct ∧ stable explanation — wrong but the
+    - **Hidden Failure**: ¬both_correct ∧ stable explanation — wrong but the
       saliency didn't even react
-    - **Expected Failure**: ¬both_correct ∧ unstable explanation
+    - **Visible Failure**: ¬both_correct ∧ unstable explanation
 
     Returns
     -------
@@ -854,9 +864,9 @@ def find_trust_zone_exemplars(
             _pick_exemplar(both_correct, similarity, abs_dH, sample_idx, want_stable=True),
         "Silent Drift":
             _pick_exemplar(both_correct, similarity, abs_dH, sample_idx, want_stable=False),
-        "Stubborn Failure":
+        "Hidden Failure":
             _pick_exemplar(~both_correct, similarity, abs_dH, sample_idx, want_stable=True),
-        "Expected Failure":
+        "Visible Failure":
             _pick_exemplar(~both_correct, similarity, abs_dH, sample_idx, want_stable=False),
     }
 
@@ -955,7 +965,7 @@ def run_sample_level_analysis(
 
     plot_trust_zones(
         df, de_basis=de_basis, threshold_quantile=threshold_quantile,
-        output_path=output_dir / f"fig9_trust_zones_{de_basis}.pdf",
+        output_path=output_dir / f"fig9_trust_zones_{de_basis}_q{threshold_quantile}.pdf",
     )
     plot_violins(
         df, slice_key=violin_slice, similarity=violin_similarity,

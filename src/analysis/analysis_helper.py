@@ -82,14 +82,14 @@ TENSOR_KEYS = (
 
 PRIMARY_MEASURE = "rho"
 
-# Trust-zone colours: robust / silent / expected / stubborn
+# Trust-zone colours: robust / silent / visible / hidden
 ZONE_COLORS = {
     "Robust":           "#1f77b4",
     "Silent Drift":     "#ff7f0e",
-    "Expected Failure": "#2ca02c",
-    "Stubborn Failure": "#d62728",
+    "Visible Failure": "#2ca02c",
+    "Hidden Failure": "#d62728",
 }
-ZONE_ORDER = ["Robust", "Silent Drift", "Expected Failure", "Stubborn Failure"]
+ZONE_ORDER = ["Robust", "Silent Drift", "Visible Failure", "Hidden Failure"]
 
 CORRELATION_METRICS: list[tuple[str, str]] = [
     ("drift_1m_cos", r"$1-\cos$"),

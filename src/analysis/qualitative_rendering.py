@@ -164,8 +164,8 @@ def _save_exemplar_figure(
     axes[3].set_title("Corrupted explanation", fontsize=9)
     axes[3].axis("off")
 
-    zone_label = zone
-    zone_color = ZONE_COLORS.get(zone_label, "#333333")
+    #zone_label = zone
+    #zone_color = ZONE_COLORS.get(zone_label, "#333333")
 
     meta = (
         f"{row['explainer']} · {corruption_label(row['corruption'])} · "
@@ -177,8 +177,8 @@ def _save_exemplar_figure(
         f"|ΔH| = {row['abs_dH']:.3f}  ·  "
         f"Both correct = {bool(row['both_correct'])}"
     )
-    fig.text(0.5, 1.06, zone_label, ha="center", va="bottom",
-             fontsize=13, fontweight="bold", color=zone_color)
+    #fig.text(0.5, 1.06, zone_label, ha="center", va="bottom",
+    #         fontsize=13, fontweight="bold", color=zone_color)
     fig.text(0.5, 1.01, meta, ha="center", va="bottom",
              fontsize=9, color="#333")
     fig.text(0.5, -0.02, metrics, ha="center", va="top",
@@ -200,7 +200,7 @@ def render_trust_zone_exemplars(
     image_loader_clean: Callable[[np.ndarray], torch.Tensor],
     image_loader_corr: Callable[[np.ndarray, str, int], torch.Tensor],
     zones: Iterable[str] = ("Robust", "Silent Drift",
-                            "Stubborn Failure", "Expected Failure"),
+                            "Hidden Failure", "Visible Failure"),
     corruptions: list[str] | None = None,
     severities: list[int] | None = None,
     explainers: list[str] | None = None,

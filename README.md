@@ -173,16 +173,43 @@ If the automatic download fails, manually download the archive from [here](https
 
 ## Outputs and artifacts
 
-### Per experiment run (stored in `./experiments/<run_name>/`)
-Each experiment creates one folder containing all artifacts needed to reproduce the run and analyse it later:
+Each experiment run writes its outputs to a dedicated run directory:
 
-!TODO auf hoher flugebene eher was in den einzelnen Ordnern gesammelt drinnen ist - oder soll .pt structure erklärt werden. 
+```text
+experiments/experiment__n{N}__{EXPLAINER}__seed{SEED}/
+├── 00__reference/
+├── 01__artifacts/
+├── 02__drift/
+└── 03__quantus/
 
-### Results (stored in `./results/`)
+### `00__reference`
 
-!TODO auf hoher flugebene eher was in den einzelnen Ordnern gesammelt drinnen ist
+This stage stores the clean reference for the sampled image pairs. It provides the baseline predictions and explanations against which all corrupted conditions are compared.
+
+### `01__artifacts`
+
+This stage stores the corresponding outputs for each corruption and severity setting. It records what the model predicted and explained once the clean inputs were corrupted.
+
+### `02__drift`
+
+This stage stores the comparison between clean and corrupted results. It contains both aggregated summaries and per-sample quantities and serves as the main source for the explanation-shift and decoupling analyses.
+
+### `03__quantus`
+
+This stage stores explanation-quality metric results computed on clean and corrupted data. These outputs are used for the `ΔQ` analysis, where metric behaviour under shift is compared against explanation drift.
+
+### `04__metaquantus`
+
+This stage runs MetaQuantus-based meta-evaluation on the clean reference subset. It stores the resulting benchmarking artifact separately from the main Quantus outputs.
+
+### Format and design
+
+Artifacts are saved as PyTorch `.pt` files, with lightweight metadata stored separately where useful. The stages are kept separate on purpose so that later analyses can be rerun or extended without recomputing all earlier outputs.
 
 ---
 
 ## Limitations
 
+The experiments in this repository are limited to the setup used in the accompanying paper: a single model architecture (ResNet-18), a single dataset setting (CIFAR-10 / CIFAR-10-C), four corruption types at selected severity levels, two attribution methods (GradCAM and Integrated Gradients), and a restricted set of evaluation metrics. The reported findings should therefore be interpreted as specific to this setup rather than as directly generalisable beyond it.
+
+Furthermore, not all computed measures are included in the main analysis. Some were omitted or treated as supplementary because they proved numerically unstable, computationally expensive, or highly redundant. In particular, robustness-related Quantus metrics and MetaQuantus-based evaluations can be affected by `NaN` values, unstable outputs, and high runtime, and are therefore better treated as exploratory or supplementary analyses than as primary results.

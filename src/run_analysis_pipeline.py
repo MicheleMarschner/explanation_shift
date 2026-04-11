@@ -126,7 +126,7 @@ def run_analysis_pipeline(experiments_dir):
         output_dir=PATHS.results / "qualitative_imgs",
         image_loader_clean=clean_loader,
         image_loader_corr=corr_loader,
-        zones=("Silent Drift", "Stubborn Failure"),
+        zones=("Silent Drift", "Hidden Failure"),
         corruptions=["fog", "gaussian_noise"],
         severities=[3, 5],
         seeds=[7],
