@@ -51,7 +51,7 @@ EXPLANATION_UNDER_SHIFT/
 │   └── CIFAR-10-C/             # 
 ├── experiments/                # Experiment outputs, run folders, and intermediate artifacts
 ├── report.pdf                  # Final report
-├── results/                    # Processed results, plots, tables, and evaluation outputs
+├── Report_Explanation_Shift_unter_Domain_Shift/                    # Processed results, plots, tables, and evaluation outputs
 ├── slurm_scripts/              # HPC / SLURM job example scripts for cluster execution
 ├── src/                        # Main project source code
 ├── .gitattributes              
