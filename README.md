@@ -29,9 +29,9 @@ Explanation drift increases with corruption severity, but its magnitude and patt
 
 ### Silent Drift Despite Correct Predictions
 
-| Integrated Gradients (IG) | GradCAM |
-|:---:|:---:|
-| <img src="results/qualitative_imgs/qual__Silent Drift__IG__seed7__fog__sev3__idx274.png" width="400" alt="Silent drift example with Integrated Gradients"/> | <img src="results/qualitative_imgs/qual__Silent Drift__GradCAM__seed7__fog__sev3__idx667.png" width="400" alt="Silent drift example with GradCAM"/> |
+![Silent drift example with Integrated Gradients](results/qualitative_imgs/qual__Silent Drift__IG__seed7__fog__sev3__idx274.png)
+
+![Silent drift example with GradCAM](results/qualitative_imgs/qual__Silent Drift__GradCAM__seed7__fog__sev3__idx667.png)
 
 Both examples show substantial attribution changes despite correct predictions on the clean and corrupted images.
 
