@@ -29,9 +29,9 @@ Explanation drift increases with corruption severity, but its magnitude and patt
 
 ### Silent Drift Despite Correct Predictions
 
-![Silent drift example with Integrated Gradients](results/qualitative_imgs/qual__Silent Drift__IG__seed7__fog__sev3__idx274.png)
+![Silent Drift – IG](results/qualitative_imgs/qual__Silent%20Drift__IG__seed7__fog__sev3__idx274.png)
 
-![Silent drift example with GradCAM](results/qualitative_imgs/qual__Silent Drift__GradCAM__seed7__fog__sev3__idx667.png)
+![Silent Drift – GradCAM](results/qualitative_imgs/qual__Silent%20Drift__GradCAM__seed7__fog__sev3__idx667.png)
 
 Both examples show substantial attribution changes despite correct predictions on the clean and corrupted images.
 
