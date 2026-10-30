@@ -18,6 +18,23 @@ The experiments revealed three main findings:
 
 Overall, predictive performance, explanation drift, and explanation-quality metrics provide related but distinct information under distribution shift.
 
+
+## Selected Results
+
+### Explanation Drift Across Corruption Severity
+
+![Explanation drift across severity levels for GradCAM and Integrated Gradients](results/explanation_shift/fig1_primary_spearman__all.png)
+
+Explanation drift increases with corruption severity, but its magnitude and pattern depend on the attribution method.
+
+### Silent Drift Despite Correct Predictions
+
+| Integrated Gradients (IG) | GradCAM |
+|:---:|:---:|
+| <img src="results/qualitative_imgs/qual__Silent Drift__IG__seed7__fog__sev3__idx274.png" width="400" alt="Silent drift example with Integrated Gradients"/> | <img src="results/qualitative_imgs/qual__Silent Drift__GradCAM__seed7__fog__sev3__idx667.png" width="400" alt="Silent drift example with GradCAM"/> |
+
+Both examples show substantial attribution changes despite correct predictions on the clean and corrupted images.
+
 **Full Report:** [Explanation Shift under Domain Shift (PDF)](Report_Explanation_Shift_unter_Domain_Shift.pdf)
 
 
