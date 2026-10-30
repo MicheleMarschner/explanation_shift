@@ -5,9 +5,20 @@ This project studies how model explanations change when the input distribution s
 More specifically, the project analyzes the relationship between **distribution shift**, **predictive behaviour**, and **explanation drift**. It compares clean and corrupted inputs across multiple corruption types, severity levels, random seeds, and explainers in order to examine when explanations change together with model performance and when they do not.
 
 > Disclaimer
-> AI tools were used exclusively for bug fixing and improving readability, including class and function documentation, visualization styling, and docstrings. They were not used for full code generation or for modeling decisions. 
+> AI tools were used exclusively for bug fixing and improving readability, including class and function documentation, visualization styling, and docstrings. They were not used for full code generation or for modeling decisions.
 
----
+
+## Key Findings
+
+The experiments revealed three main findings:
+
+- **Explanation drift is systematic but method-specific.** Drift increases with corruption severity for both GradCAM and Integrated Gradients, but the two methods show different sensitivity patterns across corruption types.
+- **Stable predictions do not imply stable explanations.** Substantial explanation drift persists even when restricting the analysis to samples classified correctly before and after corruption.
+- **Evaluation metrics respond differently across explainers.** Sparseness changes for GradCAM largely disappear when prediction-changing samples are excluded, whereas changes for Integrated Gradients persist, reflecting attribution-level reorganization.
+
+Overall, predictive performance, explanation drift, and explanation-quality metrics provide related but distinct information under distribution shift.
+
+
 
 ## Repository Structure
 
@@ -32,7 +43,6 @@ EXPLANATION_UNDER_SHIFT/
 └── requirements-captum-nodeps.txt # Optional dependency list for Captum-related setup
 ```
 
----
 
 ## Setup Guide
 
@@ -105,7 +115,6 @@ If you use VS Code or Jupyter, make sure the `shift` kernel is selected. If it d
 python -m ipykernel install --user --name shift --display-name "Python 3.11 (shift)"
 ```
 
----
 
 ## Data
 
@@ -121,7 +130,6 @@ If the datasets are not already present locally, download them from the official
 
 After downloading, extract the files so that the folder structure matches the paths above.
 
----
 
 ## Model Architecture and Weights
 
@@ -131,7 +139,6 @@ The implementation and pretrained weights are based on:
 
 Place the pretrained model weights in the `checkpoints/` directory so they can be loaded by the pipeline.
 
----
 
 ## Running Experiments
 
@@ -154,7 +161,6 @@ PYTHONPATH=src python -m src.main \
 
 The commands need to be started from the project root directory. 
 
----
 
 ## Running Analyses
 
@@ -169,7 +175,6 @@ The container will automatically attempt to download the experiments archive if 
 
 If the automatic download fails, manually download the archive from [here](https://drive.google.com/file/d/1YGeHsA141o4Rfwor1sXd0_sdwooDRIT4/view?usp=sharing), ensure it is available as a .tar.gz file, and extract it in the project root.
 
----
 
 ## Outputs and artifacts
 
@@ -207,7 +212,6 @@ This stage runs MetaQuantus-based meta-evaluation on the clean reference subset.
 
 Artifacts are saved as PyTorch `.pt` files, with lightweight metadata stored separately where useful. The stages are kept separate on purpose so that later analyses can be rerun or extended without recomputing all earlier outputs.
 
----
 
 ## Limitations
 
