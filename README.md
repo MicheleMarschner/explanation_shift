@@ -18,6 +18,7 @@ The experiments revealed three main findings:
 
 Overall, predictive performance, explanation drift, and explanation-quality metrics provide related but distinct information under distribution shift.
 
+**Full Report:** [Explanation Shift under Domain Shift (PDF)](explanation_shift_under_domain_shift.pdf)
 
 
 ## Repository Structure
